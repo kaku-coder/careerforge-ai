@@ -257,9 +257,12 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE) file for details.
+
+```text
+MIT License - Copyright (c) 2026 CareerForge AI
+```
 
 ---
 
-
-⭐️ If you found this project interesting, consider giving it a star on GitHub!
+⭐ If you found this project interesting, consider giving it a star on GitHub!
