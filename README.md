@@ -125,44 +125,42 @@ Features include:
 
 The platform follows a modular architecture combining a traditional MERN backend with AI agent workflows.
 
-```text
-                    ┌─────────────────────┐
-                    │      React App      │
-                    │     Frontend UI     │
-                    └──────────┬──────────┘
-                               │
-                               ▼
-                    ┌─────────────────────┐
-                    │     Express API     │
-                    │      Node.js        │
-                    └──────────┬──────────┘
-                               │
-                ┌──────────────┼──────────────┐
-                │              │              │
-                ▼              ▼              ▼
-          ┌──────────┐   ┌──────────┐   ┌──────────┐
-          │ MongoDB  │   │ AI Layer │   │ Razorpay │
-          └──────────┘   └─────┬────┘   └──────────┘
-                               │
-                         ┌─────▼─────┐
-                         │ LangGraph │
-                         └─────┬─────┘
-                               │
-                    ┌──────────┼──────────┐
-                    │          │          │
-                    ▼          ▼          ▼
-                 Interview   Feedback   Roadmap
-                   Agent       Agent      Agent
-                    │          │          │
-                    └──────────┼──────────┘
-                               │
-                         ┌─────▼─────┐
-                         │ LangChain │
-                         └─────┬─────┘
-                               │
-                         ┌─────▼─────┐
-                         │ LLM APIs  │
-                         └───────────┘
+```mermaid
+flowchart TD
+    A[User Browser - React App] -->|Login with Google| B(Firebase Auth)
+    B -->|Returns ID Token| C[API Gateway - Express]
+    C -->|Check session cookie| D{Session valid in Redis?}
+    D -->|No| E[401 Unauthorized -> Login Modal]
+    D -->|Yes| F[Attach req.user, forward request]
+
+    F --> G[Auth Service]
+    F --> H[Resume Service]
+    F --> I[Interview Service]
+    F --> J[Roadmap Service]
+
+    G -->|Create/Find user| K[(MongoDB - Users)]
+    G -->|Store session| L[(Redis - Sessions)]
+
+    H -->|Multer upload| M[Save PDF]
+    M -->|pdf-parse| N[Extract Resume Text]
+    N --> O[Resume Agent - LangChain + Groq]
+    O -->|ATS Score, Strengths, Weaknesses| P[(MongoDB - Resumes)]
+    O -->|Cache result| Q[(Redis Cache)]
+
+    I --> R[Interview Agent - Generate Questions]
+    R --> S{HR or Technical?}
+    S -->|Technical| T[Code Editor + Timer]
+    S -->|HR| U[Text/Voice Answer]
+    T --> V[Feedback Agent]
+    U --> V
+    V --> W[Score + Report PDF]
+
+    J --> X[Roadmap Agent]
+    X -->|Fetch videos| Y[YouTube API]
+    X --> Z[(MongoDB - Roadmaps)]
+
+    C -->|Buy Coins| AA(Razorpay)
+    AA --> K
 ```
 
 ---
