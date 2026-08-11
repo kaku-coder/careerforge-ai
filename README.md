@@ -1,129 +1,40 @@
-# 🚀 AI Interview Platform
+# CareerForge AI 🚀
 
-> An AI-powered interview and career development platform designed to help developers prepare for interviews, track their progress, improve their technical skills, and build confidence with personalized AI guidance.
+**A Multi-Agent AI Interview Platform** that helps freshers and job seekers build ATS-friendly resumes, get AI-powered resume scoring, practice realistic HR & technical interviews, and follow a personalized learning roadmap — all in one place.
 
-## 🌟 Overview
+Instead of a single generic chatbot, CareerForge AI is powered by **four specialized AI agents**, each handling one part of the job-prep journey.
 
-**AI Interview Platform** is a full-stack AI-powered career development platform built using the **MERN stack**, **LangChain**, **LangGraph**, **LangSmith**, **AWS**, and **Docker**.
-
-The platform uses multiple AI-powered systems to provide personalized interview preparation and career guidance.
-
-Instead of simply providing interview questions, the platform analyzes a user's performance, provides personalized feedback, creates learning roadmaps, recommends technologies to learn, and helps users improve their interview confidence.
-
-### 🎯 Core Idea
-
-**Practice → Analyze → Get Feedback → Improve → Track Progress → Build Confidence**
+🔗 **Repo:** [github.com/kaku-coder/careerforge-ai](https://github.com/kaku-coder/careerforge-ai)
 
 ---
 
 ## ✨ Features
 
-### 🤖 AI Interview System
-
-* AI-powered technical interviews
-* Dynamic interview questions
-* AI-driven interview conversations
-* Interview performance analysis
-* Personalized feedback
-* Strength and weakness identification
-* Interview history tracking
-
-### 📊 Progress Tracking
-
-Users can track their improvement over time.
-
-* Interview performance
-* Technical skill progress
-* Previous interview results
-* Weak areas
-* Improvement history
-* Personalized recommendations
-
-### 🧠 AI Feedback
-
-An AI system analyzes interview performance and provides:
-
-* Technical feedback
-* Communication feedback
-* Answer quality analysis
-* Weakness detection
-* Improvement suggestions
-* Personalized next steps
-
-### 🗺️ AI Career Roadmap
-
-The platform generates personalized learning roadmaps based on the user's:
-
-* Current skills
-* Target role
-* Experience level
-* Interview performance
-* Knowledge gaps
-
-Example:
-
-```text
-JavaScript
-   ↓
-Advanced JavaScript
-   ↓
-React
-   ↓
-Node.js
-   ↓
-System Design
-   ↓
-Advanced Backend
-   ↓
-AI Engineering
-```
-
-### 💻 AI Technology Guidance
-
-The platform helps users decide:
-
-* What technology to learn next
-* Which technologies are relevant to their target role
-* What skills are missing
-* Which technologies should be prioritized
-* How different technologies connect with each other
-
-### 💪 Interview Confidence
-
-AI provides guidance to help users improve their interview confidence through:
-
-* Practice interviews
-* Performance analysis
-* Personalized suggestions
-* Repeated interview sessions
-* Progress tracking
-* Weakness-focused practice
-
-### 💳 Razorpay Integration
-
-The platform includes **Razorpay payment integration** for premium features.
-
-Features include:
-
-* Payment checkout
-* Order creation
-* Payment verification
-* Premium access
-* Payment status handling
-
-### 🔐 Authentication & Authorization
-
-* User authentication
-* Protected routes
-* Authorization
-* Secure API architecture
-* User-specific data
+- 🔐 **Google Authentication** via Firebase, with server-side session management using Redis
+- 📄 **Resume Builder** — multi-step form with a live, ATS-friendly preview and PDF export
+- 📊 **Resume Scorer** — upload a PDF resume and get an AI-generated ATS score, strengths, weaknesses, missing skills, and recommendations
+- 🎤 **AI Mock Interviews** — HR and Technical interview simulations with:
+  - Text or voice-based answers
+  - Camera & microphone support
+  - Integrated code editor (JavaScript, Python, C++, TypeScript) for coding rounds
+  - Auto-submission on timeout
+- 📈 **AI Feedback Reports** — per-question scoring, strengths, improvement areas, and an overall performance report (exportable as PDF)
+- 🗺️ **Personalized Roadmap Generator** — target role + salary goal + resume → a structured, multi-month learning plan with curated YouTube videos and articles
+- 💰 **Interview Coins System** — usage-based credits for each feature, with Razorpay integration to purchase more
+- 🧩 **Microservice Architecture** — independently deployable Auth, Resume, Interview, and Roadmap services behind a single API Gateway
 
 ---
 
-# 🏗️ Architecture
+## 🧠 The Agents
 
-The platform follows a modular architecture combining a traditional MERN backend with AI agent workflows.
+| Agent | Responsibility |
+|---|---|
+| **Resume Agent** | Analyzes an uploaded resume and returns an ATS score, strengths, weaknesses, missing skills, and suggested role |
+| **Interview Agent** | Generates and conducts HR, technical, and coding interview questions |
+| **Feedback Agent** | Evaluates submitted answers and produces per-question and overall performance reports |
+| **Roadmap Agent** | Builds a personalized, topic-by-topic learning roadmap based on the target role and resume |
+
+All agents are built with **LangChain** + **Groq (ChatGroq)**.
 
 ```mermaid
 flowchart TD
@@ -165,470 +76,190 @@ flowchart TD
 
 ---
 
-# 🧠 AI Architecture
+## 🏗️ Architecture
 
-The AI layer is built using **LangChain** and **LangGraph** to create structured AI workflows.
-
-### AI Agents / Workflows
-
-The platform contains multiple AI-powered capabilities, including:
-
-### 1. Interview Agent
-
-Responsible for conducting the interview.
-
-```text
-User
- ↓
-Interview Agent
- ↓
-Question Generation
- ↓
-User Answer
- ↓
-Answer Analysis
- ↓
-Next Question
+```
+Client (React) → API Gateway (Express) → Microservices (Auth / Resume / Interview / Roadmap)
+                                              ↓                ↓
+                                          Redis (sessions,   MongoDB (persistent
+                                          cache-aside)        storage)
+                                              ↓
+                                     LangChain + Groq (4 AI Agents)
 ```
 
-### 2. Feedback Agent
+- **Gateway** — single entry point; handles CORS, cookie-based auth middleware, and proxies requests to the right service via `http-proxy-middleware`, forwarding the authenticated user's ID through an `X-User-ID` header.
+- **Redis** — stores session data (`session:{id}` → user info) and caches resume results (`resume:{userId}`) for fast reads (cache-aside pattern).
+- **MongoDB (Mongoose)** — persistent storage for users, resumes, interviews, and roadmaps, each in its own service/collection.
+- **Firebase** — client-side Google sign-in + server-side (`firebase-admin`) token verification.
 
-Analyzes interview performance and generates personalized feedback.
-
-```text
-Interview Data
-      ↓
-Performance Analysis
-      ↓
-Strengths + Weaknesses
-      ↓
-Personalized Feedback
-```
-
-### 3. Roadmap Agent
-
-Creates a personalized learning roadmap.
-
-```text
-User Skills
-    +
-Target Career
-    +
-Interview Performance
-        ↓
-   AI Roadmap Agent
-        ↓
-Personalized Learning Path
-```
-
-### 4. Technology Guidance Agent
-
-Helps users understand what technologies they should learn based on their career goals.
-
-### 5. Confidence / Improvement System
-
-Uses interview performance and previous sessions to provide targeted recommendations for improving interview confidence and overall performance.
+> Full architecture diagram available in [`/docs/architecture.png`](./docs/architecture.png).
 
 ---
 
-# 🔗 LangGraph
+## 🛠️ Tech Stack
 
-**LangGraph** is used to create structured and stateful AI workflows.
+**Frontend**
+- React 18 + Vite
+- Redux Toolkit
+- React Router DOM
+- Tailwind CSS
+- Motion (animations)
+- Axios
+- Recharts (score visualizations)
 
-Example workflow:
+**Backend**
+- Node.js + Express (API Gateway + Microservices)
+- MongoDB + Mongoose
+- Redis (ioredis) via Docker
+- Multer (file uploads)
+- pdf-parse (resume text extraction)
+- Firebase Admin SDK (auth verification)
+- LangChain + Groq (AI agents)
+- Razorpay (payments)
 
-```text
-START
-  ↓
-Collect User Information
-  ↓
-Generate Interview Question
-  ↓
-Receive Answer
-  ↓
-Analyze Answer
-  ↓
-Update Interview State
-  ↓
-Generate Next Question
-  ↓
-Final Evaluation
-  ↓
-Generate Feedback
-  ↓
-END
+**DevOps**
+- Docker Compose (Redis)
+- dotenv-based environment configuration per service
+
+---
+
+## 📂 Project Structure
+
 ```
-
-This allows the AI system to maintain state throughout an interview rather than treating every request as an isolated interaction.
-
----
-
-# 🔍 LangSmith
-
-**LangSmith** is used for monitoring and debugging AI workflows.
-
-It helps with:
-
-* LLM tracing
-* Agent debugging
-* Prompt monitoring
-* Workflow inspection
-* Performance analysis
-* AI application observability
-
----
-
-# 🛠️ Tech Stack
-
-## Frontend
-
-* React.js
-* JavaScript
-* Tailwind CSS
-* Axios
-* React Router
-
-## Backend
-
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* REST APIs
-* Authentication & Authorization
-
-## AI / Agentic AI
-
-* LangChain
-* LangGraph
-* LangSmith
-* Large Language Models
-* AI Agents
-* Structured AI Workflows
-
-## Payments
-
-* Razorpay
-
-## DevOps / Cloud
-
-* Docker
-* AWS
-* Containerized deployment
-* Environment-based configuration
-
----
-
-# 📁 Project Structure
-
-```text
-ai-interview-platform/
-│
-├── client/
+careerforge-ai/
+├── frontend/                # React + Vite client
 │   ├── src/
-│   ├── components/
-│   ├── pages/
-│   ├── hooks/
-│   ├── services/
-│   └── ...
+│   │   ├── pages/           # Home, Dashboard, Resume Builder, Scorer, Interview, Roadmap
+│   │   ├── components/      # Sidebar, LoginModal, EntryCard, ScoreRing, etc.
+│   │   ├── redux/           # Store + slices (resume, user, etc.)
+│   │   └── utils/            # Axios instance, Firebase config
 │
-├── server/
-│   ├── controllers/
-│   ├── models/
-│   ├── routes/
-│   ├── middleware/
-│   ├── services/
-│   ├── ai/
-│   │   ├── agents/
-│   │   ├── workflows/
-│   │   └── prompts/
-│   └── ...
-│
-├── docker/
-│
-├── .env.example
-├── docker-compose.yml
-├── package.json
-└── README.md
+├── backend/
+│   ├── shared/redis/        # Shared Redis client used across services
+│   ├── docker-compose.yml   # Redis container config
+│   ├── gateway/             # API Gateway (auth middleware, proxy routing)
+│   └── services/
+│       ├── auth/            # Login, signup, session, logout
+│       ├── resume/          # Upload, extraction, scoring, builder API
+│       ├── interview/       # Interview creation, questions, evaluation
+│       └── roadmap/         # Roadmap generation
 ```
 
 ---
 
-# 🔐 Environment Variables
+## ⚙️ Getting Started
 
-Create a `.env` file and configure the required environment variables.
+### Prerequisites
+- Node.js (v18+)
+- Docker (for Redis)
+- MongoDB Atlas account (or local MongoDB)
+- Firebase project (Google Auth enabled)
+- Groq API key
+- Razorpay account (optional, for payments)
 
-```env
-PORT=
-
-MONGODB_URI=
-
-JWT_SECRET=
-
-LLM_API_KEY=
-
-LANGSMITH_API_KEY=
-LANGSMITH_TRACING=
-
-RAZORPAY_KEY_ID=
-RAZORPAY_KEY_SECRET=
-
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_REGION=
-AWS_BUCKET_NAME=
+### 1. Clone the repo
+```bash
+git clone https://github.com/kaku-coder/careerforge-ai.git
+cd careerforge-ai
 ```
 
-> Never commit your `.env` file or API keys to GitHub.
-
----
-
-# 🚀 Getting Started
-
-## 1. Clone the repository
-
+### 2. Start Redis
 ```bash
-git clone https://github.com/YOUR_USERNAME/ai-interview-platform.git
-
-cd ai-interview-platform
-```
-
-## 2. Install dependencies
-
-### Frontend
-
-```bash
-cd client
-npm install
-```
-
-### Backend
-
-```bash
-cd ../server
-npm install
-```
-
-## 3. Configure environment variables
-
-Create the required `.env` files using the `.env.example` files.
-
-## 4. Start the backend
-
-```bash
-npm run dev
-```
-
-## 5. Start the frontend
-
-```bash
-cd client
-npm run dev
-```
-
----
-
-# 🐳 Running with Docker
-
-Build the containers:
-
-```bash
-docker compose build
-```
-
-Start the application:
-
-```bash
-docker compose up
-```
-
-Run in detached mode:
-
-```bash
+cd backend
 docker compose up -d
 ```
 
-Stop the containers:
-
+### 3. Install dependencies
 ```bash
-docker compose down
+# Gateway
+cd backend/gateway && npm install
+
+# Each microservice
+cd ../services/auth && npm install
+cd ../resume && npm install
+cd ../interview && npm install
+cd ../roadmap && npm install
+
+# Frontend
+cd ../../../frontend && npm install
 ```
 
----
+### 4. Configure environment variables
+Create a `.env` file inside each service (gateway, auth, resume, interview, roadmap) and the frontend. See [Environment Variables](#-environment-variables) below.
 
-# ☁️ AWS Deployment
-
-The application is designed to support cloud deployment using AWS.
-
-Possible infrastructure:
-
-```text
-                    AWS
-                     │
-          ┌──────────┴──────────┐
-          │                     │
-       Frontend              Backend
-          │                     │
-          │                  Docker
-          │                     │
-          │                  AWS Compute
-          │                     │
-          └──────────┬──────────┘
-                     │
-                 Database
-                     │
-                 MongoDB
+### 5. Run the app
+```bash
+# In separate terminals
+cd backend/gateway && npm run dev
+cd backend/services/auth && npm run dev
+cd backend/services/resume && npm run dev
+cd backend/services/interview && npm run dev
+cd backend/services/roadmap && npm run dev
+cd frontend && npm run dev
 ```
 
-AWS services can be used for:
-
-* Application hosting
-* Container deployment
-* File/object storage
-* Infrastructure management
-* Production deployment
+The app will be available at `http://localhost:5173`, with the gateway running on `http://localhost:8000`.
 
 ---
 
-# 💳 Payment Flow
+## 🔑 Environment Variables
 
-Razorpay is integrated for premium features.
-
-```text
-User
- ↓
-Select Premium Plan
- ↓
-Create Razorpay Order
- ↓
-Razorpay Checkout
- ↓
-Payment
- ↓
-Payment Verification
- ↓
-Update User Subscription
- ↓
-Unlock Premium Features
+**Gateway (`backend/gateway/.env`)**
+```
+PORT=8000
+REDIS_URL=redis://localhost:6379
+AUTH_SERVICE_URL=http://localhost:8001
+RESUME_SERVICE_URL=http://localhost:8002
+INTERVIEW_SERVICE_URL=http://localhost:8003
+ROADMAP_SERVICE_URL=http://localhost:8004
 ```
 
----
-
-# 📈 User Journey
-
-```text
-Sign Up
-   ↓
-Create Profile
-   ↓
-Select Career Goal
-   ↓
-Take AI Interview
-   ↓
-Receive AI Feedback
-   ↓
-Identify Weak Areas
-   ↓
-Generate AI Roadmap
-   ↓
-Learn Recommended Technologies
-   ↓
-Practice Again
-   ↓
-Track Progress
-   ↓
-Improve Interview Performance
+**Auth Service**
+```
+PORT=8001
+MONGO_URL=your_mongodb_connection_string
+REDIS_URL=redis://localhost:6379
 ```
 
----
-
-# 🎯 Why I Built This
-
-The goal of this project is to build more than a simple AI chatbot.
-
-I wanted to create a complete **AI-powered career development platform** where AI can understand a user's skills, analyze their interview performance, identify weaknesses, recommend what to learn next, and continuously help them improve.
-
-The project also gave me practical experience with:
-
-* Full-stack application development
-* AI agents
-* LangChain
-* LangGraph
-* LLM workflows
-* AI observability with LangSmith
-* Payment integration
-* Docker
-* AWS
-* Database architecture
-* REST API design
-* Authentication
-* Production-oriented application architecture
-
----
-
-# 🧪 Future Improvements
-
-* [ ] Real-time AI interviews
-* [ ] Voice-based interviews
-* [ ] Resume analysis
-* [ ] Resume-to-interview personalization
-* [ ] Advanced analytics dashboard
-* [ ] More AI career agents
-* [ ] Interview difficulty adaptation
-* [ ] Company-specific interview preparation
-* [ ] Coding interview environment
-* [ ] AI mock HR interviews
-* [ ] Skill benchmarking
-* [ ] More detailed progress analytics
-
----
-
-# 📸 Screenshots
-
-Add screenshots of your platform here.
-
-```text
-/screenshots
-├── dashboard.png
-├── interview.png
-├── feedback.png
-├── roadmap.png
-├── progress.png
-└── payment.png
+**Resume / Interview / Roadmap Services**
+```
+PORT=800X
+MONGO_URL=your_mongodb_connection_string
+REDIS_URL=redis://localhost:6379
+GROQ_API_KEY=your_groq_api_key
 ```
 
----
+**Frontend (`frontend/.env`)**
+```
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
+VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+```
 
-# 🔒 Security
-
-This project follows basic security practices including:
-
-* Environment variables for secrets
-* Protected API routes
-* Authentication middleware
-* Payment verification
-* Input validation
-* Secure API communication
-* No secrets committed to Git
+> Firebase service account key (`service-account-key.json`) must be placed inside the **auth service** directory and referenced in its Firebase Admin config.
 
 ---
 
-# 👨‍💻 Author
+## 🗺️ Roadmap / Upcoming Improvements
 
-**Prakash**
-
-Full-Stack Developer | MERN | AI Engineering
-
-I build full-stack applications and AI-powered products using modern web technologies and AI agent frameworks.
+- [ ] Interview coin deduction logic refinement
+- [ ] Interview history & analytics dashboard
+- [ ] Support for more coding languages in the in-browser editor
+- [ ] Mobile-responsive interview room
 
 ---
 
-## ⭐ Support
+## 🤝 Contributing
 
-If you find this project interesting, consider giving the repository a ⭐ on GitHub.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/kaku-coder/careerforge-ai/issues).
 
 ---
 
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+---
+
+
+⭐️ If you found this project interesting, consider giving it a star on GitHub!
