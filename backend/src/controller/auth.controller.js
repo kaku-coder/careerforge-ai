@@ -1,5 +1,6 @@
 import User from "../schema/login.schema.model.js";
 import Logout from "../schema/logout.schema.model.js";
+import redis from "../config/redis.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
@@ -132,7 +133,10 @@ export const logoutUser = async (req, res) => {
     try {
         const token = req.cookies?.token;
         if (token) {
-            await Logout.create({ token });
+            // Store token in Redis blacklist with 7 days TTL (604800s)
+            await redis.set(`blacklist:${token}`, "true", "EX", 7 * 24 * 60 * 60).catch(() => {});
+            // Also store in MongoDB as fallback
+            await Logout.create({ token }).catch(() => {});
         }
 
         res.clearCookie("token", {

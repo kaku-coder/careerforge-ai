@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import User from "../schema/login.schema.model.js";
 import Logout from "../schema/logout.schema.model.js";
+import redis from "../config/redis.js";
 
 export const authenticateUser = async (req, res, next) => {
     try {
@@ -12,9 +13,18 @@ export const authenticateUser = async (req, res, next) => {
             });
         }
 
-        // Check if token is blacklisted/logged out
-        const isBlacklisted = await Logout.findOne({ token });
-        if (isBlacklisted) {
+        // 1. Check Redis cache first for high-performance blacklist check
+        const isBlacklistedInRedis = await redis.get(`blacklist:${token}`).catch(() => null);
+        if (isBlacklistedInRedis) {
+            return res.status(401).json({
+                success: false,
+                message: "Token has been revoked/logged out. Please log in again."
+            });
+        }
+
+        // 2. Fallback check in MongoDB
+        const isBlacklistedInDb = await Logout.findOne({ token });
+        if (isBlacklistedInDb) {
             return res.status(401).json({
                 success: false,
                 message: "Token has been revoked/logged out. Please log in again."

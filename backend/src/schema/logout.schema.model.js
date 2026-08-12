@@ -1,9 +1,6 @@
 import mongoose from "mongoose";
 
-/**
- * Schema to store blacklisted/invalidated JWT tokens upon user logout.
- * Uses MongoDB TTL (Time-To-Live) index to automatically delete records after 7 days.
- */
+
 const logoutSchema = new mongoose.Schema(
     {
         token: {
@@ -15,7 +12,7 @@ const logoutSchema = new mongoose.Schema(
         createdAt: {
             type: Date,
             default: Date.now,
-            expires: 7 * 24 * 60 * 60 // Automatically delete document after 7 days
+            expires: 7 * 24 * 60 * 60
         }
     },
     {
