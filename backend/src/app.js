@@ -2,6 +2,7 @@ import express from "express"
 import morgan from "morgan"
 import cookieparser from "cookie-parser"
 import authRoutes from "./routes/auth.routes.js"
+import fileRoutes from "./routes/file.routes.js"
 import helmet from "helmet"
 
 
@@ -13,6 +14,7 @@ app.use(cookieparser())
 app.use(helmet())
 
 app.use("/api/auth", authRoutes)
+app.use("/api/files", fileRoutes)
 
 
 app.get("/", (req, res) => {
