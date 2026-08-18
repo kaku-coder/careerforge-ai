@@ -1,10 +1,36 @@
+<div align="center">
+
 # CareerForge AI 🚀
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/Node.js-v18%2B-green.svg)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://react.dev/)
+[![LangChain](https://img.shields.io/badge/AI-LangChain-emerald.svg)](https://www.langchain.com/)
+[![Groq](https://img.shields.io/badge/LLM-Groq-orange.svg)](https://groq.com/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/kaku-coder/careerforge-ai/issues)
 
 **A Multi-Agent AI Interview Platform** that helps freshers and job seekers build ATS-friendly resumes, get AI-powered resume scoring, practice realistic HR & technical interviews, and follow a personalized learning roadmap — all in one place.
 
 Instead of a single generic chatbot, CareerForge AI is powered by **four specialized AI agents**, each handling one part of the job-prep journey.
 
 🔗 **Repo:** [github.com/kaku-coder/careerforge-ai](https://github.com/kaku-coder/careerforge-ai)
+
+</div>
+
+---
+
+## 📌 Quick Links
+
+- [✨ Features](#-features)
+- [🧠 The Agents](#-the-agents)
+- [🏗️ Architecture](#️-architecture)
+- [🛠️ Tech Stack](#️-tech-stack)
+- [📂 Project Structure](#-project-structure)
+- [⚙️ Getting Started](#️-getting-started)
+- [🔑 Environment Variables](#-environment-variables)
+- [🗺️ Roadmap](#️-roadmap--upcoming-improvements)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
 
 ---
 
@@ -98,28 +124,28 @@ Client (React) → API Gateway (Express) → Microservices (Auth / Resume / Inte
 
 ## 🛠️ Tech Stack
 
-**Frontend**
-- React 18 + Vite
-- Redux Toolkit
-- React Router DOM
-- Tailwind CSS
-- Motion (animations)
-- Axios
-- Recharts (score visualizations)
+### Frontend
+- ⚛️ **React 18** + Vite
+- 📦 **Redux Toolkit**
+- 🔀 **React Router DOM**
+- 🎨 **Tailwind CSS**
+- ✨ **Motion (Framer Motion)** (animations)
+- 🌐 **Axios**
+- 📊 **Recharts** (score visualizations)
 
-**Backend**
-- Node.js + Express (API Gateway + Microservices)
-- MongoDB + Mongoose
-- Redis (ioredis) via Docker
-- Multer (file uploads)
-- pdf-parse (resume text extraction)
-- Firebase Admin SDK (auth verification)
-- LangChain + Groq (AI agents)
-- Razorpay (payments)
+### Backend
+- 🟢 **Node.js** + Express (API Gateway + Microservices)
+- 🍃 **MongoDB** + Mongoose
+- ⚡ **Redis** (ioredis) via Docker
+- 📁 **Multer** (file uploads)
+- 📄 **pdf-parse** (resume text extraction)
+- 🔥 **Firebase Admin SDK** (auth verification)
+- 🤖 **LangChain** + **Groq** (AI agents)
+- 💳 **Razorpay** (payments)
 
-**DevOps**
-- Docker Compose (Redis)
-- dotenv-based environment configuration per service
+### DevOps & Infrastructure
+- 🐳 **Docker Compose** (Redis)
+- 🔑 **dotenv** environment configuration per service
 
 ---
 
@@ -266,3 +292,4 @@ MIT License - Copyright (c) 2026 CareerForge AI
 ---
 
 ⭐ If you found this project interesting, consider giving it a star on GitHub!
+
