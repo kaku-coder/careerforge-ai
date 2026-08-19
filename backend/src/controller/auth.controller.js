@@ -200,3 +200,88 @@ export const getProfile = async (req, res) => {
         });
     }
 };
+
+/**
+ * Handle Google OAuth Callback (Passport) & Issue Auth Cookie
+ */
+export const googleCallbackHandler = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(401).json({
+                success: false,
+                message: "Google authentication failed"
+            });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign(
+            { id: req.user._id, email: req.user.email },
+            getSecretKey(),
+            { expiresIn: "7d" }
+        );
+
+        // Set JWT in HTTP-only Cookie
+        res.cookie("token", token, cookieOptions);
+
+        // If client redirect URL is provided or frontend environment set
+        const clientRedirectUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+        return res.redirect(`${clientRedirectUrl}/dashboard`);
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Google auth error"
+        });
+    }
+};
+
+/**
+ * Handle direct Google User Profile / Credential Login from Frontend
+ */
+export const googleTokenLogin = async (req, res) => {
+    try {
+        const { email, username, googleId, avatar } = req.body;
+
+        if (!email || !googleId) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and Google ID are required"
+            });
+        }
+
+        let user = await User.findOne({
+            $or: [{ googleId }, { email }]
+        });
+
+        if (!user) {
+            user = await User.create({
+                username: username || email.split("@")[0],
+                email,
+                googleId,
+                avatar: avatar || ""
+            });
+        } else if (!user.googleId) {
+            user.googleId = googleId;
+            if (avatar && !user.avatar) user.avatar = avatar;
+            await user.save();
+        }
+
+        const token = jwt.sign(
+            { id: user._id, email: user.email },
+            getSecretKey(),
+            { expiresIn: "7d" }
+        );
+
+        res.cookie("token", token, cookieOptions);
+
+        return res.status(200).json({
+            success: true,
+            message: "Google sign-in successful",
+            user
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Google sign-in failed"
+        });
+    }
+};

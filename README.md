@@ -36,7 +36,7 @@ Instead of a single generic chatbot, CareerForge AI is powered by **four special
 
 ## ✨ Features
 
-- 🔐 **Google Authentication** via Firebase, with server-side session management using Redis
+- 🔐 **Google Authentication** via Google OAuth 2.0 / Passport.js, with server-side JWT session management using Redis
 - 📄 **Resume Builder** — multi-step form with a live, ATS-friendly preview and PDF export
 - 📊 **Resume Scorer** — upload a PDF resume and get an AI-generated ATS score, strengths, weaknesses, missing skills, and recommendations
 - 🎤 **AI Mock Interviews** — HR and Technical interview simulations with:
@@ -64,8 +64,8 @@ All agents are built with **LangChain** + **Groq (ChatGroq)**.
 
 ```mermaid
 flowchart TD
-    A[User Browser - React App] -->|Login with Google| B(Firebase Auth)
-    B -->|Returns ID Token| C[API Gateway - Express]
+    A[User Browser - React App] -->|Login with Google| B(Google Auth Services)
+    B -->|Returns OAuth Token / Credentials| C[API Gateway - Express]
     C -->|Check session cookie| D{Session valid in Redis?}
     D -->|No| E[401 Unauthorized -> Login Modal]
     D -->|Yes| F[Attach req.user, forward request]
@@ -116,7 +116,7 @@ Client (React) → API Gateway (Express) → Microservices (Auth / Resume / Inte
 - **Gateway** — single entry point; handles CORS, cookie-based auth middleware, and proxies requests to the right service via `http-proxy-middleware`, forwarding the authenticated user's ID through an `X-User-ID` header.
 - **Redis** — stores session data (`session:{id}` → user info) and caches resume results (`resume:{userId}`) for fast reads (cache-aside pattern).
 - **MongoDB (Mongoose)** — persistent storage for users, resumes, interviews, and roadmaps, each in its own service/collection.
-- **Firebase** — client-side Google sign-in + server-side (`firebase-admin`) token verification.
+- **Google Auth Services** — Google OAuth 2.0 sign-in + Passport.js / JWT cookie session management.
 
 > Full architecture diagram available in [`/docs/architecture.png`](./docs/architecture.png).
 
@@ -139,7 +139,7 @@ Client (React) → API Gateway (Express) → Microservices (Auth / Resume / Inte
 - ⚡ **Redis** (ioredis) via Docker
 - 📁 **Multer** (file uploads)
 - 📄 **pdf-parse** (resume text extraction)
-- 🔥 **Firebase Admin SDK** (auth verification)
+- 🔑 **Google Auth Services** (Passport.js + Google OAuth 2.0)
 - 🤖 **LangChain** + **Groq** (AI agents)
 - 💳 **Razorpay** (payments)
 
@@ -179,7 +179,7 @@ careerforge-ai/
 - Node.js (v18+)
 - Docker (for Redis)
 - MongoDB Atlas account (or local MongoDB)
-- Firebase project (Google Auth enabled)
+- Google Cloud Console account (Google OAuth 2.0 Credentials: Client ID & Client Secret)
 - Groq API key
 - Razorpay account (optional, for payments)
 
@@ -240,11 +240,15 @@ INTERVIEW_SERVICE_URL=http://localhost:8003
 ROADMAP_SERVICE_URL=http://localhost:8004
 ```
 
-**Auth Service**
+**Auth Service (`backend/services/auth/.env` or `backend/.env`)**
 ```
 PORT=8001
 MONGO_URL=your_mongodb_connection_string
 REDIS_URL=redis://localhost:6379
+JWT_SECRET=your_jwt_secret_key
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:8000/api/auth/google/callback
 ```
 
 **Resume / Interview / Roadmap Services**
@@ -257,12 +261,9 @@ GROQ_API_KEY=your_groq_api_key
 
 **Frontend (`frontend/.env`)**
 ```
-VITE_FIREBASE_API_KEY=your_firebase_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_firebase_auth_domain
-VITE_FIREBASE_PROJECT_ID=your_firebase_project_id
+VITE_GOOGLE_CLIENT_ID=your_google_client_id
+VITE_API_BASE_URL=http://localhost:8000
 ```
-
-> Firebase service account key (`service-account-key.json`) must be placed inside the **auth service** directory and referenced in its Firebase Admin config.
 
 ---
 
