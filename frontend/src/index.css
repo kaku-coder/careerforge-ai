@@ -8,9 +8,17 @@
 
 .bg-grid-lines {
   background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.045) 1px, transparent 1px);
+  background-size: 60px 60px;
+  background-position: top left;
+}
+
+.bg-grid-lines-left {
+  background-image: 
     linear-gradient(to right, rgba(0, 0, 0, 0.06) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
-  background-size: 36px 36px;
+  background-size: 60px 60px;
   background-position: top left;
 }
 
@@ -19,7 +27,8 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  height: 56px;
+  height: 72px;
+  padding: 0 18px;
   text-decoration: none;
   font-family: var(--font-mono);
   font-size: 12px;
@@ -55,6 +64,27 @@
   color: #111110;
   font-weight: 600;
 }
+
+/* Login Page Entrance Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-1 { animation: fadeInUp 0.5s ease-out 0.05s both; }
+.fade-in-2 { animation: fadeInUp 0.5s ease-out 0.12s both; }
+.fade-in-3 { animation: fadeInUp 0.5s ease-out 0.2s both; }
+.fade-in-4 { animation: fadeInUp 0.5s ease-out 0.28s both; }
+.fade-in-5 { animation: fadeInUp 0.5s ease-out 0.36s both; }
+.fade-in-6 { animation: fadeInUp 0.5s ease-out 0.44s both; }
+.fade-in-7 { animation: fadeInUp 0.5s ease-out 0.52s both; }
+.fade-in-8 { animation: fadeInUp 0.5s ease-out 0.6s both; }
 
 * {
   padding: 0;
