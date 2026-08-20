@@ -14,6 +14,7 @@ const Navbar = () => {
     { name: 'INTERVIEW', path: '/interview' },
     { name: 'ROADMAP', path: '/roadmap' },
     { name: 'RESUME', path: '/resume' },
+    { name: 'PROFILE', path: '/profile' },
   ]
 
   const handleLogout = async () => {
@@ -34,7 +35,7 @@ const Navbar = () => {
       <div className="flex items-center">
         <Link
           to="/"
-          className="flex items-center gap-0.5 font-bold tracking-[0.12em] text-[#111110] no-underline mr-6 lg:mr-10"
+          className="flex items-center gap-0.5 font-bold tracking-[0.12em] text-[#111110] no-underline mr-6 lg:mr-10 text-sm"
         >
           <span className="text-[#66645e] font-normal">//</span>CAREER
         </Link>
@@ -56,18 +57,13 @@ const Navbar = () => {
 
       {/* Right side: AI Status, Notifications & Dynamic User Profile / Login */}
       <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
-        <div className="hidden lg:flex items-center gap-2 text-[#66645e] uppercase">
-          <span className="text-[#111110] text-[10px] leading-none">■</span>
-          <span>AI ENGINE: ACTIVE</span>
-        </div>
-
         <button className="hidden sm:flex bg-transparent border-0 font-mono text-[12px] tracking-[0.08em] text-[#66645e] hover:text-[#111110] cursor-pointer uppercase items-center gap-1 transition-colors duration-200">
           <span>NOTIFICATIONS</span>
           <span className="text-[14px] leading-none text-[#111110]">•</span>
         </button>
 
         {isAuthenticated ? (
-          /* LOGGED IN DESKTOP: Displays Profile Name, Initials Box & Logout Dropdown */
+          /* LOGGED IN DESKTOP: Displays Profile Name, Square Initials Box (PK) & Dropdown */
           <div className="hidden sm:flex items-center gap-3 relative">
             <span className="font-mono text-[12px] text-[#111110] font-bold uppercase tracking-wider">
               {displayName}
@@ -92,6 +88,15 @@ const Navbar = () => {
                     {user?.email}
                   </div>
                 </div>
+
+                <Link
+                  to="/profile"
+                  onClick={() => setShowDropdown(false)}
+                  className="w-full flex items-center justify-between text-[#111110] hover:text-[#33322e] cursor-pointer font-mono text-[12px] uppercase py-1.5 no-underline border-b border-[#e2e0d6] mb-2"
+                >
+                  <span className="font-bold">MY PROFILE →</span>
+                  <FiUser size={14} />
+                </Link>
 
                 <button
                   type="button"
@@ -133,7 +138,7 @@ const Navbar = () => {
           {/* User Status Card on Mobile */}
           {isAuthenticated && (
             <div className="border border-[#111110] p-4 mb-6 bg-grid-lines flex flex-col items-center justify-center">
-              <div className="w-12 h-12 border border-[#111110] bg-[#111110] text-[#F8F6F1] font-mono font-bold text-sm flex items-center justify-center mb-2">
+              <div className="w-14 h-14 border border-[#111110] bg-[#111110] text-[#F8F6F1] font-mono font-bold text-sm flex items-center justify-center mb-2">
                 {initials || 'PK'}
               </div>
               <div className="font-bold text-[#111110] text-sm uppercase tracking-wider">{displayName}</div>

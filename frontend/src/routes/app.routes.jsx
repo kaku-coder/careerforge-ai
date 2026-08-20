@@ -3,6 +3,7 @@ import MainLayout from '../components/MainLayout'
 import OverviewPage from '../pages/OverviewPage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
+import ProfilePage from '../pages/ProfilePage'
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path: 'overview',
         element: <OverviewPage />,
+      },
+      {
+        path: 'profile',
+        element: <ProfilePage />,
       },
       {
         path: 'interview',
