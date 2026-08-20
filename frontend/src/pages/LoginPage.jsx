@@ -1,22 +1,30 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight } from 'react-icons/fi'
-import AiWireframe from '../components/AiWireframe'
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiAlertCircle } from 'react-icons/fi'
+import { useAuth } from '../context/AuthContext'
 
 const LoginPage = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [rememberMe, setRememberMe] = useState(false)
+    const [formError, setFormError] = useState('')
+    const { login, loading } = useAuth()
     const navigate = useNavigate()
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        navigate('/overview')
+        setFormError('')
+        const res = await login(email, password)
+        if (res.success) {
+            navigate('/overview')
+        } else {
+            setFormError(res.message || 'Failed to sign in. Please check your credentials.')
+        }
     }
 
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:8000/api/auth/google'
+        window.location.href = 'http://localhost:5000/api/auth/google'
     }
 
     return (
@@ -36,7 +44,7 @@ const LoginPage = () => {
                 <div className="relative z-10 flex flex-col h-full" style={{ padding: '70px 50px 40px 50px' }}>
 
                     <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase fade-in-1">
-            // ACCESS YOUR CAREER SYSTEM
+                        // ACCESS YOUR CAREER SYSTEM
                     </div>
 
                     <h1
@@ -86,10 +94,16 @@ const LoginPage = () => {
                 <div className="flex flex-col h-full" style={{ padding: '65px 50px 40px 50px' }}>
 
                     <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-10 fade-in-1">
-            // LOGIN TO CONTINUE
+                        // LOGIN TO CONTINUE
                     </div>
 
                     <div className="w-full max-w-[550px]">
+                        {formError && (
+                            <div className="mb-6 p-3 bg-[#fee2e2] border border-[#ef4444] text-[#b91c1c] font-mono text-[12px] flex items-center gap-2">
+                                <FiAlertCircle size={16} />
+                                <span>{formError}</span>
+                            </div>
+                        )}
 
                         <form onSubmit={handleSubmit}>
 
@@ -164,9 +178,10 @@ const LoginPage = () => {
                             <div className="fade-in-5" style={{ marginTop: '36px' }}>
                                 <button
                                     type="submit"
-                                    className="w-full h-[64px] btn-primary-dark font-mono font-bold text-[13px] tracking-[0.12em] uppercase flex items-center justify-center gap-3 cursor-pointer border-0 group"
+                                    disabled={loading}
+                                    className="w-full h-[64px] btn-primary-dark font-mono font-bold text-[13px] tracking-[0.12em] uppercase flex items-center justify-center gap-3 cursor-pointer border-0 disabled:opacity-50 group"
                                 >
-                                    <span>SIGN IN</span>
+                                    <span>{loading ? 'AUTHENTICATING...' : 'SIGN IN'}</span>
                                     <FiArrowRight
                                         size={16}
                                         className="transition-transform duration-200 group-hover:translate-x-1"

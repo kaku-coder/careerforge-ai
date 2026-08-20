@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react'
 
 const AuthContext = createContext(null)
 
+const API_BASE_URL = 'http://localhost:5000/api/auth'
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
@@ -24,6 +26,26 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user])
 
+  // Fetch current user profile on app load
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/profile`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        })
+        const data = await response.json()
+        if (response.ok && data.success && data.user) {
+          setUser(data.user)
+        }
+      } catch (e) {
+        console.log('No active session found', e)
+      }
+    }
+    checkAuthStatus()
+  }, [])
+
   // Helper to get initials from name or email
   const getInitials = () => {
     if (!user) return ''
@@ -44,9 +66,10 @@ export const AuthProvider = ({ children }) => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       })
 
@@ -70,9 +93,10 @@ export const AuthProvider = ({ children }) => {
     setLoading(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:8000/api/auth/register', {
+      const response = await fetch(`${API_BASE_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ username, email, password }),
       })
 
@@ -94,11 +118,15 @@ export const AuthProvider = ({ children }) => {
   // Logout handler
   const logout = async () => {
     try {
-      await fetch('http://localhost:8000/api/auth/logout', { method: 'POST' })
+      await fetch(`${API_BASE_URL}/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      })
     } catch (e) {
       console.error(e)
     }
     setUser(null)
+    localStorage.removeItem('career_user')
   }
 
   return (
