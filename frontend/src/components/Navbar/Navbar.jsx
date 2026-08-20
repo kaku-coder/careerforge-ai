@@ -27,7 +27,8 @@ const Navbar = () => {
 
   return (
     <header
-      className="w-full h-[72px] bg-[#F8F6F1] border-b border-[#e2e0d6] flex items-center justify-between font-mono text-[12px] tracking-[0.08em] text-[#111110] z-30 relative px-5 sm:px-10"
+      style={{ paddingLeft: '40px', paddingRight: '40px' }}
+      className="w-full h-[72px] bg-[#F8F6F1] border-b border-[#e2e0d6] flex items-center justify-between font-mono text-[12px] tracking-[0.08em] text-[#111110] z-30 relative"
     >
       {/* Left side: Brand & Desktop Navigation */}
       <div className="flex items-center">

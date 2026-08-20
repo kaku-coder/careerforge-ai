@@ -105,7 +105,10 @@ const RegisterPage = () => {
             <div className="w-full lg:w-1/2 flex flex-col lg:overflow-y-auto">
                 <div className="flex flex-col flex-1 h-full px-6 py-8 sm:px-10 lg:p-[70px_50px_40px_50px] items-center lg:items-start">
                     
-                    <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-6 lg:mb-11 text-center lg:text-left fade-in-1">
+                    <div
+                        className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-8 lg:mb-11 text-center lg:text-left fade-in-1"
+                        style={{ marginTop: '50px' }}
+                    >
                         // CREATE AN ACCOUNT
                     </div>
 
@@ -245,12 +248,10 @@ const RegisterPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex-1 min-h-[10px]" />
-
                     {/* SIGN IN FOOTER */}
                     <div
                         className="font-mono text-[11px] tracking-[0.08em] text-[#66645e] uppercase text-center lg:text-left fade-in-8"
-                        style={{ marginTop: '16px' }}
+                        style={{ marginTop: '5px' }}
                     >
                         ALREADY HAVE AN ACCOUNT?{' '}
                         <Link
