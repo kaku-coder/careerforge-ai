@@ -76,10 +76,6 @@ const LoginPage = () => {
                         <div className="mt-0.5">VER 2.6.0</div>
                     </div>
                 </div>
-
-                <div className="absolute bottom-0 right-0 w-[52%] h-[70%] opacity-[0.35] pointer-events-none fade-in-3 hidden lg:block">
-                    <AiWireframe className="w-full h-full" />
-                </div>
             </div>
 
             {/* ════════════════════════════════════════════
