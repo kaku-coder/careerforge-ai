@@ -17,7 +17,7 @@ const LoginPage = () => {
         setFormError('')
         const res = await login(email, password)
         if (res.success) {
-            navigate('/overview')
+            navigate('/')
         } else {
             setFormError(res.message || 'Failed to sign in. Please check your credentials.')
         }
@@ -28,21 +28,19 @@ const LoginPage = () => {
     }
 
     return (
-        <div className="w-full h-[calc(100vh-72px)] flex flex-col lg:flex-row bg-[#F8F6F1] text-[#111110] relative overflow-hidden">
+        <div className="w-full min-h-[calc(100vh-72px)] lg:h-[calc(100vh-72px)] flex flex-col lg:flex-row bg-[#F8F6F1] text-[#111110] relative overflow-y-auto lg:overflow-hidden">
 
             {/* ── Corner Registration Marks ── */}
             <span className="absolute top-4 left-5 font-mono text-xs text-[#88857d] z-10">+</span>
             <span className="absolute top-4 right-5 font-mono text-xs text-[#88857d] z-10">+</span>
-            <span className="absolute bottom-4 left-5 font-mono text-xs text-[#88857d] z-10">+</span>
-            <span className="absolute bottom-4 right-5 font-mono text-xs text-[#88857d] z-10">+</span>
+            <span className="absolute bottom-4 left-5 font-mono text-xs text-[#88857d] z-10 hidden lg:block">+</span>
+            <span className="absolute bottom-4 right-5 font-mono text-xs text-[#88857d] z-10 hidden lg:block">+</span>
 
             {/* ════════════════════════════════════════════
           LEFT COLUMN — BRAND / WELCOME
          ════════════════════════════════════════════ */}
-            <div className="lg:w-1/2 relative border-b lg:border-b-0 lg:border-r border-[#e2e0d6] flex flex-col bg-grid-lines-left overflow-hidden">
-
+            <div className="hidden lg:flex lg:w-1/2 relative border-r border-[#e2e0d6] flex-col bg-grid-lines-left overflow-hidden">
                 <div className="relative z-10 flex flex-col h-full" style={{ padding: '70px 50px 40px 50px' }}>
-
                     <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase fade-in-1">
                         // ACCESS YOUR CAREER SYSTEM
                     </div>
@@ -86,14 +84,26 @@ const LoginPage = () => {
                 </div>
             </div>
 
+            {/* ── Mobile Header ── */}
+            <div className="lg:hidden w-full px-6 pt-8 pb-6 border-b border-[#e2e0d6] bg-grid-lines-left shrink-0 text-center flex flex-col items-center">
+                <div className="font-mono text-[11px] tracking-[0.15em] text-[#66645e] uppercase mb-2">
+                    // ACCESS YOUR CAREER SYSTEM
+                </div>
+                <h1
+                    className="font-sans font-black text-[#111110] uppercase text-center"
+                    style={{ fontSize: 'clamp(36px, 9vw, 56px)', lineHeight: '0.92', letterSpacing: '-0.04em' }}
+                >
+                    WELCOME<br />BACK.
+                </h1>
+            </div>
+
             {/* ════════════════════════════════════════════
           RIGHT COLUMN — LOGIN FORM
          ════════════════════════════════════════════ */}
-            <div className="lg:w-1/2 flex flex-col overflow-y-auto">
-
-                <div className="flex flex-col h-full" style={{ padding: '65px 50px 40px 50px' }}>
-
-                    <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-10 fade-in-1">
+            <div className="w-full lg:w-1/2 flex flex-col lg:overflow-y-auto">
+                <div className="flex flex-col flex-1 h-full px-6 py-8 sm:px-10 lg:p-[65px_50px_40px_50px] items-center lg:items-start">
+                    
+                    <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-8 lg:mb-10 text-center lg:text-left fade-in-1">
                         // LOGIN TO CONTINUE
                     </div>
 
@@ -106,9 +116,9 @@ const LoginPage = () => {
                         )}
 
                         <form onSubmit={handleSubmit}>
-
+                            {/* EMAIL */}
                             <div className="fade-in-2">
-                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[14px]">
+                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[12px]">
                                     EMAIL ADDRESS
                                 </label>
                                 <div className="relative flex items-center">
@@ -121,14 +131,15 @@ const LoginPage = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="you@example.com"
-                                        className="w-full h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
+                                        className="w-full h-[56px] sm:h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
                                         style={{ paddingLeft: '52px', paddingRight: '20px' }}
                                     />
                                 </div>
                             </div>
 
-                            <div className="fade-in-3" style={{ marginTop: '30px' }}>
-                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[14px]">
+                            {/* PASSWORD */}
+                            <div className="fade-in-3" style={{ marginTop: '24px' }}>
+                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[12px]">
                                     PASSWORD
                                 </label>
                                 <div className="relative flex items-center">
@@ -141,7 +152,7 @@ const LoginPage = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="Enter your password"
-                                        className="w-full h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
+                                        className="w-full h-[56px] sm:h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
                                         style={{ paddingLeft: '52px', paddingRight: '52px' }}
                                     />
                                     <button
@@ -154,9 +165,10 @@ const LoginPage = () => {
                                 </div>
                             </div>
 
+                            {/* REMEMBER ME & FORGOT PASSWORD */}
                             <div
-                                className="flex items-center justify-between font-mono text-[11px] tracking-[0.08em] text-[#66645e] fade-in-4"
-                                style={{ marginTop: '24px' }}
+                                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 font-mono text-[11px] tracking-[0.08em] text-[#66645e] fade-in-4"
+                                style={{ marginTop: '20px' }}
                             >
                                 <label className="flex items-center gap-2.5 cursor-pointer uppercase select-none">
                                     <input
@@ -175,11 +187,12 @@ const LoginPage = () => {
                                 </a>
                             </div>
 
-                            <div className="fade-in-5" style={{ marginTop: '36px' }}>
+                            {/* SIGN IN BUTTON */}
+                            <div className="fade-in-5" style={{ marginTop: '28px' }}>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full h-[64px] btn-primary-dark font-mono font-bold text-[13px] tracking-[0.12em] uppercase flex items-center justify-center gap-3 cursor-pointer border-0 disabled:opacity-50 group"
+                                    className="w-full h-[60px] sm:h-[64px] btn-primary-dark font-mono font-bold text-[13px] tracking-[0.12em] uppercase flex items-center justify-center gap-3 cursor-pointer border-0 disabled:opacity-50 group"
                                 >
                                     <span>{loading ? 'AUTHENTICATING...' : 'SIGN IN'}</span>
                                     <FiArrowRight
@@ -190,9 +203,10 @@ const LoginPage = () => {
                             </div>
                         </form>
 
+                        {/* OR DIVIDER */}
                         <div
                             className="relative flex items-center justify-center fade-in-6"
-                            style={{ marginTop: '36px' }}
+                            style={{ marginTop: '28px' }}
                         >
                             <div className="w-full border-t border-[#e2e0d6]" />
                             <span className="absolute bg-[#F8F6F1] px-4 font-mono text-[11px] text-[#88857d] uppercase tracking-[0.15em]">
@@ -200,11 +214,12 @@ const LoginPage = () => {
                             </span>
                         </div>
 
-                        <div className="fade-in-7" style={{ marginTop: '26px' }}>
+                        {/* GOOGLE BUTTON */}
+                        <div className="fade-in-7" style={{ marginTop: '24px' }}>
                             <button
                                 type="button"
                                 onClick={handleGoogleLogin}
-                                className="w-full h-[60px] btn-fill-animate font-mono font-bold text-[12px] tracking-[0.1em] uppercase flex items-center justify-center gap-3 cursor-pointer"
+                                className="w-full h-[56px] sm:h-[60px] btn-fill-animate font-mono font-bold text-[12px] tracking-[0.1em] uppercase flex items-center justify-center gap-3 cursor-pointer"
                             >
                                 <span className="font-sans font-black text-base leading-none">G</span>
                                 <span>CONTINUE WITH GOOGLE</span>
@@ -212,10 +227,12 @@ const LoginPage = () => {
                         </div>
                     </div>
 
+                    <div className="flex-1 min-h-[10px]" />
+
                     {/* SIGN UP FOOTER */}
                     <div
-                        className="font-mono text-[11px] tracking-[0.08em] text-[#66645e] uppercase fade-in-8"
-                        style={{ marginTop: '5px' }}
+                        className="font-mono text-[11px] tracking-[0.08em] text-[#66645e] uppercase text-center lg:text-left fade-in-8"
+                        style={{ marginTop: '16px' }}
                     >
                         DON'T HAVE AN ACCOUNT?{' '}
                         <Link

@@ -18,7 +18,7 @@ const RegisterPage = () => {
         setFormError('')
         const res = await register(name, email, password)
         if (res.success) {
-            navigate('/overview')
+            navigate('/')
         } else {
             setFormError(res.message || 'Failed to create account. Please try again.')
         }
@@ -87,12 +87,12 @@ const RegisterPage = () => {
             </div>
 
             {/* ── Mobile Header ── */}
-            <div className="lg:hidden w-full px-5 pt-6 pb-4 border-b border-[#e2e0d6] bg-grid-lines-left shrink-0">
-                <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-3">
+            <div className="lg:hidden w-full px-6 pt-8 pb-6 border-b border-[#e2e0d6] bg-grid-lines-left shrink-0 text-center flex flex-col items-center">
+                <div className="font-mono text-[11px] tracking-[0.15em] text-[#66645e] uppercase mb-2">
                     // CREATE YOUR CAREER ACCOUNT
                 </div>
                 <h1
-                    className="font-sans font-black text-[#111110] uppercase"
+                    className="font-sans font-black text-[#111110] uppercase text-center"
                     style={{ fontSize: 'clamp(36px, 9vw, 56px)', lineHeight: '0.92', letterSpacing: '-0.04em' }}
                 >
                     JOIN THE<br />PLATFORM.
@@ -103,11 +103,9 @@ const RegisterPage = () => {
           RIGHT COLUMN — REGISTER FORM
          ════════════════════════════════════════════ */}
             <div className="w-full lg:w-1/2 flex flex-col lg:overflow-y-auto">
-                <div className="flex flex-col flex-1 h-full px-5 py-6 sm:px-8 sm:py-8 lg:p-[70px_50px_40px_50px]">
-                    <div
-                        className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-8 lg:mb-11 fade-in-1"
-                        style={{ marginTop: '40px' }}
-                    >
+                <div className="flex flex-col flex-1 h-full px-6 py-8 sm:px-10 lg:p-[70px_50px_40px_50px] items-center lg:items-start">
+                    
+                    <div className="font-mono text-[12px] tracking-[0.15em] text-[#66645e] uppercase mb-6 lg:mb-11 text-center lg:text-left fade-in-1">
                         // CREATE AN ACCOUNT
                     </div>
 
@@ -122,7 +120,7 @@ const RegisterPage = () => {
                         <form onSubmit={handleSubmit}>
                             {/* FULL NAME */}
                             <div className="fade-in-2">
-                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[14px]">
+                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[12px]">
                                     FULL NAME
                                 </label>
                                 <div className="relative flex items-center">
@@ -135,15 +133,15 @@ const RegisterPage = () => {
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="Enter your name"
-                                        className="w-full h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
+                                        className="w-full h-[56px] sm:h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
                                         style={{ paddingLeft: '52px', paddingRight: '20px' }}
                                     />
                                 </div>
                             </div>
 
                             {/* EMAIL */}
-                            <div className="fade-in-3" style={{ marginTop: '24px' }}>
-                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[14px]">
+                            <div className="fade-in-3" style={{ marginTop: '20px' }}>
+                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[12px]">
                                     EMAIL ADDRESS
                                 </label>
                                 <div className="relative flex items-center">
@@ -156,15 +154,15 @@ const RegisterPage = () => {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder="you@example.com"
-                                        className="w-full h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
+                                        className="w-full h-[56px] sm:h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
                                         style={{ paddingLeft: '52px', paddingRight: '20px' }}
                                     />
                                 </div>
                             </div>
 
                             {/* PASSWORD */}
-                            <div className="fade-in-4" style={{ marginTop: '24px' }}>
-                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[14px]">
+                            <div className="fade-in-4" style={{ marginTop: '20px' }}>
+                                <label className="block font-mono text-[11px] tracking-[0.1em] text-[#66645e] uppercase mb-[12px]">
                                     PASSWORD
                                 </label>
                                 <div className="relative flex items-center">
@@ -177,7 +175,7 @@ const RegisterPage = () => {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="Create a strong password"
-                                        className="w-full h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
+                                        className="w-full h-[56px] sm:h-[60px] bg-transparent border border-[#111110] font-mono text-[13px] text-[#111110] placeholder-[#99968e] focus:outline-none focus:border-[#111110] transition-colors duration-200"
                                         style={{ paddingLeft: '52px', paddingRight: '52px' }}
                                     />
                                     <button
@@ -193,7 +191,7 @@ const RegisterPage = () => {
                             {/* TERMS CHECKBOX */}
                             <div
                                 className="font-mono text-[11px] tracking-[0.08em] text-[#66645e] fade-in-5"
-                                style={{ marginTop: '20px' }}
+                                style={{ marginTop: '18px' }}
                             >
                                 <label className="flex items-center gap-2.5 cursor-pointer uppercase select-none">
                                     <input
@@ -207,12 +205,12 @@ const RegisterPage = () => {
                                 </label>
                             </div>
 
-                            {/* CREATE ACCOUNT BUTTON WITH 0% TO 100% HOVER ANIMATION */}
-                            <div className="fade-in-6" style={{ marginTop: '28px' }}>
+                            {/* CREATE ACCOUNT BUTTON */}
+                            <div className="fade-in-6" style={{ marginTop: '24px' }}>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full h-[64px] btn-primary-dark font-mono font-bold text-[13px] tracking-[0.12em] uppercase flex items-center justify-center gap-3 cursor-pointer border-0 disabled:opacity-50 group"
+                                    className="w-full h-[60px] sm:h-[64px] btn-primary-dark font-mono font-bold text-[13px] tracking-[0.12em] uppercase flex items-center justify-center gap-3 cursor-pointer border-0 disabled:opacity-50 group"
                                 >
                                     <span>{loading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT'}</span>
                                     <FiArrowRight
@@ -226,7 +224,7 @@ const RegisterPage = () => {
                         {/* OR DIVIDER */}
                         <div
                             className="relative flex items-center justify-center fade-in-7"
-                            style={{ marginTop: '32px' }}
+                            style={{ marginTop: '28px' }}
                         >
                             <div className="w-full border-t border-[#e2e0d6]" />
                             <span className="absolute bg-[#F8F6F1] px-4 font-mono text-[11px] text-[#88857d] uppercase tracking-[0.15em]">
@@ -234,12 +232,12 @@ const RegisterPage = () => {
                             </span>
                         </div>
 
-                        {/* GOOGLE BUTTON WITH 0% TO 100% HOVER ANIMATION */}
+                        {/* GOOGLE BUTTON */}
                         <div className="fade-in-8" style={{ marginTop: '24px' }}>
                             <button
                                 type="button"
                                 onClick={handleGoogleLogin}
-                                className="w-full h-[60px] btn-fill-animate font-mono font-bold text-[12px] tracking-[0.1em] uppercase flex items-center justify-center gap-3 cursor-pointer"
+                                className="w-full h-[56px] sm:h-[60px] btn-fill-animate font-mono font-bold text-[12px] tracking-[0.1em] uppercase flex items-center justify-center gap-3 cursor-pointer"
                             >
                                 <span className="font-sans font-black text-base leading-none">G</span>
                                 <span>CONTINUE WITH GOOGLE</span>
@@ -247,10 +245,12 @@ const RegisterPage = () => {
                         </div>
                     </div>
 
+                    <div className="flex-1 min-h-[10px]" />
+
                     {/* SIGN IN FOOTER */}
                     <div
-                        className="font-mono text-[11px] tracking-[0.08em] text-[#66645e] uppercase fade-in-8"
-                        style={{ marginTop: '5px' }}
+                        className="font-mono text-[11px] tracking-[0.08em] text-[#66645e] uppercase text-center lg:text-left fade-in-8"
+                        style={{ marginTop: '16px' }}
                     >
                         ALREADY HAVE AN ACCOUNT?{' '}
                         <Link

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import { FiLogOut, FiArrowRight, FiMenu, FiX } from 'react-icons/fi'
+import { FiLogOut, FiArrowRight, FiMenu, FiX, FiUser } from 'react-icons/fi'
 
 const Navbar = () => {
   const { user, initials, isAuthenticated, logout } = useAuth()
@@ -19,6 +19,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     await logout()
     setShowDropdown(false)
+    setSidebarOpen(false)
     navigate('/login')
   }
 
@@ -26,10 +27,9 @@ const Navbar = () => {
 
   return (
     <header
-      style={{ paddingLeft: '40px', paddingRight: '40px' }}
-      className="w-full h-[72px] bg-[#F8F6F1] border-b border-[#e2e0d6] flex items-center justify-between font-mono text-[12px] tracking-[0.08em] text-[#111110] z-30 relative"
+      className="w-full h-[72px] bg-[#F8F6F1] border-b border-[#e2e0d6] flex items-center justify-between font-mono text-[12px] tracking-[0.08em] text-[#111110] z-30 relative px-5 sm:px-10"
     >
-      {/* Left side: Brand & Navigation */}
+      {/* Left side: Brand & Desktop Navigation */}
       <div className="flex items-center">
         <Link
           to="/"
@@ -54,7 +54,7 @@ const Navbar = () => {
       </div>
 
       {/* Right side: AI Status, Notifications & Dynamic User Profile / Login */}
-      <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
+      <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
         <div className="hidden lg:flex items-center gap-2 text-[#66645e] uppercase">
           <span className="text-[#111110] text-[10px] leading-none">■</span>
           <span>AI ENGINE: ACTIVE</span>
@@ -66,9 +66,9 @@ const Navbar = () => {
         </button>
 
         {isAuthenticated ? (
-          /* LOGGED IN: Displays Profile Name, Initials Box & Logout Dropdown */
-          <div className="flex items-center gap-3 relative">
-            <span className="hidden sm:inline-block font-mono text-[12px] text-[#111110] font-bold uppercase tracking-wider">
+          /* LOGGED IN DESKTOP: Displays Profile Name, Initials Box & Logout Dropdown */
+          <div className="hidden sm:flex items-center gap-3 relative">
+            <span className="font-mono text-[12px] text-[#111110] font-bold uppercase tracking-wider">
               {displayName}
             </span>
 
@@ -104,85 +104,83 @@ const Navbar = () => {
             )}
           </div>
         ) : (
-          /* UNAUTHENTICATED: Displays LOGIN Button */
+          /* UNAUTHENTICATED DESKTOP: Displays LOGIN Button */
           <Link
             to="/login"
-            className="btn-fill-animate h-11 px-8 font-mono font-bold text-[11px] tracking-[0.1em] uppercase flex items-center gap-2.5 no-underline"
+            className="hidden sm:flex btn-fill-animate h-11 px-8 font-mono font-bold text-[11px] tracking-[0.1em] uppercase items-center gap-2.5 no-underline"
           >
             <span>LOGIN</span>
             <FiArrowRight size={14} />
           </Link>
         )}
 
-        {/* Mobile Navigation Toggle */}
+        {/* Mobile Hamburger / Toggle Button */}
         <button
           type="button"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="md:hidden text-[#111110] bg-transparent border-0 cursor-pointer p-1"
-          aria-label="Toggle navigation"
+          className="md:hidden text-[#111110] bg-transparent border border-[#111110] p-2 flex items-center justify-center cursor-pointer hover:bg-[#111110] hover:text-[#F8F6F1] transition-colors duration-200"
+          aria-label="Toggle navigation drawer"
         >
-          {sidebarOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+          {sidebarOpen ? <FiX size={20} /> : <FiMenu size={20} />}
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer */}
+      {/* ── Mobile Side Navigation Drawer ── */}
       {sidebarOpen && (
-        <div className="md:hidden fixed inset-0 top-[72px] bg-[#F8F6F1] z-40 flex flex-col border-t border-[#e2e0d6]">
-          <div className="flex flex-col h-full">
-            <div className="p-6 border-b border-[#e2e0d6] flex justify-between items-center">
-              <Link
-                to="/"
+        <div className="md:hidden fixed inset-0 top-[72px] bg-[#F8F6F1] z-50 flex flex-col border-t border-[#e2e0d6] p-6 text-center animate-in fade-in slide-in-from-right duration-200">
+          
+          {/* User Status Card on Mobile */}
+          {isAuthenticated && (
+            <div className="border border-[#111110] p-4 mb-6 bg-grid-lines flex flex-col items-center justify-center">
+              <div className="w-12 h-12 border border-[#111110] bg-[#111110] text-[#F8F6F1] font-mono font-bold text-sm flex items-center justify-center mb-2">
+                {initials || 'PK'}
+              </div>
+              <div className="font-bold text-[#111110] text-sm uppercase tracking-wider">{displayName}</div>
+              <div className="text-[11px] text-[#66645e] font-mono mt-0.5">{user?.email}</div>
+            </div>
+          )}
+
+          {/* Centered Navigation Links */}
+          <nav className="flex flex-col gap-2 my-auto">
+            {navLinks.map((link) => (
+              <NavLink
+                key={link.path}
+                to={link.path}
                 onClick={() => setSidebarOpen(false)}
-                className="font-bold tracking-[0.12em] text-[#111110] no-underline"
+                className={({ isActive }) =>
+                  `w-full py-4 text-center uppercase font-mono font-bold text-sm tracking-[0.15em] no-underline border-b border-[#e2e0d6] transition-all duration-200 ${
+                    isActive
+                      ? 'text-[#111110] bg-[#111110] text-[#F8F6F1]'
+                      : 'text-[#111110] hover:bg-[#ebe9e2]'
+                  }`
+                }
               >
-                <span className="text-[#66645e] font-normal">//</span>CAREER
-              </Link>
+                {link.name}
+              </NavLink>
+            ))}
+          </nav>
+
+          {/* Mobile Footer Action Button */}
+          <div className="mt-auto pt-6 border-t border-[#e2e0d6]">
+            {isAuthenticated ? (
               <button
                 type="button"
-                onClick={() => setSidebarOpen(false)}
-                className="text-[#111110] bg-transparent border-0 cursor-pointer p-1"
-                aria-label="Close menu"
+                onClick={handleLogout}
+                className="w-full h-12 bg-[#ff4d4d] text-white font-mono font-bold text-xs tracking-[0.12em] uppercase flex items-center justify-center gap-2 cursor-pointer border-0"
               >
-                <FiX size={20} />
+                <span>LOGOUT</span>
+                <FiLogOut size={16} />
               </button>
-            </div>
-
-            <nav className="flex flex-col pt-2">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setSidebarOpen(false)}
-                  className={({ isActive }) =>
-                    `px-6 h-[52px] flex items-center uppercase text-[12px] tracking-[0.1em] no-underline transition-colors duration-200 ${isActive ? 'text-[#111110] font-bold bg-[#ebe9e2]' : 'text-[#66645e] hover:text-[#111110] hover:bg-[#f0eee8]'}`
-                  }
-                >
-                  {link.name}
-                </NavLink>
-              ))}
-            </nav>
-
-            <div className="mt-auto border-t border-[#e2e0d6] p-6">
-              {isAuthenticated ? (
-                <button
-                  type="button"
-                  onClick={() => { setSidebarOpen(false); handleLogout() }}
-                  className="w-full flex items-center justify-between text-[#111110] hover:text-[#ff4d4d] cursor-pointer bg-transparent border-0 font-mono text-[12px] uppercase text-left"
-                >
-                  <span>LOGOUT</span>
-                  <FiLogOut size={14} />
-                </button>
-              ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setSidebarOpen(false)}
-                  className="btn-fill-animate w-full h-11 px-8 font-mono font-bold text-[11px] tracking-[0.1em] uppercase flex items-center justify-center gap-2.5 no-underline"
-                >
-                  <span>LOGIN</span>
-                  <FiArrowRight size={14} />
-                </Link>
-              )}
-            </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setSidebarOpen(false)}
+                className="btn-primary-dark w-full h-12 font-mono font-bold text-xs tracking-[0.12em] uppercase flex items-center justify-center gap-2 no-underline"
+              >
+                <span>LOGIN</span>
+                <FiArrowRight size={16} />
+              </Link>
+            )}
           </div>
         </div>
       )}
