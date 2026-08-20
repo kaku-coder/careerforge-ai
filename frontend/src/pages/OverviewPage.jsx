@@ -2,7 +2,7 @@ import React from 'react'
 
 const OverviewPage = () => {
   return (
-    <div className="w-full flex flex-col text-[#111110] min-h-[calc(100vh-56px)] select-none">
+    <div className="w-full flex flex-col text-[#111110] min-h-[calc(100vh-56px)]">
       {/* Hero Section */}
       <section
         style={{ paddingLeft: '40px', paddingRight: '40px' }}
