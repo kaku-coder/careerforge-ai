@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
-import MainLayout from '../components/MainLayout'
-import OverviewPage from '../pages/OverviewPage'
+import MainLayout from '../mainPages/MainLayout'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import ProfilePage from '../pages/ProfilePage'
@@ -24,6 +23,8 @@ const PublicOnlyRoute = ({ children }) => {
   return children ? children : <Outlet />
 }
 
+import HomePage from '../mainPages/HomePage'
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -31,7 +32,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Navigate to="/overview" replace />,
+        element: <HomePage />,
       },
       {
         path: 'login',
@@ -50,14 +51,6 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'overview',
-        element: (
-          <ProtectedRoute>
-            <OverviewPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: 'profile',
         element: (
           <ProtectedRoute>
@@ -69,7 +62,7 @@ export const router = createBrowserRouter([
         path: 'interview',
         element: (
           <ProtectedRoute>
-            <div className="p-[40px] font-mono text-xl font-bold">INTERVIEW PAGE</div>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// INTERVIEW SYSTEM</div>
           </ProtectedRoute>
         ),
       },
@@ -77,7 +70,7 @@ export const router = createBrowserRouter([
         path: 'roadmap',
         element: (
           <ProtectedRoute>
-            <div className="p-[40px] font-mono text-xl font-bold">ROADMAP PAGE</div>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// ROADMAP SYSTEM</div>
           </ProtectedRoute>
         ),
       },
@@ -85,7 +78,39 @@ export const router = createBrowserRouter([
         path: 'resume',
         element: (
           <ProtectedRoute>
-            <div className="p-[40px] font-mono text-xl font-bold">RESUME PAGE</div>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// RESUME BUILDER</div>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'scorer',
+        element: (
+          <ProtectedRoute>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// RESUME SCORER</div>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'analytics',
+        element: (
+          <ProtectedRoute>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// ANALYTICS SYSTEM</div>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'agents',
+        element: (
+          <ProtectedRoute>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// AI AGENTS HUB</div>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'settings',
+        element: (
+          <ProtectedRoute>
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// SYSTEM SETTINGS</div>
           </ProtectedRoute>
         ),
       },
