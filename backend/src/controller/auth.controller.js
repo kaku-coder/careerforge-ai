@@ -225,7 +225,7 @@ export const googleCallbackHandler = async (req, res) => {
 
         // If client redirect URL is provided or frontend environment set
         const clientRedirectUrl = process.env.FRONTEND_URL || "http://localhost:5173";
-        return res.redirect(`${clientRedirectUrl}/dashboard`);
+        return res.redirect(`${clientRedirectUrl}/overview`);
     } catch (error) {
         return res.status(500).json({
             success: false,

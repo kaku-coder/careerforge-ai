@@ -1,9 +1,28 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom'
 import MainLayout from '../components/MainLayout'
 import OverviewPage from '../pages/OverviewPage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import ProfilePage from '../pages/ProfilePage'
+import { useAuth } from '../context/AuthContext'
+
+// Guard for routes requiring authentication
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth()
+  if (!user) {
+    return <Navigate to="/login" replace />
+  }
+  return children ? children : <Outlet />
+}
+
+// Guard for auth pages (redirects authenticated users to overview)
+const PublicOnlyRoute = ({ children }) => {
+  const { user } = useAuth()
+  if (user) {
+    return <Navigate to="/overview" replace />
+  }
+  return children ? children : <Outlet />
+}
 
 export const router = createBrowserRouter([
   {
@@ -12,42 +31,71 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Navigate to="/login" replace />,
+        element: <Navigate to="/overview" replace />,
       },
       {
         path: 'login',
-        element: <LoginPage />,
+        element: (
+          <PublicOnlyRoute>
+            <LoginPage />
+          </PublicOnlyRoute>
+        ),
       },
       {
         path: 'register',
-        element: <RegisterPage />,
+        element: (
+          <PublicOnlyRoute>
+            <RegisterPage />
+          </PublicOnlyRoute>
+        ),
       },
       {
         path: 'overview',
-        element: <OverviewPage />,
+        element: (
+          <ProtectedRoute>
+            <OverviewPage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'profile',
-        element: <ProfilePage />,
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'interview',
-        element: <div className="p-[40px] font-mono text-xl font-bold">INTERVIEW PAGE</div>,
+        element: (
+          <ProtectedRoute>
+            <div className="p-[40px] font-mono text-xl font-bold">INTERVIEW PAGE</div>
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'roadmap',
-        element: <div className="p-[40px] font-mono text-xl font-bold">ROADMAP PAGE</div>,
+        element: (
+          <ProtectedRoute>
+            <div className="p-[40px] font-mono text-xl font-bold">ROADMAP PAGE</div>
+          </ProtectedRoute>
+        ),
       },
       {
         path: 'resume',
-        element: <div className="p-[40px] font-mono text-xl font-bold">RESUME PAGE</div>,
+        element: (
+          <ProtectedRoute>
+            <div className="p-[40px] font-mono text-xl font-bold">RESUME PAGE</div>
+          </ProtectedRoute>
+        ),
       },
     ],
   },
   {
     path: '*',
-    element: <Navigate to="/login" replace />,
+    element: <Navigate to="/overview" replace />,
   },
 ])
 
 export default router
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiAlertCircle } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
@@ -10,15 +10,21 @@ const RegisterPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [agreeTerms, setAgreeTerms] = useState(false)
     const [formError, setFormError] = useState('')
-    const { register, loading } = useAuth()
+    const { register, loading, user } = useAuth()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            navigate('/overview', { replace: true })
+        }
+    }, [user, navigate])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setFormError('')
         const res = await register(name, email, password)
         if (res.success) {
-            navigate('/')
+            navigate('/overview')
         } else {
             setFormError(res.message || 'Failed to create account. Please try again.')
         }

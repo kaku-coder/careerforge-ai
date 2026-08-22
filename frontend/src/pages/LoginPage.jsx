@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiAlertCircle } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
@@ -9,15 +9,21 @@ const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false)
     const [rememberMe, setRememberMe] = useState(false)
     const [formError, setFormError] = useState('')
-    const { login, loading } = useAuth()
+    const { login, loading, user } = useAuth()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (user) {
+            navigate('/overview', { replace: true })
+        }
+    }, [user, navigate])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         setFormError('')
         const res = await login(email, password)
         if (res.success) {
-            navigate('/')
+            navigate('/overview')
         } else {
             setFormError(res.message || 'Failed to sign in. Please check your credentials.')
         }

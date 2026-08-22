@@ -38,6 +38,9 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json()
         if (response.ok && data.success && data.user) {
           setUser(data.user)
+        } else {
+          setUser(null)
+          localStorage.removeItem('career_user')
         }
       } catch (e) {
         console.log('No active session found', e)
