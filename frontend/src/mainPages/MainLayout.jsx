@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useMemo, memo } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 
 const MainLayout = () => {
   const location = useLocation()
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register'
+  
+  const isAuthPage = useMemo(
+    () => location.pathname === '/login' || location.pathname === '/register',
+    [location.pathname]
+  )
 
   if (isAuthPage) {
     return (
@@ -27,4 +31,4 @@ const MainLayout = () => {
   )
 }
 
-export default MainLayout
+export default memo(MainLayout)

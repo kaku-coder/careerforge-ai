@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useMemo, memo } from 'react'
 import { NavLink, Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import {
@@ -13,7 +13,7 @@ import {
   FiX
 } from 'react-icons/fi'
 
-const navLinks = [
+const NAV_LINKS = [
   { name: 'Home', path: '/', icon: FiHome },
   { name: 'Interviews', path: '/interview', icon: FiMessageSquare },
   { name: 'Roadmap', path: '/roadmap', icon: FiCompass },
@@ -26,13 +26,24 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     await logout()
     setMobileOpen(false)
     navigate('/login')
-  }
+  }, [logout, navigate])
 
-  const displayName = (user?.username || user?.name || user?.email?.split('@')[0] || 'USER').toUpperCase()
+  const closeMobileMenu = useCallback(() => {
+    setMobileOpen(false)
+  }, [])
+
+  const openMobileMenu = useCallback(() => {
+    setMobileOpen(true)
+  }, [])
+
+  const displayName = useMemo(
+    () => (user?.username || user?.name || user?.email?.split('@')[0] || 'USER').toUpperCase(),
+    [user]
+  )
 
   return (
     <>
@@ -41,7 +52,7 @@ const Navbar = () => {
         <div className="md:hidden fixed top-4 left-4 z-50">
           <button
             type="button"
-            onClick={() => setMobileOpen(true)}
+            onClick={openMobileMenu}
             className="p-3 bg-[#111110] text-[#F8F6F1] border border-[#111110] rounded-xl shadow-lg cursor-pointer flex items-center justify-center transition-all hover:bg-[#2b2b27]"
             aria-label="Open navigation drawer"
           >
@@ -54,7 +65,7 @@ const Navbar = () => {
       {mobileOpen && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 md:hidden transition-opacity duration-300"
-          onClick={() => setMobileOpen(false)}
+          onClick={closeMobileMenu}
         />
       )}
 
@@ -68,7 +79,7 @@ const Navbar = () => {
         <div className="h-[72px] px-6 flex items-center justify-between border-b border-[#e2e0d6] shrink-0">
           <Link
             to="/"
-            onClick={() => setMobileOpen(false)}
+            onClick={closeMobileMenu}
             className="flex items-center gap-1 font-sans font-black tracking-tight text-[#111110] text-xl no-underline group"
           >
             <span className="text-[#88857d] font-mono font-normal group-hover:text-[#111110] transition-colors">//</span>
@@ -78,7 +89,7 @@ const Navbar = () => {
           {/* Close button on mobile left drawer */}
           <button
             type="button"
-            onClick={() => setMobileOpen(false)}
+            onClick={closeMobileMenu}
             className="md:hidden p-2 text-[#66645e] hover:text-[#111110] hover:bg-[#ebe8df] rounded-lg transition-colors cursor-pointer border border-[#e2e0d6]"
             aria-label="Close menu"
           >
@@ -92,7 +103,7 @@ const Navbar = () => {
             // NAVIGATION
           </div>
 
-          {navLinks.map((item, index) => {
+          {NAV_LINKS.map((item, index) => {
             const Icon = item.icon
             return (
               <div
@@ -105,7 +116,7 @@ const Navbar = () => {
                 <NavLink
                   to={item.path}
                   end={item.path === '/'}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={closeMobileMenu}
                   className={({ isActive }) =>
                     `flex items-center gap-4 px-4 py-3.5 rounded-xl font-sans text-[14.5px] font-medium transition-all duration-200 no-underline group ${
                       isActive
@@ -165,7 +176,7 @@ const Navbar = () => {
             /* LOGIN Button */
             <Link
               to="/login"
-              onClick={() => setMobileOpen(false)}
+              onClick={closeMobileMenu}
               className="w-full h-12 btn-primary-dark font-mono font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 no-underline rounded-xl shadow-md"
             >
               <span>LOGIN</span>
@@ -178,4 +189,4 @@ const Navbar = () => {
   )
 }
 
-export default Navbar
+export default memo(Navbar)

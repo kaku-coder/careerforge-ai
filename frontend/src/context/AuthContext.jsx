@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 
 const AuthContext = createContext(null)
 
@@ -49,8 +49,8 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus()
   }, [])
 
-  // Helper to get initials from name or email
-  const getInitials = () => {
+  // Memoized helper to get initials
+  const initials = useMemo(() => {
     if (!user) return ''
     const nameStr = user.username || user.name || user.email || ''
     if (!nameStr) return 'U'
@@ -62,10 +62,10 @@ export const AuthProvider = ({ children }) => {
       return parts[0].substring(0, 2).toUpperCase()
     }
     return parts[0][0].toUpperCase()
-  }
+  }, [user])
 
-  // Real login API handler
-  const login = async (email, password) => {
+  // Memoized login API handler
+  const login = useCallback(async (email, password) => {
     setLoading(true)
     setError(null)
     try {
@@ -89,10 +89,10 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  // Real register API handler
-  const register = async (username, email, password) => {
+  // Memoized register API handler
+  const register = useCallback(async (username, email, password) => {
     setLoading(true)
     setError(null)
     try {
@@ -116,10 +116,10 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  // Logout handler
-  const logout = async () => {
+  // Memoized logout handler
+  const logout = useCallback(async () => {
     try {
       await fetch(`${API_BASE_URL}/logout`, {
         method: 'POST',
@@ -130,22 +130,28 @@ export const AuthProvider = ({ children }) => {
     }
     setUser(null)
     localStorage.removeItem('career_user')
-  }
+  }, [])
+
+  const isAuthenticated = useMemo(() => !!user, [user])
+
+  // Memoize context value to eliminate unnecessary consumer re-renders
+  const contextValue = useMemo(
+    () => ({
+      user,
+      setUser,
+      loading,
+      error,
+      login,
+      register,
+      logout,
+      initials,
+      isAuthenticated,
+    }),
+    [user, loading, error, login, register, logout, initials, isAuthenticated]
+  )
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        loading,
-        error,
-        login,
-        register,
-        logout,
-        initials: getInitials(),
-        isAuthenticated: !!user,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   )
