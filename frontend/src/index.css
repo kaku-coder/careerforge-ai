@@ -157,6 +157,15 @@
 .fade-in-7 { animation: fadeInUp 0.5s ease-out 0.52s both; }
 .fade-in-8 { animation: fadeInUp 0.5s ease-out 0.6s both; }
 
+/* Custom Scrollbar Hide Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 * {
   padding: 0;
   margin: 0;

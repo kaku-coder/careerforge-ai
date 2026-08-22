@@ -98,7 +98,7 @@ const Navbar = () => {
         </div>
 
         {/* Vertical Navigation Links with spacious margins, padding, and staggered entrance animation */}
-        <nav className="flex-1 px-4 py-6 space-y-3 overflow-y-auto">
+        <nav className="flex-1 px-4 py-6 space-y-3 overflow-y-auto no-scrollbar">
           <div className="px-2 pb-3 font-mono text-[10px] font-semibold text-[#88857d] uppercase tracking-widest">
             // NAVIGATION
           </div>
