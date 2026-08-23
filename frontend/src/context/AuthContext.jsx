@@ -132,6 +132,33 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('career_user')
   }, [])
 
+  const INITIAL_STATS = useMemo(() => ({
+    totalInterviews: 0,
+    questionsAnswered: 0,
+    completedInterviews: 0,
+    averageScore: 0,
+    technicalCount: 0,
+    hrCount: 0,
+  }), [])
+
+  const [userStats, setUserStats] = useState(() => {
+    try {
+      const savedStats = localStorage.getItem('career_user_stats')
+      return savedStats ? JSON.parse(savedStats) : INITIAL_STATS
+    } catch {
+      return INITIAL_STATS
+    }
+  })
+
+  // Save userStats to localStorage
+  useEffect(() => {
+    localStorage.setItem('career_user_stats', JSON.stringify(userStats))
+  }, [userStats])
+
+  const updateUserStats = useCallback((newStats) => {
+    setUserStats((prev) => ({ ...prev, ...newStats }))
+  }, [])
+
   const isAuthenticated = useMemo(() => !!user, [user])
 
   // Memoize context value to eliminate unnecessary consumer re-renders
@@ -146,8 +173,10 @@ export const AuthProvider = ({ children }) => {
       logout,
       initials,
       isAuthenticated,
+      userStats,
+      updateUserStats,
     }),
-    [user, loading, error, login, register, logout, initials, isAuthenticated]
+    [user, loading, error, login, register, logout, initials, isAuthenticated, userStats, updateUserStats]
   )
 
   return (

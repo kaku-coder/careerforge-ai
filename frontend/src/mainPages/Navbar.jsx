@@ -85,7 +85,7 @@ const Navbar = () => {
             className="flex items-center gap-1 font-sans font-black tracking-tight text-[#111110] text-xl no-underline group"
           >
             <span className="text-[#88857d] font-mono font-normal group-hover:text-[#111110] transition-colors">//</span>
-            <span>CAREER</span>
+            <span>CAREER Ai</span>
           </Link>
 
           {/* Close button on mobile left drawer */}
