@@ -96,8 +96,8 @@ const HomePage = () => {
                 </div>
               </div>
 
-              {/* + Create Interview Button (Fixed Right Side Padding & No Overflow) */}
-              <div className="flex items-center gap-2">
+              {/* + Create Interview Button with Right Margin */}
+              <div className="flex items-center gap-2 mr-3 sm:mr-6">
                 <Link
                   to="/interview"
                   className="no-underline group px-7 py-3 sm:px-8 sm:py-3.5 bg-[#111110] text-white font-sans text-xs sm:text-sm font-bold rounded-md border border-[#2e2c28] shadow-lg hover:bg-[#22211e] hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 whitespace-nowrap"
