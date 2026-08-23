@@ -55,14 +55,13 @@ const ProfilePage = () => {
           <span className="absolute top-4 left-5 font-mono text-xs text-[#88857d]">+</span>
           <span className="absolute top-4 right-5 font-mono text-xs text-[#88857d]">+</span>
 
-          {/* Animated SVG Avatar Frame (Replacing static PD initials!) */}
+          {/* Animated SVG Avatar (No Black Background Box) */}
           <div className="relative group">
-            <div className="absolute -inset-2 bg-gradient-to-r from-[#111110]/20 via-[#66645e]/20 to-[#111110]/20 rounded-3xl blur-md opacity-75 group-hover:opacity-100 transition-opacity" />
-            <div className="relative w-36 h-36 sm:w-44 sm:h-44 bg-[#111110] border-2 border-[#111110] rounded-3xl p-3 flex items-center justify-center overflow-hidden shadow-xl">
+            <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
               <img
                 src={bloubAvatarSvg}
                 alt="Prakash Das Animated Avatar"
-                className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
+                className="w-full h-full object-contain pointer-events-none select-none drop-shadow-xl"
               />
             </div>
             <div className="absolute -bottom-2 right-2 bg-emerald-500 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider border border-[#111110] shadow-xs">

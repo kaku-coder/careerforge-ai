@@ -158,11 +158,11 @@ const Navbar = () => {
             >
               <div className="flex items-center gap-3 min-w-0">
                 {/* Animated SVG Avatar replacing static PD initials */}
-                <div className="w-10 h-10 bg-[#111110] border border-[#111110] rounded-xl flex items-center justify-center p-0.5 overflow-hidden shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+                <div className="w-10 h-10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <img
                     src={bloubAvatarSvg}
                     alt="User Animated Avatar"
-                    className="w-full h-full object-contain pointer-events-none select-none"
+                    className="w-full h-full object-contain pointer-events-none select-none drop-shadow-xs"
                   />
                 </div>
                 <div className="min-w-0">
@@ -190,12 +190,12 @@ const Navbar = () => {
           ) : (
             /* Animated SVG Avatar Box with OVERLAID / INTEGRATED LOGIN Button */
             <div className="relative flex flex-col items-center bg-[#efece4] p-3.5 rounded-xl border border-[#e2e0d6] text-center">
-              {/* Animated SVG Avatar */}
-              <div className="relative w-16 h-16 bg-[#111110] rounded-xl p-1 border border-[#2b2b27] shadow-md flex items-center justify-center overflow-hidden mb-2">
+              {/* Animated SVG Avatar (No Black Background) */}
+              <div className="relative w-16 h-16 flex items-center justify-center mb-2">
                 <img
                   src={bloubAvatarSvg}
                   alt="Animated Avatar Login"
-                  className="w-full h-full object-contain pointer-events-none select-none"
+                  className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
                 />
               </div>
 
