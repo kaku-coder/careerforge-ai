@@ -13,6 +13,8 @@ import {
   FiX
 } from 'react-icons/fi'
 
+import bloubAvatarSvg from '../assets/bloub-nuage-surpris-encre-anime.svg'
+
 const NAV_LINKS = [
   { name: 'Home', path: '/', icon: FiHome },
   { name: 'Interviews', path: '/interview', icon: FiMessageSquare },
@@ -145,14 +147,23 @@ const Navbar = () => {
           })}
         </nav>
 
-        {/* Bottom Section: LOGIN Button OR User Profile Card */}
+        {/* Bottom Section: LOGIN Card with Animated SVG Avatar OR Logged In User Profile Card */}
         <div className="p-4 border-t border-[#e2e0d6] shrink-0 bg-[#F8F6F1]">
           {isAuthenticated ? (
-            /* Logged in User Card */
-            <div className="flex items-center justify-between gap-3 p-3 bg-[#efece4] rounded-xl border border-[#e2e0d6]">
+            /* Logged in User Card with Animated SVG Avatar */
+            <Link
+              to="/profile"
+              onClick={closeMobileMenu}
+              className="no-underline flex items-center justify-between gap-3 p-3 bg-[#efece4] rounded-xl border border-[#e2e0d6] hover:border-[#111110] transition-colors group"
+            >
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 border border-[#111110] bg-[#111110] text-[#F8F6F1] font-mono font-bold text-xs flex items-center justify-center shrink-0 rounded-lg">
-                  {initials || 'PK'}
+                {/* Animated SVG Avatar replacing static PD initials */}
+                <div className="w-10 h-10 bg-[#111110] border border-[#111110] rounded-xl flex items-center justify-center p-0.5 overflow-hidden shrink-0 shadow-xs group-hover:scale-105 transition-transform">
+                  <img
+                    src={bloubAvatarSvg}
+                    alt="User Animated Avatar"
+                    className="w-full h-full object-contain pointer-events-none select-none"
+                  />
                 </div>
                 <div className="min-w-0">
                   <div className="font-mono font-bold text-xs text-[#111110] uppercase truncate">
@@ -165,23 +176,39 @@ const Navbar = () => {
               </div>
               <button
                 type="button"
-                onClick={handleLogout}
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleLogout()
+                }}
                 className="p-1.5 text-[#66645e] hover:text-[#ef4444] transition-colors cursor-pointer bg-transparent border-0 shrink-0"
                 title="Logout"
               >
                 <FiLogOut size={18} />
               </button>
-            </div>
-          ) : (
-            /* LOGIN Button */
-            <Link
-              to="/login"
-              onClick={closeMobileMenu}
-              className="w-full h-12 btn-primary-dark font-mono font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 no-underline rounded-xl shadow-md"
-            >
-              <span>LOGIN</span>
-              <FiArrowRight size={16} />
             </Link>
+          ) : (
+            /* Animated SVG Avatar Box with OVERLAID / INTEGRATED LOGIN Button */
+            <div className="relative flex flex-col items-center bg-[#efece4] p-3.5 rounded-xl border border-[#e2e0d6] text-center">
+              {/* Animated SVG Avatar */}
+              <div className="relative w-16 h-16 bg-[#111110] rounded-xl p-1 border border-[#2b2b27] shadow-md flex items-center justify-center overflow-hidden mb-2">
+                <img
+                  src={bloubAvatarSvg}
+                  alt="Animated Avatar Login"
+                  className="w-full h-full object-contain pointer-events-none select-none"
+                />
+              </div>
+
+              {/* Overlaid Login Button */}
+              <Link
+                to="/login"
+                onClick={closeMobileMenu}
+                className="w-full h-10 btn-primary-dark font-mono font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 no-underline rounded-lg shadow-md hover:scale-[1.02] transition-transform"
+              >
+                <span>LOGIN</span>
+                <FiArrowRight size={15} />
+              </Link>
+            </div>
           )}
         </div>
       </aside>
