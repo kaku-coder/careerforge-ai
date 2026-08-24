@@ -11,6 +11,15 @@ import {
 import { useAuth } from '../context/AuthContext'
 import { useStats } from '../context/StatsContext'
 import StatCard from '../components/StatCard'
+import AgentMediaCard from '../components/AgentMediaCard'
+
+// Asset imports for card preview visuals
+import resumeImg from '../assets/robot_scanning_resume.jpeg'
+import resumeVid from '../assets/robot_scanning_resume.mp4'
+import interviewImg from '../assets/character_interview_ai.jpeg'
+import interviewVid from '../assets/candidate_robot_interview.mp4'
+import roadmapImg from '../assets/developer_coding_roadmap.jpeg'
+import roadmapVid from '../assets/developer_coding_roadmap.mp4'
 
 const HomePage = () => {
   const { user, isAuthenticated, initials } = useAuth()
@@ -256,96 +265,56 @@ const HomePage = () => {
           CareerForge AI combines multiple AI agents that work together to help you build your resume, practice interviews, receive detailed feedback, and follow a personalized roadmap to land your dream job.
         </p>
 
-        {/* 4 Cards Grid (Centered Alignment) */}
+        {/* 4 Cards Grid (Interactive Image & Hover-to-Play Video Cards) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 w-full text-center items-stretch">
 
           {/* Card 1: Resume Agent */}
-          <Link
+          <AgentMediaCard
             to="/resume"
-            className="no-underline p-6 bg-[#1f1e1b] text-[#F8F6F1] rounded-2xl border border-[#33312c] hover:border-[#66645e] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between items-center text-center group shadow-xl h-full"
-          >
-            <div className="flex flex-col items-center justify-center text-center w-full">
-              <div className="w-12 h-12 rounded-xl bg-[#2d2b27] flex items-center justify-center mb-4 text-[#F8F6F1] group-hover:scale-110 transition-transform mx-auto">
-                <FiFileText size={22} />
-              </div>
-              <h3 className="font-sans font-bold text-lg mb-2 text-[#F8F6F1] text-center w-full">
-                Resume Agent
-              </h3>
-              <p className="font-sans text-sm text-[#a3a097] leading-relaxed text-center w-full">
-                Create ATS-friendly resumes, improve profile strength, and maximize interview opportunities.
-              </p>
-            </div>
-            <div className="mt-5 pt-3 border-t border-[#33312c] font-mono text-xs font-semibold text-emerald-400 flex items-center justify-center gap-2 w-full text-center">
-              <span>EXPLORE AGENT</span>
-              <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
+            title="Resume Agent"
+            description="Create ATS-friendly resumes, improve profile strength, and maximize interview opportunities."
+            icon={FiFileText}
+            imageSrc={resumeImg}
+            videoSrc={resumeVid}
+            badgeText="RESUME AI"
+            ctaText="EXPLORE AGENT"
+          />
 
           {/* Card 2: Interview Agent */}
-          <Link
+          <AgentMediaCard
             to="/interview"
-            className="no-underline p-6 bg-[#1f1e1b] text-[#F8F6F1] rounded-2xl border border-[#33312c] hover:border-[#66645e] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between items-center text-center group shadow-xl h-full"
-          >
-            <div className="flex flex-col items-center justify-center text-center w-full">
-              <div className="w-12 h-12 rounded-xl bg-[#2d2b27] flex items-center justify-center mb-4 text-[#F8F6F1] group-hover:scale-110 transition-transform mx-auto">
-                <FiMic size={22} />
-              </div>
-              <h3 className="font-sans font-bold text-lg mb-2 text-[#F8F6F1] text-center w-full">
-                Interview Agent
-              </h3>
-              <p className="font-sans text-sm text-[#a3a097] leading-relaxed text-center w-full">
-                Conduct realistic HR, Technical, and Coding interviews with AI-powered simulations.
-              </p>
-            </div>
-            <div className="mt-5 pt-3 border-t border-[#33312c] font-mono text-xs font-semibold text-emerald-400 flex items-center justify-center gap-2 w-full text-center">
-              <span>PRACTICE NOW</span>
-              <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
+            title="Interview Agent"
+            description="Conduct realistic HR, Technical, and Coding interviews with AI-powered simulations."
+            icon={FiMic}
+            imageSrc={interviewImg}
+            videoSrc={interviewVid}
+            badgeText="MOCK AI"
+            ctaText="PRACTICE NOW"
+          />
 
           {/* Card 3: Feedback Agent */}
-          <Link
+          <AgentMediaCard
             to="/scorer"
-            className="no-underline p-6 bg-[#1f1e1b] text-[#F8F6F1] rounded-2xl border border-[#33312c] hover:border-[#66645e] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between items-center text-center group shadow-xl h-full"
-          >
-            <div className="flex flex-col items-center justify-center text-center w-full">
-              <div className="w-12 h-12 rounded-xl bg-[#2d2b27] flex items-center justify-center mb-4 text-[#F8F6F1] group-hover:scale-110 transition-transform mx-auto">
-                <FiBarChart2 size={22} />
-              </div>
-              <h3 className="font-sans font-bold text-lg mb-2 text-[#F8F6F1] text-center w-full">
-                Feedback Agent
-              </h3>
-              <p className="font-sans text-sm text-[#a3a097] leading-relaxed text-center w-full">
-                Get detailed answer analysis, scoring reports, and improvement recommendations.
-              </p>
-            </div>
-            <div className="mt-5 pt-3 border-t border-[#33312c] font-mono text-xs font-semibold text-emerald-400 flex items-center justify-center gap-2 w-full text-center">
-              <span>VIEW REPORTS</span>
-              <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
+            title="Feedback Agent"
+            description="Get detailed answer analysis, scoring reports, and improvement recommendations."
+            icon={FiBarChart2}
+            imageSrc={resumeImg}
+            videoSrc={resumeVid}
+            badgeText="ANALYSIS AI"
+            ctaText="VIEW REPORTS"
+          />
 
           {/* Card 4: Roadmap Agent */}
-          <Link
+          <AgentMediaCard
             to="/roadmap"
-            className="no-underline p-6 bg-[#1f1e1b] text-[#F8F6F1] rounded-2xl border border-[#33312c] hover:border-[#66645e] transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between items-center text-center group shadow-xl h-full"
-          >
-            <div className="flex flex-col items-center justify-center text-center w-full">
-              <div className="w-12 h-12 rounded-xl bg-[#2d2b27] flex items-center justify-center mb-4 text-[#F8F6F1] group-hover:scale-110 transition-transform mx-auto">
-                <FiCompass size={22} />
-              </div>
-              <h3 className="font-sans font-bold text-lg mb-2 text-[#F8F6F1] text-center w-full">
-                Roadmap Agent
-              </h3>
-              <p className="font-sans text-sm text-[#a3a097] leading-relaxed text-center w-full">
-                Generate personalized learning roadmaps based on goals, skills, and performance.
-              </p>
-            </div>
-            <div className="mt-5 pt-3 border-t border-[#33312c] font-mono text-xs font-semibold text-emerald-400 flex items-center justify-center gap-2 w-full text-center">
-              <span>GENERATE PATH</span>
-              <FiArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </div>
-          </Link>
+            title="Roadmap Agent"
+            description="Generate personalized learning roadmaps based on goals, skills, and performance."
+            icon={FiCompass}
+            imageSrc={roadmapImg}
+            videoSrc={roadmapVid}
+            badgeText="PATHWAY AI"
+            ctaText="GENERATE PATH"
+          />
 
         </div>
 
