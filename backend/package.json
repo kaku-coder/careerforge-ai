@@ -8,12 +8,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon server.js",
     "start": "node server.js",
-    "test:mistral": "node src/testMistral.js"
+    "test:mistral": "node src/testMistral.js",
+    "test:compare": "node src/testCompareModels.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@langchain/anthropic": "^1.5.8",
     "@langchain/community": "^1.1.29",
     "@langchain/core": "^1.2.9",
     "@langchain/mistralai": "^1.2.0",

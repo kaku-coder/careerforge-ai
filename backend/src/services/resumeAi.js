@@ -1,11 +1,10 @@
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { MistralAIEmbeddings, ChatMistralAI } from "@langchain/mistralai";
+import { ChatAnthropic } from "@langchain/anthropic";
 
 /**
  * Service to parse text content from a PDF file path or Blob/Buffer
- * @param {string | Blob} fileInput - Path to PDF file or Blob
- * @returns {Promise<Array>} List of document pages with pageContent and metadata
  */
 export const parseResumePdf = async (fileInput) => {
     try {
@@ -20,9 +19,6 @@ export const parseResumePdf = async (fileInput) => {
 
 /**
  * Service to split documents or text into smaller chunks
- * @param {Array | string} input - List of Document objects or raw text string
- * @param {Object} options - chunkSize (default 500) and chunkOverlap (default 50)
- * @returns {Promise<Array>} List of split document chunks
  */
 export const splitResumeText = async (input, options = { chunkSize: 500, chunkOverlap: 50 }) => {
     try {
@@ -60,7 +56,7 @@ export const getMistralEmbeddings = (apiKey = process.env.MISTRAL_API_KEY) => {
 };
 
 /**
- * Generate vector embeddings for an array of text strings using Mistral AI
+ * Generate vector embeddings using Mistral AI
  */
 export const embedTextsWithMistral = async (texts, apiKey = process.env.MISTRAL_API_KEY) => {
     try {
@@ -74,7 +70,7 @@ export const embedTextsWithMistral = async (texts, apiKey = process.env.MISTRAL_
 };
 
 /**
- * Generate vector embedding for a single query string using Mistral AI
+ * Generate vector embedding for a query string using Mistral AI
  */
 export const embedQueryWithMistral = async (query, apiKey = process.env.MISTRAL_API_KEY) => {
     try {
@@ -102,17 +98,28 @@ export const getMistralChatModel = (modelName = "mistral-small-latest", apiKey =
 };
 
 /**
+ * Helper to initialize ChatAnthropic model instance
+ */
+export const getAnthropicChatModel = (modelName = "claude-3-5-sonnet-20240620", apiKey = process.env.ANTHROPIC_API_KEY) => {
+    const key = apiKey || process.env.ANTHROPIC_API_KEY;
+    if (!key) {
+        throw new Error("ANTHROPIC_API_KEY is missing in environment variables.");
+    }
+    return new ChatAnthropic({
+        apiKey: key,
+        modelName: modelName
+    });
+};
+
+/**
  * Ask a question about candidate's resume using Mistral AI
- * @param {string} question - Question asked by user
- * @param {string} resumeContext - Extracted resume text context
- * @returns {Promise<string>} AI answer response string
  */
 export const askResumeWithMistral = async (question, resumeContext) => {
     try {
         const chatModel = getMistralChatModel();
 
-        const systemPrompt = `You are CareerForge AI Resume Assistant. Your job is to answer questions about candidate resumes accurately based ONLY on the provided resume context below.
-If the answer is not in the resume context, politely state that it's not mentioned in the resume.
+        const systemPrompt = `You are CareerForge AI Resume Assistant (powered by Mistral AI). Answer questions about candidate resumes, code reviews, and problem-solving skills accurately based on the provided resume context below.
+If the information is missing from the context, state that it's not mentioned in the resume.
 
 --- RESUME CONTEXT ---
 ${resumeContext}
@@ -130,10 +137,71 @@ ${resumeContext}
     }
 };
 
+/**
+ * Ask a question about candidate's resume using Anthropic Claude
+ */
+export const askResumeWithAnthropic = async (question, resumeContext) => {
+    try {
+        const chatModel = getAnthropicChatModel();
+
+        const systemPrompt = `You are CareerForge AI Resume Assistant (powered by Anthropic Claude). Answer questions about candidate resumes, code reviews, and problem-solving skills accurately based on the provided resume context below.
+If the information is missing from the context, state that it's not mentioned in the resume.
+
+--- RESUME CONTEXT ---
+${resumeContext}
+----------------------`;
+
+        const response = await chatModel.invoke([
+            ["system", systemPrompt],
+            ["user", question]
+        ]);
+
+        return response.content;
+    } catch (error) {
+        console.error("Error asking Anthropic AI:", error);
+        throw error;
+    }
+};
+
+/**
+ * Compare responses, code review, and problem solving between Mistral AI and Anthropic Claude
+ */
+export const compareMistralAndAnthropic = async (question, resumeContext) => {
+    const results = {
+        question,
+        mistral: { provider: "Mistral AI", model: "mistral-small-latest", answer: null, error: null, timeMs: 0 },
+        anthropic: { provider: "Anthropic Claude", model: "claude-3-5-sonnet", answer: null, error: null, timeMs: 0 }
+    };
+
+    // 1. Query Mistral AI
+    const mistralStart = Date.now();
+    try {
+        results.mistral.answer = await askResumeWithMistral(question, resumeContext);
+        results.mistral.timeMs = Date.now() - mistralStart;
+    } catch (err) {
+        results.mistral.error = err.message;
+        results.mistral.timeMs = Date.now() - mistralStart;
+    }
+
+    // 2. Query Anthropic Claude
+    const anthropicStart = Date.now();
+    try {
+        results.anthropic.answer = await askResumeWithAnthropic(question, resumeContext);
+        results.anthropic.timeMs = Date.now() - anthropicStart;
+    } catch (err) {
+        results.anthropic.error = err.message;
+        results.anthropic.timeMs = Date.now() - anthropicStart;
+    }
+
+    return results;
+};
+
 export default {
     parseResumePdf,
     splitResumeText,
     embedTextsWithMistral,
     embedQueryWithMistral,
-    askResumeWithMistral
+    askResumeWithMistral,
+    askResumeWithAnthropic,
+    compareMistralAndAnthropic
 };

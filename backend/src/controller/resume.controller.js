@@ -1,4 +1,11 @@
-import { parseResumePdf, splitResumeText, embedTextsWithMistral, askResumeWithMistral } from "../services/resumeAi.js";
+import {
+    parseResumePdf,
+    splitResumeText,
+    embedTextsWithMistral,
+    askResumeWithMistral,
+    askResumeWithAnthropic,
+    compareMistralAndAnthropic
+} from "../services/resumeAi.js";
 import ResumeModel from "../schema/resume.schema.model.js";
 
 /**
@@ -79,11 +86,11 @@ export const processResumePdf = async (req, res) => {
 };
 
 /**
- * Controller to ask a question about a candidate's resume using Mistral AI
+ * Controller to ask a question or compare responses between Mistral AI & Anthropic Claude
  */
 export const askResumeQuestionController = async (req, res) => {
     try {
-        const { question, resumeId, resumeText } = req.body;
+        const { question, resumeId, resumeText, provider = "mistral" } = req.body;
 
         if (!question || question.trim() === "") {
             return res.status(400).json({
@@ -117,11 +124,34 @@ export const askResumeQuestionController = async (req, res) => {
             });
         }
 
-        // Call Mistral AI to answer question based on resume context
-        const answer = await askResumeWithMistral(question, contextText);
+        const mode = provider.toLowerCase();
+
+        // 1. Comparison Mode ("both" or "compare")
+        if (mode === "both" || mode === "compare") {
+            const comparison = await compareMistralAndAnthropic(question, contextText);
+            return res.status(200).json({
+                success: true,
+                mode: "comparison",
+                question,
+                comparison
+            });
+        }
+
+        // 2. Single Model Selection ("anthropic" vs "mistral")
+        let answer = "";
+        let selectedProvider = mode;
+
+        if (mode === "anthropic" || mode === "claude") {
+            answer = await askResumeWithAnthropic(question, contextText);
+            selectedProvider = "Anthropic Claude";
+        } else {
+            answer = await askResumeWithMistral(question, contextText);
+            selectedProvider = "Mistral AI";
+        }
 
         return res.status(200).json({
             success: true,
+            provider: selectedProvider,
             question,
             answer
         });
@@ -129,7 +159,7 @@ export const askResumeQuestionController = async (req, res) => {
         console.error("Ask Resume Question Controller Error:", error);
         return res.status(500).json({
             success: false,
-            message: "Failed to get AI answer for resume",
+            message: "Failed to get AI answer",
             error: error.message
         });
     }
