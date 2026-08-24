@@ -252,21 +252,21 @@ const HomePage = () => {
       {/* ════════════════════════════════════════════════════════════
           AI POWERED AGENTS SECTION
          ════════════════════════════════════════════════════════════ */}
-      <section className="relative z-10 w-full max-w-6xl mx-auto mt-14 sm:mt-18 mb-10 pt-6 pb-16 px-4 sm:px-6 flex flex-col items-center justify-center text-center">
+      <section className="relative z-10 w-full max-w-6xl mx-auto mt-10 sm:mt-18 mb-8 sm:mb-10 pt-4 sm:pt-6 pb-12 sm:pb-16 px-3.5 sm:px-6 flex flex-col items-center justify-center text-center">
 
         {/* Section Title */}
-        <h2 className="font-sans font-extrabold text-[#111110] text-2xl sm:text-3xl max-w-3xl leading-tight mb-3">
+        <h2 className="font-sans font-extrabold text-[#111110] text-xl sm:text-3xl max-w-3xl leading-tight mb-2.5 sm:mb-3">
           Specialized Agents for <br />
           <span className="text-[#88857d]">Every Interview Stage</span>
         </h2>
 
         {/* Subtitle Paragraph */}
-        <p className="font-sans text-base text-[#55534e] max-w-3xl leading-relaxed mb-8">
+        <p className="font-sans text-xs sm:text-base text-[#55534e] max-w-3xl leading-relaxed mb-6 sm:mb-8 px-2">
           CareerForge AI combines multiple AI agents that work together to help you build your resume, practice interviews, receive detailed feedback, and follow a personalized roadmap to land your dream job.
         </p>
 
-        {/* 4 Cards Grid (Interactive Image & Hover-to-Play Video Cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 w-full text-center items-stretch">
+        {/* 4 Cards Grid (Interactive Image & Hover/Touch Video Cards) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-7 w-full text-center items-stretch">
 
           {/* Card 1: Resume Agent */}
           <AgentMediaCard
