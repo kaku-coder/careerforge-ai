@@ -31,6 +31,14 @@ const resumeSchema = new mongoose.Schema(
                 metadata: mongoose.Schema.Types.Mixed
             }
         ],
+        chunks: [
+            {
+                chunkIndex: Number,
+                chunkText: String,
+                embedding: [Number], // Mistral AI embedding vector array
+                metadata: mongoose.Schema.Types.Mixed
+            }
+        ],
         parsedSkills: [
             {
                 type: String
