@@ -4,7 +4,7 @@ import Navbar from './Navbar'
 
 const MainLayout = () => {
   const location = useLocation()
-  
+
   const isAuthPage = useMemo(
     () => location.pathname === '/login' || location.pathname === '/register',
     [location.pathname]
@@ -20,11 +20,11 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F6F1] text-[#111110] relative">
-      {/* Top Navigation Bar Header */}
+      {/* Top Sticky Header Navbar */}
       <Navbar />
 
-      {/* Page Content View */}
-      <main className="flex-1 min-w-0 min-h-screen bg-grid-lines">
+      {/* Main Page Content View */}
+      <main className="flex-1 min-w-0 bg-grid-lines">
         <Outlet />
       </main>
     </div>

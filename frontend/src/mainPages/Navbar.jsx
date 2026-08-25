@@ -10,20 +10,17 @@ import {
   FiLogOut,
   FiArrowRight,
   FiMenu,
-  FiX,
-  FiBarChart2,
-  FiCpu
+  FiX
 } from 'react-icons/fi'
 
 import bloubAvatarSvg from '../assets/bloub-nuage-surpris-encre-anime.svg'
 
 const NAV_LINKS = [
-  { name: 'Overview', path: '/', icon: FiHome },
+  { name: 'Home', path: '/', icon: FiHome },
   { name: 'Interviews', path: '/interview', icon: FiMessageSquare },
   { name: 'Roadmap', path: '/roadmap', icon: FiCompass },
   { name: 'Resume', path: '/resume', icon: FiFileText },
-  { name: 'Analytics', path: '/profile', icon: FiBarChart2 },
-  { name: 'AI Agents', path: '/profile', icon: FiCpu },
+  { name: 'Profile', path: '/profile', icon: FiUser },
 ]
 
 const Navbar = () => {
@@ -54,7 +51,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 w-full h-[76px] bg-[#F8F6F1]/95 backdrop-blur-md border-b border-[#e2e0d6] transition-all select-none">
       <div className="max-w-[1440px] h-full mx-auto px-6 sm:px-10 lg:px-12 flex items-center justify-between gap-6">
         
-        {/* Brand Header / Logo strictly matching image: // CAREER */}
+        {/* Brand Header / Logo strictly matching design: // CAREER */}
         <Link
           to="/"
           onClick={closeMobileMenu}
@@ -64,8 +61,8 @@ const Navbar = () => {
           <span className="tracking-tight uppercase font-extrabold">CAREER</span>
         </Link>
 
-        {/* Central Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-2 lg:gap-5 h-full">
+        {/* Central Top Navigation Links */}
+        <nav className="hidden md:flex items-center gap-2 lg:gap-6 h-full">
           {NAV_LINKS.map((item) => {
             return (
               <NavLink
@@ -73,20 +70,30 @@ const Navbar = () => {
                 to={item.path}
                 end={item.path === '/'}
                 className={({ isActive }) =>
-                  `px-3 py-1.5 rounded-lg font-sans text-xs font-semibold tracking-wide transition-all duration-200 no-underline ${
+                  `relative px-3.5 py-2 font-sans text-xs sm:text-sm font-semibold tracking-wide transition-colors duration-200 no-underline group flex items-center h-full ${
                     isActive
-                      ? 'text-[#111110] font-bold border-b-2 border-[#111110] rounded-none'
+                      ? 'text-[#111110] font-bold'
                       : 'text-[#66645e] hover:text-[#111110]'
                   }`
                 }
               >
-                <span>{item.name}</span>
+                {({ isActive }) => (
+                  <>
+                    <span>{item.name}</span>
+                    {/* Bottom Smooth 0% to 100% Line Hover Animation */}
+                    <span
+                      className={`absolute bottom-3 left-0 w-full h-[2px] bg-[#111110] rounded-full transition-transform duration-300 ease-out origin-left ${
+                        isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                      }`}
+                    />
+                  </>
+                )}
               </NavLink>
             )
           })}
         </nav>
 
-        {/* Right Section: Login Link + Try Now Black Button */}
+        {/* Right Section: User Profile Pill / Login Link + Try Now Black Button */}
         <div className="flex items-center gap-4 sm:gap-6 shrink-0">
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
@@ -112,7 +119,7 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="p-2 text-[#66645e] hover:text-[#ef4444] rounded-full transition-colors cursor-pointer bg-transparent"
+                className="p-2 text-[#66645e] hover:text-[#ef4444] rounded-full transition-colors cursor-pointer bg-transparent border-0"
                 title="Logout"
               >
                 <FiLogOut size={18} />
@@ -123,16 +130,17 @@ const Navbar = () => {
               <Link
                 to="/login"
                 onClick={closeMobileMenu}
-                className="font-sans text-xs font-bold text-[#111110] hover:text-black no-underline"
+                className="font-sans text-xs sm:text-sm font-bold text-[#111110] hover:text-black no-underline"
               >
                 Login
               </Link>
               <Link
                 to="/register"
                 onClick={closeMobileMenu}
-                className="no-underline px-5 py-2.5 bg-[#111110] text-[#F8F6F1] font-sans font-bold text-xs rounded-full hover:bg-[#262522] shadow-sm transition-all"
+                className="no-underline px-5 py-2.5 bg-[#111110] text-[#F8F6F1] font-sans font-bold text-xs sm:text-sm rounded-full hover:bg-[#262522] shadow-sm transition-all flex items-center gap-1.5"
               >
-                Try Now
+                <span>Try Now</span>
+                <FiArrowRight size={14} />
               </Link>
             </div>
           )}
@@ -141,7 +149,7 @@ const Navbar = () => {
           <button
             type="button"
             onClick={toggleMobileMenu}
-            className="lg:hidden p-2 text-[#111110] bg-[#efece4] border border-[#e2e0d6] rounded-xl cursor-pointer flex items-center justify-center hover:bg-[#e4e1d7] transition-colors"
+            className="md:hidden p-2 text-[#111110] bg-[#efece4] border border-[#e2e0d6] rounded-xl cursor-pointer flex items-center justify-center hover:bg-[#e4e1d7] transition-colors"
             aria-label="Toggle navigation menu"
           >
             {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
@@ -151,7 +159,7 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown Panel */}
       {mobileOpen && (
-        <div className="lg:hidden bg-[#F8F6F1] border-b border-[#e2e0d6] px-6 py-6 shadow-2xl animate-in slide-in-from-top duration-200">
+        <div className="md:hidden bg-[#F8F6F1] border-b border-[#e2e0d6] px-6 py-6 shadow-2xl animate-in slide-in-from-top duration-200">
           <nav className="flex flex-col gap-3 py-2">
             {NAV_LINKS.map((item) => {
               return (
@@ -161,7 +169,7 @@ const Navbar = () => {
                   end={item.path === '/'}
                   onClick={closeMobileMenu}
                   className={({ isActive }) =>
-                    `px-4 py-2.5 rounded-xl font-sans text-sm font-semibold tracking-wide transition-all duration-200 no-underline ${
+                    `px-4 py-3 rounded-xl font-sans text-sm font-semibold tracking-wide transition-all duration-200 no-underline ${
                       isActive
                         ? 'bg-[#111110] text-[#F8F6F1] font-bold'
                         : 'text-[#55534e] hover:bg-[#eae7dc] hover:text-[#111110]'

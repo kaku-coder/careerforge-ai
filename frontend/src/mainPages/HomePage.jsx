@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { FiArrowRight } from 'react-icons/fi'
 
+import interviewVideo from '../assets/candidate_robot_interview.mp4'
+
 const frameModules = import.meta.glob('../assets/interviewJpg/ezgif-frame-*.jpg', {
   eager: true,
   import: 'default',
@@ -16,28 +18,28 @@ const frames = Array.from({ length: TOTAL_FRAMES }, (_, i) => {
 
 const STAGES = [
   {
-    range: [0.15, 0.35],
+    range: [0.08, 0.28],
     tag: '// SYSTEM 01',
     title: 'AI Interview Engine',
-    subtitle: 'Practice with an AI that adapts to your resume, target role, and skill level — delivering real interview pressure.',
+    subtitle: 'Practice with an AI that adapts to your resume, target role, and skill level \u2014 delivering real interview pressure.',
   },
   {
-    range: [0.35, 0.55],
+    range: [0.28, 0.48],
     tag: '// LIVE FEEDBACK',
     title: 'Real-Time Scoring',
     subtitle: 'Every answer is analyzed for technical depth, communication clarity, problem-solving approach, and confidence.',
   },
   {
-    range: [0.55, 0.75],
+    range: [0.48, 0.65],
     tag: '// SYSTEM DESIGN',
     title: 'Think Under Pressure',
     subtitle: 'Whiteboard-style system design challenges with AI-guided hints when you get stuck.',
   },
   {
-    range: [0.75, 0.95],
+    range: [0.65, 0.82],
     tag: '// YOUR RESULTS',
     title: 'Know Exactly Where You Stand',
-    subtitle: 'Detailed breakdown of strengths and weaknesses — so your next practice session targets what matters.',
+    subtitle: 'Detailed breakdown of strengths and weaknesses \u2014 so your next practice session targets what matters.',
   },
 ]
 
@@ -55,142 +57,152 @@ const HomePage = () => {
       const p = Math.max(0, Math.min(1, scrolled / scrollableHeight))
       setProgress(p)
     }
-
     window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   const activeFrame = Math.min(TOTAL_FRAMES - 1, Math.floor(progress * TOTAL_FRAMES))
+  const isVideoPhase = progress >= 0.82
 
-  // Canvas expansion: starts at 0.6 scale, expands to 1.0 between 0-15%
-  const canvasScale = Math.min(1, 0.6 + progress * 2.67)
-  const borderRadius = Math.max(0, 24 - progress * 160)
-
-  // Find active text stage
-  const activeStage = STAGES.find(
+  const activeStageIndex = STAGES.findIndex(
     (s) => progress >= s.range[0] && progress < s.range[1]
   )
 
-  return (
-    <div className="bg-[#111110]">
+  const splitT = Math.max(0, Math.min(1, (progress - 0.06) / 0.08))
 
-      {/* Scroll container — 600vh for plenty of scroll room */}
+  return (
+    <div className="bg-[#F8F6F1]">
+
       <div ref={containerRef} className="relative" style={{ height: '600vh' }}>
 
-        {/* Sticky viewport */}
-        <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#111110] flex items-center justify-center">
+        <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#F8F6F1]">
 
-          {/* Canvas wrapper — expands from card to fullscreen */}
+          {isVideoPhase && (
+            <div className="absolute inset-0 z-30 flex items-center gap-12 lg:gap-16 px-10 sm:px-16 lg:px-24">
+              <div className="flex-1 flex justify-center">
+                <video
+                  src={interviewVideo}
+                  autoPlay loop muted playsInline
+                  className="w-full max-w-lg rounded-2xl shadow-xl object-cover"
+                  style={{ aspectRatio: '16/10' }}
+                />
+              </div>
+              <div className="flex-1 space-y-5">
+                <div className="font-mono text-[10px] sm:text-xs font-bold text-[#88857d] uppercase tracking-[0.2em]">
+                  // AI POWERED
+                </div>
+                <h2 className="font-sans font-black text-3xl sm:text-4xl lg:text-5xl text-[#111110] tracking-tight leading-[1.08]">
+                  Your Career,<br />Our Intelligence.
+                </h2>
+                <p className="font-sans text-sm sm:text-base text-[#66645e] max-w-md leading-relaxed">
+                  AI-powered system to analyze, prepare and accelerate your career every step of the way.
+                </p>
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <a href="/register" className="no-underline inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
+                    <span>Get Started</span><FiArrowRight size={14} />
+                  </a>
+                  <a href="/interview" className="no-underline inline-flex items-center gap-2.5 px-6 py-3.5 bg-white border border-[#e2e0d6] text-[#111110] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs hover:bg-[#efece4] transition-all">
+                    <span>Try Interview</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div
-            className="relative overflow-hidden"
+            className="absolute inset-0 flex"
             style={{
-              width: `${canvasScale * 100}vw`,
-              height: `${canvasScale * 100}vh`,
-              maxWidth: '100vw',
-              maxHeight: '100vh',
-              borderRadius: `${borderRadius}px`,
-              transition: 'none',
+              opacity: isVideoPhase ? 0 : 1,
+              transition: 'opacity 0.6s ease',
+              pointerEvents: isVideoPhase ? 'none' : 'auto',
             }}
           >
-            {/* Frame images */}
-            {frames.map((src, index) => (
-              <img
-                key={index}
-                src={src}
-                alt=""
-                className="absolute inset-0 w-full h-full"
+            <div
+              className="h-full flex items-center overflow-hidden"
+              style={{
+                width: splitT < 1 ? '100%' : '50%',
+                paddingLeft: splitT < 1 ? `${50 - splitT * 42}%` : '8%',
+                transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1), padding 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
+              <div
+                className="w-full"
                 style={{
-                  opacity: index === activeFrame ? 1 : 0,
-                  objectFit: 'cover',
-                  imageRendering: 'auto',
-                  WebkitFontSmoothing: 'antialiased',
-                  willChange: 'opacity',
+                  maxWidth: '480px',
+                  transform: `translateX(${splitT < 1 ? (1 - splitT) * 10 : 0}%)`,
+                  transition: 'transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
-                draggable={false}
-              />
-            ))}
-
-            {/* Dark overlay that deepens as canvas expands */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: `rgba(17,17,16,${Math.min(0.55, progress * 0.8)})`,
-              }}
-            />
-
-            {/* Vignette */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'radial-gradient(ellipse at center, transparent 40%, rgba(17,17,16,0.5) 100%)',
-              }}
-            />
-
-            {/* Text overlays — revealed by scroll */}
-            {progress > 0.1 && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-6">
+              >
                 {STAGES.map((stage, i) => {
-                  const isVisible = progress >= stage.range[0] && progress < stage.range[1]
-                  const fadeIn = isVisible ? 1 : 0
-                  const translateY = isVisible ? 0 : 30
-
+                  const isVisible = activeStageIndex === i
                   return (
                     <div
                       key={i}
-                      className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+                      className="absolute"
                       style={{
-                        opacity: fadeIn,
-                        transform: `translateY(${translateY}px)`,
-                        transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        opacity: isVisible ? 1 : 0,
+                        transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+                        transition: 'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
                         pointerEvents: isVisible ? 'auto' : 'none',
                       }}
                     >
-                      <div className="font-mono text-[10px] sm:text-xs font-bold text-[#F8F6F1]/50 uppercase tracking-[0.2em] mb-4">
+                      <div className="font-mono text-[10px] sm:text-xs font-bold text-[#88857d] uppercase tracking-[0.2em] mb-5">
                         {stage.tag}
                       </div>
-                      <h2 className="font-sans font-black text-3xl sm:text-5xl lg:text-6xl text-[#F8F6F1] tracking-tight leading-[1.05] max-w-3xl mb-4">
+                      <h2 className="font-sans font-black text-3xl sm:text-4xl lg:text-5xl text-[#111110] tracking-tight leading-[1.08] mb-5">
                         {stage.title}
                       </h2>
-                      <p className="font-sans text-sm sm:text-base text-[#F8F6F1]/60 max-w-lg leading-relaxed">
+                      <p className="font-sans text-sm sm:text-base text-[#66645e] max-w-md leading-relaxed mb-8">
                         {stage.subtitle}
                       </p>
+                      <div>
+                        <a href="/register" className="no-underline inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
+                          <span>Get Started</span><FiArrowRight size={14} />
+                        </a>
+                      </div>
                     </div>
                   )
                 })}
               </div>
-            )}
-
-            {/* Frame counter — top left */}
-            <div className="absolute top-5 left-5 z-20 flex items-center gap-3">
-              <div className="font-mono text-[10px] font-bold text-[#F8F6F1]/40 uppercase tracking-widest">
-                AI Interview
-              </div>
-              <div className="h-3 w-px bg-[#F8F6F1]/15" />
-              <div className="font-mono text-[10px] font-bold text-[#F8F6F1]/30 tracking-wider">
-                {String(activeFrame + 1).padStart(2, '0')} / {TOTAL_FRAMES}
-              </div>
             </div>
 
-            {/* Progress bar — bottom */}
-            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#F8F6F1]/10 z-20">
+            <div
+              className="h-full flex items-center overflow-hidden"
+              style={{
+                width: splitT < 1 ? '0%' : '50%',
+                paddingRight: splitT >= 1 ? '8%' : '0',
+                transition: 'width 0.8s cubic-bezier(0.16, 1, 0.3, 1), padding 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+              }}
+            >
               <div
-                className="h-full bg-[#F8F6F1]/50"
-                style={{ width: `${(activeFrame / TOTAL_FRAMES) * 100}%` }}
-              />
-            </div>
-
-            {/* Scroll hint — only at start */}
-            {progress < 0.08 && (
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-opacity duration-500" style={{ opacity: Math.max(0, 1 - progress * 15) }}>
-                <div className="font-mono text-[9px] font-bold text-[#F8F6F1]/30 uppercase tracking-[0.25em]">
-                  Scroll to explore
-                </div>
-                <div className="w-4 h-7 border border-[#F8F6F1]/20 rounded-full flex justify-center pt-1.5">
-                  <div className="w-0.5 h-1.5 bg-[#F8F6F1]/30 rounded-full animate-float" />
-                </div>
+                className="relative w-full h-full max-h-[80vh] rounded-2xl overflow-hidden shadow-lg"
+                style={{
+                  opacity: splitT,
+                  transform: `translateX(${(1 - splitT) * 30}%)`,
+                  transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              >
+                {frames.map((src, index) => (
+                  <img
+                    key={index}
+                    src={src}
+                    alt=""
+                    className="absolute inset-0 w-full h-full"
+                    style={{
+                      opacity: index === activeFrame ? 1 : 0,
+                      objectFit: 'cover',
+                      imageRendering: 'auto',
+                      willChange: 'opacity',
+                    }}
+                    draggable={false}
+                  />
+                ))}
+                <div className="absolute inset-0 pointer-events-none rounded-2xl" style={{
+                  boxShadow: 'inset 0 0 60px rgba(17,17,16,0.15)',
+                }} />
               </div>
-            )}
+            </div>
           </div>
 
         </div>

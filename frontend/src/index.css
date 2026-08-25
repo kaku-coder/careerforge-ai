@@ -6,21 +6,20 @@
   --color-brand-bg: #F8F6F1;
 }
 
-/* Micro-Dot Grid Pattern Matching Reference Screenshot */
 .bg-grid-lines {
-  background-color: #F8F6F1;
-  background-image: radial-gradient(rgba(17, 17, 16, 0.12) 1.2px, transparent 1.2px);
-  background-size: 16px 16px;
-  background-position: 0 0;
+  background-image:
+    linear-gradient(to right, rgba(17, 17, 16, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 16, 0.09) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: top left;
 }
 
 .bg-grid-lines-left {
-  background-color: #F8F6F1;
-  background-image: 
-    radial-gradient(rgba(17, 17, 16, 0.15) 1.2px, transparent 1.2px),
-    linear-gradient(to right, rgba(17, 17, 16, 0.05) 1px, transparent 1px);
-  background-size: 16px 16px, 32px 32px;
-  background-position: 0 0;
+  background-image:
+    linear-gradient(to right, rgba(17, 17, 16, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(17, 17, 16, 0.12) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: top left;
 }
 
 /* Nav Link 0% to 100% Smooth Underline Hover Animation */
@@ -132,6 +131,7 @@
     opacity: 0;
     transform: translateY(18px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -143,69 +143,50 @@
     opacity: 0;
     transform: translateX(-24px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
   }
 }
 
-.fade-in-1 { animation: fadeInUp 0.5s ease-out 0.05s both; }
-.fade-in-2 { animation: fadeInUp 0.5s ease-out 0.12s both; }
-.fade-in-3 { animation: fadeInUp 0.5s ease-out 0.2s both; }
-.fade-in-4 { animation: fadeInUp 0.5s ease-out 0.28s both; }
-.fade-in-5 { animation: fadeInUp 0.5s ease-out 0.36s both; }
-.fade-in-6 { animation: fadeInUp 0.5s ease-out 0.44s both; }
-.fade-in-7 { animation: fadeInUp 0.5s ease-out 0.52s both; }
-.fade-in-8 { animation: fadeInUp 0.5s ease-out 0.6s both; }
-
-/* Card Hover Lift Effect */
-.card-hover {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(17, 17, 16, 0.08);
+.fade-in-1 {
+  animation: fadeInUp 0.5s ease-out 0.05s both;
 }
 
-/* Progress Bar Fill Animation */
-@keyframes fillBar {
-  from { width: 0%; }
-}
-.animate-fill {
-  animation: fillBar 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+.fade-in-2 {
+  animation: fadeInUp 0.5s ease-out 0.12s both;
 }
 
-/* Soft Glow Pulse (replaces jarring ping) */
-@keyframes softGlow {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
-  50% { opacity: 0.85; box-shadow: 0 0 8px 3px rgba(52, 211, 153, 0.2); }
-}
-.animate-glow {
-  animation: softGlow 2.5s ease-in-out infinite;
+.fade-in-3 {
+  animation: fadeInUp 0.5s ease-out 0.2s both;
 }
 
-/* Flow Diagram Dash Animation */
-@keyframes dashMove {
-  to { stroke-dashoffset: -16; }
-}
-.animate-dash {
-  animation: dashMove 1.5s linear infinite;
+.fade-in-4 {
+  animation: fadeInUp 0.5s ease-out 0.28s both;
 }
 
-/* Subtle Scroll Float */
-@keyframes subtleFloat {
-  0%, 100% { transform: translateY(0); opacity: 0.6; }
-  50% { transform: translateY(4px); opacity: 1; }
+.fade-in-5 {
+  animation: fadeInUp 0.5s ease-out 0.36s both;
 }
-.animate-float {
-  animation: subtleFloat 2s ease-in-out infinite;
+
+.fade-in-6 {
+  animation: fadeInUp 0.5s ease-out 0.44s both;
+}
+
+.fade-in-7 {
+  animation: fadeInUp 0.5s ease-out 0.52s both;
+}
+
+.fade-in-8 {
+  animation: fadeInUp 0.5s ease-out 0.6s both;
 }
 
 /* Custom Scrollbar Hide Utility */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -217,7 +198,67 @@
   box-sizing: border-box;
 }
 
-html, body, #root {
+html,
+body,
+#root {
+  min-height: 100vh;
+  width: 100%;
+  font-family: var(--font-sans);
+  color: #111110;
+  background-color: #F8F6F1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Flow Diagram Dash Animation */
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+.animate-dash {
+  animation: dashMove 1.5s linear infinite;
+}
+
+/* Subtle Scroll Float */
+@keyframes subtleFloat {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: subtleFloat 2s ease-in-out infinite;
+}
+
+/* Custom Scrollbar Hide Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
   min-height: 100vh;
   width: 100%;
   font-family: var(--font-sans);
