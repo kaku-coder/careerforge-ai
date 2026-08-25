@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { FiArrowRight } from 'react-icons/fi'
 
 import interviewVideo from '../assets/candidate_robot_interview.mp4'
@@ -167,12 +168,12 @@ const ScrollSection = ({
                   {videoSubtitle}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3 pt-2">
-                  <a href={videoCta1Link} className="no-underline inline-flex items-center gap-2 px-6 py-3 bg-[#111110] text-[#F8F6F1] font-mono text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
+                  <Link to={videoCta1Link} className="btn-tactile-dark-3d text-[11px] px-5 py-2.5 rounded-xl">
                     <span>{videoCta1Text}</span><FiArrowRight size={13} />
-                  </a>
-                  <a href={videoCta2Link} className="no-underline inline-flex items-center gap-2 px-5 py-3 bg-[#F8F6F1] border border-[#d6d3c7] text-[#111110] font-mono text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-2xs hover:bg-[#efece4] transition-all">
+                  </Link>
+                  <Link to={videoCta2Link} className="btn-tactile-3d text-[11px] px-5 py-2.5 rounded-xl">
                     <span>{videoCta2Text}</span>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -187,49 +188,49 @@ const ScrollSection = ({
             }}
           >
             {/* Mobile: Text on top */}
-            <div className="flex-[0.45] flex items-end justify-center px-6 pb-1">
-              <div className="w-full">
+            <div className="flex-[0.42] relative z-20 flex items-center justify-center px-6 pt-12 pb-2">
+              <div className="w-full relative h-full flex items-center justify-center">
                 {stages.map((stage, i) => {
                   const isVisible = activeStageIndex === i
                   return (
                     <div
                       key={i}
-                      className="absolute left-6 right-6 bottom-[52%]"
+                      className="absolute inset-x-0 flex flex-col items-start"
                       style={{
                         opacity: isVisible ? 1 : 0,
-                        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
-                        transition: `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
+                        transform: isVisible ? 'translateY(0)' : 'translateY(16px)',
+                        transition: `opacity 0.6s ${ease}, transform 0.6s ${ease}`,
                         pointerEvents: isVisible ? 'auto' : 'none',
                       }}
                     >
-                      <div className="font-mono text-[9px] font-bold text-[#88857d] uppercase tracking-[0.2em] mb-2">
+                      <div className="font-mono text-[9px] font-bold text-[#88857d] uppercase tracking-[0.2em] mb-1.5">
                         {stage.tag}
                       </div>
-                      <h2 className="font-sans font-black text-xl text-[#111110] tracking-tight leading-[1.1] mb-2">
+                      <h2 className="font-sans font-black text-xl text-[#111110] tracking-tight leading-[1.1] mb-1.5">
                         {stage.title}
                       </h2>
-                      <p className="font-sans text-[11px] text-[#66645e] leading-relaxed mb-4">
+                      <p className="font-sans text-[11px] text-[#66645e] leading-relaxed mb-3.5 max-w-xs">
                         {stage.subtitle}
                       </p>
-                      <a href={stageCtaLink} className="no-underline inline-flex items-center gap-2.5 px-6 py-3 bg-[#111110] text-[#F8F6F1] font-mono text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
+                      <Link to={stageCtaLink} className="btn-tactile-dark-3d text-[11px] px-5 py-2.5 rounded-xl">
                         <span>Get Started</span><FiArrowRight size={13} />
-                      </a>
+                      </Link>
                     </div>
                   )
                 })}
               </div>
             </div>
 
-            {/* Mobile: Image sequence on bottom */}
-            <div className="flex-[0.55] flex items-start justify-center px-5 pt-1">
-            <div
-              className="relative w-full h-full max-h-[50vh] rounded-xl overflow-hidden shadow-lg"
-              style={{
-                opacity: splitT,
-                transform: `translateY(${(1 - splitT) * 15}%)`,
-                transition: `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
-                willChange: 'opacity, transform',
-              }}
+            {/* Mobile: Image sequence on bottom with spacing */}
+            <div className="flex-[0.58] flex items-start justify-center px-5 pt-4 pb-6">
+              <div
+                className="relative w-full h-full max-h-[44vh] rounded-xl overflow-hidden shadow-lg"
+                style={{
+                  opacity: splitT,
+                  transform: `translateY(${(1 - splitT) * 15}%)`,
+                  transition: `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
+                  willChange: 'opacity, transform',
+                }}
               >
                 {frames.map((src, index) => (
                   <img
@@ -283,19 +284,19 @@ const ScrollSection = ({
                 {videoSubtitle}
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
-                <a
-                  href={videoCta1Link}
-                  className="no-underline inline-flex items-center gap-3 px-8 py-4 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-[#262522] hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all group cursor-pointer border border-[#111110]"
+                <Link
+                  to={videoCta1Link}
+                  className="btn-tactile-dark-3d group relative z-30"
                 >
                   <span>{videoCta1Text}</span>
                   <FiArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
-                </a>
-                <a
-                  href={videoCta2Link}
-                  className="no-underline inline-flex items-center gap-3 px-7 py-4 bg-[#F8F6F1] border border-[#d6d3c7] text-[#111110] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-2xs hover:bg-[#efece4] hover:border-[#111110] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+                </Link>
+                <Link
+                  to={videoCta2Link}
+                  className="btn-tactile-3d group relative z-30"
                 >
                   <span>{videoCta2Text}</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -311,7 +312,7 @@ const ScrollSection = ({
         >
           {/* Text column — centered on page load, splits to side on scroll */}
           <div
-            className="absolute top-0 h-full flex items-center overflow-hidden"
+            className="absolute top-0 h-full flex items-center overflow-hidden z-20 pointer-events-auto"
             style={{
               left: splitT < 1 ? 0 : (reverse ? 'auto' : 0),
               right: splitT < 1 ? 0 : (reverse ? 0 : 'auto'),
@@ -360,13 +361,13 @@ const ScrollSection = ({
                       {stage.subtitle}
                     </p>
                     <div className={`w-full flex ${isCentered ? 'justify-center' : 'justify-start'}`}>
-                      <a
-                        href={stageCtaLink}
-                        className="no-underline inline-flex items-center gap-3 px-8 py-4 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-[#262522] hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all group cursor-pointer border border-[#111110]"
+                      <Link
+                        to={stageCtaLink}
+                        className="btn-tactile-dark-3d group relative z-30"
                       >
                         <span>Get Started</span>
                         <FiArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 )

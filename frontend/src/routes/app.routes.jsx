@@ -14,11 +14,11 @@ const ProtectedRoute = ({ children }) => {
   return children ? children : <Outlet />
 }
 
-// Guard for auth pages (redirects authenticated users to overview)
+// Guard for auth pages (redirects authenticated users to home)
 const PublicOnlyRoute = ({ children }) => {
   const { user } = useAuth()
   if (user) {
-    return <Navigate to="/overview" replace />
+    return <Navigate to="/" replace />
   }
   return children ? children : <Outlet />
 }
@@ -118,7 +118,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <Navigate to="/overview" replace />,
+    element: <Navigate to="/" replace />,
   },
 ])
 
