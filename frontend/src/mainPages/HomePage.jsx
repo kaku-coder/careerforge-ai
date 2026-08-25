@@ -1,324 +1,202 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import {
-  FiArrowRight,
-  FiFileText,
-  FiMic,
-  FiBarChart2,
-  FiCompass,
-  FiPlus
-} from 'react-icons/fi'
-import { useAuth } from '../context/AuthContext'
-import { useStats } from '../context/StatsContext'
-import StatCard from '../components/StatCard'
-import AgentMediaCard from '../components/AgentMediaCard'
+import React, { useState, useEffect, useRef } from 'react'
+import { FiArrowRight } from 'react-icons/fi'
 
-// Asset imports for card preview visuals
-import resumeImg from '../assets/robot_scanning_resume.jpeg'
-import resumeVid from '../assets/robot_scanning_resume.mp4'
-import interviewImg from '../assets/character_interview_ai.jpeg'
-import interviewVid from '../assets/candidate_robot_interview.mp4'
-import roadmapImg from '../assets/developer_coding_roadmap.jpeg'
-import roadmapVid from '../assets/developer_coding_roadmap.mp4'
+const frameModules = import.meta.glob('../assets/interviewJpg/ezgif-frame-*.jpg', {
+  eager: true,
+  import: 'default',
+})
+
+const TOTAL_FRAMES = 50
+
+const frames = Array.from({ length: TOTAL_FRAMES }, (_, i) => {
+  const num = String(i + 1).padStart(3, '0')
+  const key = `../assets/interviewJpg/ezgif-frame-${num}.jpg`
+  return frameModules[key]
+})
+
+const STAGES = [
+  {
+    range: [0.15, 0.35],
+    tag: '// SYSTEM 01',
+    title: 'AI Interview Engine',
+    subtitle: 'Practice with an AI that adapts to your resume, target role, and skill level — delivering real interview pressure.',
+  },
+  {
+    range: [0.35, 0.55],
+    tag: '// LIVE FEEDBACK',
+    title: 'Real-Time Scoring',
+    subtitle: 'Every answer is analyzed for technical depth, communication clarity, problem-solving approach, and confidence.',
+  },
+  {
+    range: [0.55, 0.75],
+    tag: '// SYSTEM DESIGN',
+    title: 'Think Under Pressure',
+    subtitle: 'Whiteboard-style system design challenges with AI-guided hints when you get stuck.',
+  },
+  {
+    range: [0.75, 0.95],
+    tag: '// YOUR RESULTS',
+    title: 'Know Exactly Where You Stand',
+    subtitle: 'Detailed breakdown of strengths and weaknesses — so your next practice session targets what matters.',
+  },
+]
 
 const HomePage = () => {
-  const { user, isAuthenticated, initials } = useAuth()
-  const { userStats } = useStats()
+  const [progress, setProgress] = useState(0)
+  const containerRef = useRef(null)
 
-  // Dynamic user display name format
-  const rawName = user?.username || user?.name || user?.email?.split('@')[0] || 'Ankush'
-  const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1).toLowerCase()
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return
+      const rect = containerRef.current.getBoundingClientRect()
+      const scrollableHeight = rect.height - window.innerHeight
+      if (scrollableHeight <= 0) return
+      const scrolled = -rect.top
+      const p = Math.max(0, Math.min(1, scrolled / scrollableHeight))
+      setProgress(p)
+    }
 
-  // Formatted stats (Defaults to 00 / 0 for new users)
-  const totalInterviews = userStats?.totalInterviews || 0
-  const questionsAnswered = userStats?.questionsAnswered || 0
-  const completedInterviews = userStats?.completedInterviews || 0
-  const averageScore = userStats?.averageScore || 0
-  const technicalCount = userStats?.technicalCount || 0
-  const hrCount = userStats?.hrCount || 0
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll()
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-  const totalInterviewsFormatted = String(totalInterviews).padStart(2, '0')
-  const questionsAnsweredFormatted = String(questionsAnswered).padStart(2, '0')
-  const completedFormatted = String(completedInterviews).padStart(2, '0')
-  const averageScoreFormatted = averageScore > 0 ? String(averageScore) : '00'
+  const activeFrame = Math.min(TOTAL_FRAMES - 1, Math.floor(progress * TOTAL_FRAMES))
 
-  const hasActivity = totalInterviews > 0
+  // Canvas expansion: starts at 0.6 scale, expands to 1.0 between 0-15%
+  const canvasScale = Math.min(1, 0.6 + progress * 2.67)
+  const borderRadius = Math.max(0, 24 - progress * 160)
+
+  // Find active text stage
+  const activeStage = STAGES.find(
+    (s) => progress >= s.range[0] && progress < s.range[1]
+  )
 
   return (
-    <div className="min-h-screen bg-[#F8F6F1] text-[#111110] relative overflow-x-hidden font-sans flex flex-col items-center justify-center py-10 sm:py-14">
-      {/* ── Background Grid Accent Lines ── */}
-      <div className="absolute inset-0 bg-grid-lines pointer-events-none opacity-40" />
+    <div className="bg-[#111110]">
 
-      {/* ════════════════════════════════════════════════════════════
-          HERO & DASHBOARD SECTION
-         ════════════════════════════════════════════════════════════ */}
-      <section className="relative z-10 w-full max-w-[1400px] mx-auto pt-4 pb-6 sm:pt-6 sm:pb-8 px-4 sm:px-6 flex flex-col items-center justify-center text-center">
+      {/* Scroll container — 600vh for plenty of scroll room */}
+      <div ref={containerRef} className="relative" style={{ height: '600vh' }}>
 
-        {/* 3-Line Headline matching exact image typography & grey middle line */}
-        <h1
-          className="font-sans font-extrabold uppercase tracking-tight leading-[1.05] text-[#111110] max-w-3xl mb-4 text-center"
-          style={{ fontSize: 'clamp(22px, 3.2vw, 40px)' }}
-        >
-          YOUR RESUME <br />
-          <span className="text-[#9e9b91] font-extrabold">SHOULDN'T BE THE REASON</span> <br />
-          YOU GET REJECTED.
-        </h1>
+        {/* Sticky viewport */}
+        <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#111110] flex items-center justify-center">
 
-        {/* Subtitle Paragraph */}
-        <p className="font-sans text-sm sm:text-base text-[#66645e] max-w-2xl leading-relaxed mb-6 text-center mx-auto">
-          CareerForge AI is an innovative AI-powered interview preparation platform designed to help job seekers excel in their interviews and land their dream jobs.
-        </p>
-
-        {/* Primary CTA Button (Balanced Margin Top & Bottom) */}
-        <div className="mt-10 mb-10 sm:mt-12 sm:mb-12 flex justify-center w-full">
-          <Link
-            to={isAuthenticated ? '/interview' : '/register'}
-            className="no-underline group relative inline-flex items-center justify-center gap-4 px-9 py-3.5 sm:px-11 sm:py-4 bg-[#111110] text-[#F8F6F1] font-sans text-base font-bold tracking-wide rounded-md border border-[#2e2c28] shadow-2xl hover:bg-[#22211e] hover:shadow-[0_15px_30px_rgba(17,17,16,0.3)] transition-all duration-300 transform hover:-translate-y-0.5 whitespace-nowrap"
+          {/* Canvas wrapper — expands from card to fullscreen */}
+          <div
+            className="relative overflow-hidden"
+            style={{
+              width: `${canvasScale * 100}vw`,
+              height: `${canvasScale * 100}vh`,
+              maxWidth: '100vw',
+              maxHeight: '100vh',
+              borderRadius: `${borderRadius}px`,
+              transition: 'none',
+            }}
           >
-            <span>Get started for free</span>
-            <div className="w-8 h-8 rounded-full bg-[#262522] border border-[#383733] flex items-center justify-center text-[#F8F6F1] shrink-0 group-hover:bg-[#33312d] transition-colors">
-              <FiArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform duration-300" />
+            {/* Frame images */}
+            {frames.map((src, index) => (
+              <img
+                key={index}
+                src={src}
+                alt=""
+                className="absolute inset-0 w-full h-full"
+                style={{
+                  opacity: index === activeFrame ? 1 : 0,
+                  objectFit: 'cover',
+                  imageRendering: 'auto',
+                  WebkitFontSmoothing: 'antialiased',
+                  willChange: 'opacity',
+                }}
+                draggable={false}
+              />
+            ))}
+
+            {/* Dark overlay that deepens as canvas expands */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `rgba(17,17,16,${Math.min(0.55, progress * 0.8)})`,
+              }}
+            />
+
+            {/* Vignette */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at center, transparent 40%, rgba(17,17,16,0.5) 100%)',
+              }}
+            />
+
+            {/* Text overlays — revealed by scroll */}
+            {progress > 0.1 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-6">
+                {STAGES.map((stage, i) => {
+                  const isVisible = progress >= stage.range[0] && progress < stage.range[1]
+                  const fadeIn = isVisible ? 1 : 0
+                  const translateY = isVisible ? 0 : 30
+
+                  return (
+                    <div
+                      key={i}
+                      className="absolute inset-0 flex flex-col items-center justify-center text-center px-6"
+                      style={{
+                        opacity: fadeIn,
+                        transform: `translateY(${translateY}px)`,
+                        transition: 'opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        pointerEvents: isVisible ? 'auto' : 'none',
+                      }}
+                    >
+                      <div className="font-mono text-[10px] sm:text-xs font-bold text-[#F8F6F1]/50 uppercase tracking-[0.2em] mb-4">
+                        {stage.tag}
+                      </div>
+                      <h2 className="font-sans font-black text-3xl sm:text-5xl lg:text-6xl text-[#F8F6F1] tracking-tight leading-[1.05] max-w-3xl mb-4">
+                        {stage.title}
+                      </h2>
+                      <p className="font-sans text-sm sm:text-base text-[#F8F6F1]/60 max-w-lg leading-relaxed">
+                        {stage.subtitle}
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* Frame counter — top left */}
+            <div className="absolute top-5 left-5 z-20 flex items-center gap-3">
+              <div className="font-mono text-[10px] font-bold text-[#F8F6F1]/40 uppercase tracking-widest">
+                AI Interview
+              </div>
+              <div className="h-3 w-px bg-[#F8F6F1]/15" />
+              <div className="font-mono text-[10px] font-bold text-[#F8F6F1]/30 tracking-wider">
+                {String(activeFrame + 1).padStart(2, '0')} / {TOTAL_FRAMES}
+              </div>
             </div>
-          </Link>
-        </div>
 
-        {/* ════════════════════════════════════════════════════════════
-            DASHBOARD PREVIEW MOCKUP (STATUS STORED IN CONTEXT)
-           ════════════════════════════════════════════════════════════ */}
-        <div className="w-[90%] max-w-[1280px] mx-auto text-left py-2">
-          <div className="w-full">
+            {/* Progress bar — bottom */}
+            <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[#F8F6F1]/10 z-20">
+              <div
+                className="h-full bg-[#F8F6F1]/50"
+                style={{ width: `${(activeFrame / TOTAL_FRAMES) * 100}%` }}
+              />
+            </div>
 
-            {/* Dashboard Mockup Nav Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#e2e0d6]">
-              <div className="flex items-center gap-3.5">
-                {/* PD Avatar initials */}
-                <div className="w-10 h-10 rounded-xl bg-[#111110] text-white flex items-center justify-center font-mono font-bold text-sm shadow-md border border-[#2b2925] shrink-0">
-                  {initials || 'PD'}
+            {/* Scroll hint — only at start */}
+            {progress < 0.08 && (
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 transition-opacity duration-500" style={{ opacity: Math.max(0, 1 - progress * 15) }}>
+                <div className="font-mono text-[9px] font-bold text-[#F8F6F1]/30 uppercase tracking-[0.25em]">
+                  Scroll to explore
                 </div>
-                <div>
-                  <div className="font-mono text-xs text-[#55524a] uppercase tracking-widest font-bold">
-                    Overview
-                  </div>
-                  <h2 className="font-sans font-bold text-xl text-[#111110] flex items-center gap-1.5 m-0">
-                    <span>Hello, {displayName}</span>
-                    <span className="text-base">👋</span>
-                  </h2>
-                </div>
-              </div>
-
-              {/* + Create Interview Button with rounded-md and Right Margin */}
-              <div className="flex items-center gap-2 mr-6 sm:mr-8">
-                <Link
-                  to="/interview"
-                  className="no-underline group px-8 py-3 sm:px-9 sm:py-3.5 bg-[#111110] text-white font-sans text-xs sm:text-sm font-bold rounded-md border border-[#2e2c28] shadow-lg hover:bg-[#22211e] hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 whitespace-nowrap"
-                >
-                  <FiPlus size={16} className="text-white shrink-0 group-hover:rotate-90 transition-transform duration-300" />
-                  <span className="tracking-wide">Create Interview</span>
-                </Link>
-              </div>
-            </div>
-
-            {/* 4 Reusable StatCard Components (Consuming StatsContext & Standardized 12px Scale - Issue #1 & #4) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 mt-8 mb-8 sm:mt-10 sm:mb-10 items-stretch">
-              <StatCard
-                title="TOTAL INTERVIEWS"
-                value={totalInterviewsFormatted}
-                badgeText="All Time"
-                subtitleText="Interviews Created"
-              />
-              <StatCard
-                title="QUESTIONS SOLVED"
-                value={questionsAnsweredFormatted}
-                badgeText="Answered"
-                subtitleText="Across All Interviews"
-              />
-              <StatCard
-                title="COMPLETED"
-                value={completedFormatted}
-                badgeText={hasActivity ? `${totalInterviews} Total` : '0 Total'}
-                subtitleText="Interviews Finished"
-              />
-              <StatCard
-                title="AVERAGE SCORE"
-                value={averageScoreFormatted}
-                unit="/100"
-                badgeText="Completed Only"
-                subtitleText="Average Performance"
-              />
-            </div>
-
-            {/* Performance Sub-Heading Section (Margin Top) */}
-            <div className="mt-12 sm:mt-16 mb-4 text-left">
-              <div className="font-mono text-[11px] text-[#88857d] uppercase tracking-widest font-semibold">
-                PERFORMANCE
-              </div>
-              <h3 className="font-sans font-bold text-xl sm:text-2xl text-[#111110]">
-                Interview History
-              </h3>
-            </div>
-
-            {/* High Definition SVG Radar Charts Grid (High Contrast Lines & Text - Issue #8) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-              {/* Radar Chart 1 - Technical Interviews */}
-              <div className="bg-[#141412] text-[#F8F6F1] p-6 rounded-2xl border border-[#262522] flex flex-col items-center justify-center text-center shadow-xl min-h-[300px]">
-
-                <div className="relative w-full max-w-[290px] h-[250px] flex items-center justify-center">
-                  <svg className="w-full h-full" viewBox="0 0 300 260">
-                    {/* Concentric Polygons (High Contrast Grid Stroke #484642) */}
-                    <polygon points="150,50 210,75 235,135 210,195 150,220 90,195 65,135 90,75" fill="none" stroke="#484642" strokeWidth="1.5" />
-                    <polygon points="150,71 192,89 210,135 192,177 150,195 108,177 90,135 108,89" fill="none" stroke="#484642" strokeWidth="1.5" />
-                    <polygon points="150,92 174,103 185,135 174,159 150,170 126,159 115,135 126,103" fill="none" stroke="#484642" strokeWidth="1.5" />
-
-                    {/* Axis Lines */}
-                    <line x1="150" y1="135" x2="150" y2="50" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="210" y2="75" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="235" y2="135" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="210" y2="195" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="150" y2="220" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="90" y2="195" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="65" y2="135" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="90" y2="75" stroke="#484642" strokeWidth="1.5" />
-
-                    {/* Active Polygon Data (High Contrast White Stroke & Translucent Fill) */}
-                    <polygon
-                      points={hasActivity ? "150,55 200,82 225,135 195,180 150,210 100,185 75,135 98,80" : "150,92 174,103 185,135 174,159 150,170 126,159 115,135 126,103"}
-                      fill={hasActivity ? "rgba(255, 255, 255, 0.20)" : "rgba(255, 255, 255, 0.05)"}
-                      stroke={hasActivity ? "#ffffff" : "#a3a097"}
-                      strokeWidth="2.5"
-                    />
-
-                    {/* 8 Outer Metric Axis Labels (High Contrast Text #d5d2c8) */}
-                    <text x="150" y="38" textAnchor="middle" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Correctness</text>
-                    <text x="222" y="65" textAnchor="start" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Clarity</text>
-                    <text x="246" y="139" textAnchor="start" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Relevance</text>
-                    <text x="220" y="210" textAnchor="start" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Detail</text>
-                    <text x="150" y="238" textAnchor="middle" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Efficiency</text>
-                    <text x="80" y="210" textAnchor="end" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Communication</text>
-                    <text x="54" y="139" textAnchor="end" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Problem solving</text>
-                    <text x="78" y="65" textAnchor="end" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Creativity</text>
-                  </svg>
+                <div className="w-4 h-7 border border-[#F8F6F1]/20 rounded-full flex justify-center pt-1.5">
+                  <div className="w-0.5 h-1.5 bg-[#F8F6F1]/30 rounded-full animate-float" />
                 </div>
               </div>
-
-              {/* Radar Chart 2 - HR & Behavioral */}
-              <div className="bg-[#141412] text-[#F8F6F1] p-6 rounded-2xl border border-[#262522] flex flex-col items-center justify-center text-center shadow-xl min-h-[300px]">
-
-                <div className="relative w-full max-w-[290px] h-[250px] flex items-center justify-center">
-                  <svg className="w-full h-full" viewBox="0 0 300 260">
-                    {/* Concentric Polygons */}
-                    <polygon points="150,50 210,75 235,135 210,195 150,220 90,195 65,135 90,75" fill="none" stroke="#484642" strokeWidth="1.5" />
-                    <polygon points="150,71 192,89 210,135 192,177 150,195 108,177 90,135 108,89" fill="none" stroke="#484642" strokeWidth="1.5" />
-                    <polygon points="150,92 174,103 185,135 174,159 150,170 126,159 115,135 126,103" fill="none" stroke="#484642" strokeWidth="1.5" />
-
-                    {/* Axis Lines */}
-                    <line x1="150" y1="135" x2="150" y2="50" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="210" y2="75" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="235" y2="135" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="210" y2="195" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="150" y2="220" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="90" y2="195" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="65" y2="135" stroke="#484642" strokeWidth="1.5" />
-                    <line x1="150" y1="135" x2="90" y2="75" stroke="#484642" strokeWidth="1.5" />
-
-                    {/* Active Polygon Data */}
-                    <polygon
-                      points={hasActivity ? "150,60 195,85 220,135 190,175 150,205 105,180 80,135 102,82" : "150,92 174,103 185,135 174,159 150,170 126,159 115,135 126,103"}
-                      fill={hasActivity ? "rgba(255, 255, 255, 0.20)" : "rgba(255, 255, 255, 0.05)"}
-                      stroke={hasActivity ? "#ffffff" : "#a3a097"}
-                      strokeWidth="2.5"
-                    />
-
-                    {/* 8 Outer Metric Axis Labels */}
-                    <text x="150" y="38" textAnchor="middle" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Correctness</text>
-                    <text x="222" y="65" textAnchor="start" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Clarity</text>
-                    <text x="246" y="139" textAnchor="start" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Relevance</text>
-                    <text x="220" y="210" textAnchor="start" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Detail</text>
-                    <text x="150" y="238" textAnchor="middle" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Efficiency</text>
-                    <text x="80" y="210" textAnchor="end" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Communication</text>
-                    <text x="54" y="139" textAnchor="end" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Problem solving</text>
-                    <text x="78" y="65" textAnchor="end" fill="#d5d2c8" fontSize="11" fontWeight="600" fontFamily="sans-serif">Creativity</text>
-                  </svg>
-                </div>
-              </div>
-
-            </div>
-
+            )}
           </div>
-        </div>
-
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════
-          AI POWERED AGENTS SECTION
-         ════════════════════════════════════════════════════════════ */}
-      <section className="relative z-10 w-full max-w-6xl mx-auto mt-10 sm:mt-18 mb-8 sm:mb-10 pt-4 sm:pt-6 pb-12 sm:pb-16 px-3.5 sm:px-6 flex flex-col items-center justify-center text-center">
-
-        {/* Section Title */}
-        <h2 className="font-sans font-extrabold text-[#111110] text-xl sm:text-3xl max-w-3xl leading-tight mb-2.5 sm:mb-3">
-          Specialized Agents for <br />
-          <span className="text-[#88857d]">Every Interview Stage</span>
-        </h2>
-
-        {/* Subtitle Paragraph */}
-        <p className="font-sans text-xs sm:text-base text-[#55534e] max-w-3xl leading-relaxed mb-6 sm:mb-8 px-2">
-          CareerForge AI combines multiple AI agents that work together to help you build your resume, practice interviews, receive detailed feedback, and follow a personalized roadmap to land your dream job.
-        </p>
-
-        {/* 4 Cards Grid (Interactive Image & Hover/Touch Video Cards) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-7 w-full text-center items-stretch">
-
-          {/* Card 1: Resume Agent */}
-          <AgentMediaCard
-            to="/resume"
-            title="Resume Agent"
-            description="Create ATS-friendly resumes, improve profile strength, and maximize interview opportunities."
-            icon={FiFileText}
-            imageSrc={resumeImg}
-            videoSrc={resumeVid}
-            badgeText="RESUME AI"
-            ctaText="EXPLORE AGENT"
-          />
-
-          {/* Card 2: Interview Agent */}
-          <AgentMediaCard
-            to="/interview"
-            title="Interview Agent"
-            description="Conduct realistic HR, Technical, and Coding interviews with AI-powered simulations."
-            icon={FiMic}
-            imageSrc={interviewImg}
-            videoSrc={interviewVid}
-            badgeText="MOCK AI"
-            ctaText="PRACTICE NOW"
-          />
-
-          {/* Card 3: Feedback Agent */}
-          <AgentMediaCard
-            to="/scorer"
-            title="Feedback Agent"
-            description="Get detailed answer analysis, scoring reports, and improvement recommendations."
-            icon={FiBarChart2}
-            imageSrc={resumeImg}
-            videoSrc={resumeVid}
-            badgeText="ANALYSIS AI"
-            ctaText="VIEW REPORTS"
-          />
-
-          {/* Card 4: Roadmap Agent */}
-          <AgentMediaCard
-            to="/roadmap"
-            title="Roadmap Agent"
-            description="Generate personalized learning roadmaps based on goals, skills, and performance."
-            icon={FiCompass}
-            imageSrc={roadmapImg}
-            videoSrc={roadmapVid}
-            badgeText="PATHWAY AI"
-            ctaText="GENERATE PATH"
-          />
 
         </div>
 
-      </section>
+      </div>
+
     </div>
   )
 }

@@ -19,11 +19,11 @@ const MainLayout = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-[#F8F6F1] text-[#111110] relative">
-      {/* Left side: Navigation Sidebar */}
+    <div className="min-h-screen flex flex-col bg-[#F8F6F1] text-[#111110] relative">
+      {/* Top Navigation Bar Header */}
       <Navbar />
 
-      {/* Right side: Page Content View */}
+      {/* Page Content View */}
       <main className="flex-1 min-w-0 min-h-screen bg-grid-lines">
         <Outlet />
       </main>

@@ -20,19 +20,11 @@ export const processResumePdf = async (req, res) => {
             });
         }
 
-        // 1. Convert uploaded file buffer into a Blob for PDFLoader
         const pdfBlob = new Blob([req.file.buffer], { type: "application/pdf" });
-        
-        // 2. Parse PDF pages using LangChain PDFLoader service
         const docs = await parseResumePdf(pdfBlob);
-
-        // 3. Combine extracted text across pages
         const fullText = docs.map(doc => doc.pageContent).join("\n\n");
-
-        // 4. Split PDF documents into smaller chunks (chunkSize: 500 characters, overlap: 50)
         const splitDocs = await splitResumeText(docs, { chunkSize: 500, chunkOverlap: 50 });
 
-        // 5. Generate Mistral AI Embeddings for all text chunks if MISTRAL_API_KEY is configured
         let chunkEmbeddings = [];
         const hasMistralKey = Boolean(process.env.MISTRAL_API_KEY);
         if (hasMistralKey && splitDocs.length > 0) {
@@ -44,7 +36,6 @@ export const processResumePdf = async (req, res) => {
             }
         }
 
-        // 6. Format pages & chunks (including embedding vectors) for MongoDB schema
         const formattedPages = docs.map(doc => ({
             pageContent: doc.pageContent,
             metadata: doc.metadata || {}
@@ -57,7 +48,6 @@ export const processResumePdf = async (req, res) => {
             metadata: chunk.metadata || {}
         }));
 
-        // 7. Save resume data, text chunks, and vector embeddings in MongoDB
         const newResume = await ResumeModel.create({
             user: req.user?._id || req.user?.id || null,
             fileName: req.file.originalname,
@@ -86,82 +76,117 @@ export const processResumePdf = async (req, res) => {
 };
 
 /**
- * Controller to ask a question or compare responses between Mistral AI & Anthropic Claude
+ * Helper to get resume context text from request or database
  */
-export const askResumeQuestionController = async (req, res) => {
+const getResumeContext = async (req) => {
+    const { resumeId, resumeText } = req.body;
+    if (resumeText) return resumeText;
+
+    if (resumeId) {
+        const found = await ResumeModel.findById(resumeId);
+        if (found) return found.extractedText;
+    }
+
+    const latest = await ResumeModel.findOne().sort({ createdAt: -1 });
+    return latest ? latest.extractedText : null;
+};
+
+/**
+ * Dedicated Controller for Mistral AI Q&A
+ */
+export const askMistralController = async (req, res) => {
     try {
-        const { question, resumeId, resumeText, provider = "mistral" } = req.body;
-
+        const { question } = req.body;
         if (!question || question.trim() === "") {
-            return res.status(400).json({
-                success: false,
-                message: "Please provide a question to ask."
-            });
+            return res.status(400).json({ success: false, message: "Please provide a question." });
         }
 
-        let contextText = resumeText || "";
-
-        // If resumeId is passed, fetch resume from MongoDB database
-        if (!contextText && resumeId) {
-            const foundResume = await ResumeModel.findById(resumeId);
-            if (foundResume) {
-                contextText = foundResume.extractedText;
-            }
-        }
-
-        // If no resumeId or text provided, fetch latest uploaded resume
+        const contextText = await getResumeContext(req);
         if (!contextText) {
-            const latestResume = await ResumeModel.findOne().sort({ createdAt: -1 });
-            if (latestResume) {
-                contextText = latestResume.extractedText;
-            }
+            return res.status(404).json({ success: false, message: "No resume found. Please upload a resume first." });
         }
 
-        if (!contextText) {
-            return res.status(404).json({
-                success: false,
-                message: "No resume found to answer questions from. Please upload a resume first."
-            });
-        }
-
-        const mode = provider.toLowerCase();
-
-        // 1. Comparison Mode ("both" or "compare")
-        if (mode === "both" || mode === "compare") {
-            const comparison = await compareMistralAndAnthropic(question, contextText);
-            return res.status(200).json({
-                success: true,
-                mode: "comparison",
-                question,
-                comparison
-            });
-        }
-
-        // 2. Single Model Selection ("anthropic" vs "mistral")
-        let answer = "";
-        let selectedProvider = mode;
-
-        if (mode === "anthropic" || mode === "claude") {
-            answer = await askResumeWithAnthropic(question, contextText);
-            selectedProvider = "Anthropic Claude";
-        } else {
-            answer = await askResumeWithMistral(question, contextText);
-            selectedProvider = "Mistral AI";
-        }
-
+        const answer = await askResumeWithMistral(question, contextText);
         return res.status(200).json({
             success: true,
-            provider: selectedProvider,
+            provider: "Mistral AI",
+            model: "mistral-small-latest",
             question,
             answer
         });
     } catch (error) {
-        console.error("Ask Resume Question Controller Error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to get AI answer",
-            error: error.message
+        return res.status(500).json({ success: false, message: "Mistral AI Error", error: error.message });
+    }
+};
+
+/**
+ * Dedicated Controller for Anthropic Claude Q&A
+ */
+export const askAnthropicController = async (req, res) => {
+    try {
+        const { question } = req.body;
+        if (!question || question.trim() === "") {
+            return res.status(400).json({ success: false, message: "Please provide a question." });
+        }
+
+        const contextText = await getResumeContext(req);
+        if (!contextText) {
+            return res.status(404).json({ success: false, message: "No resume found. Please upload a resume first." });
+        }
+
+        const answer = await askResumeWithAnthropic(question, contextText);
+        return res.status(200).json({
+            success: true,
+            provider: "Anthropic Claude",
+            model: "claude-3-5-sonnet",
+            question,
+            answer
         });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Anthropic Claude Error", error: error.message });
+    }
+};
+
+/**
+ * Dedicated Controller for Comparing Both AI Models Side-by-Side
+ */
+export const compareModelsController = async (req, res) => {
+    try {
+        const { question } = req.body;
+        if (!question || question.trim() === "") {
+            return res.status(400).json({ success: false, message: "Please provide a question." });
+        }
+
+        const contextText = await getResumeContext(req);
+        if (!contextText) {
+            return res.status(404).json({ success: false, message: "No resume found. Please upload a resume first." });
+        }
+
+        const comparison = await compareMistralAndAnthropic(question, contextText);
+        return res.status(200).json({
+            success: true,
+            mode: "comparison",
+            question,
+            comparison
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: "Model Comparison Error", error: error.message });
+    }
+};
+
+/**
+ * Universal Controller for Q&A (Supports provider parameter)
+ */
+export const askResumeQuestionController = async (req, res) => {
+    const { provider = "mistral" } = req.body;
+    const mode = provider.toLowerCase();
+
+    if (mode === "both" || mode === "compare") {
+        return compareModelsController(req, res);
+    } else if (mode === "anthropic" || mode === "claude") {
+        return askAnthropicController(req, res);
+    } else {
+        return askMistralController(req, res);
     }
 };
 
@@ -180,11 +205,6 @@ export const getUserResumes = async (req, res) => {
             data: resumes
         });
     } catch (error) {
-        console.error("Get User Resumes Error:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to fetch resumes",
-            error: error.message
-        });
+        return res.status(500).json({ success: false, message: "Failed to fetch resumes", error: error.message });
     }
 };

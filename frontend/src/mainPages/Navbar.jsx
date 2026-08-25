@@ -10,21 +10,24 @@ import {
   FiLogOut,
   FiArrowRight,
   FiMenu,
-  FiX
+  FiX,
+  FiBarChart2,
+  FiCpu
 } from 'react-icons/fi'
 
 import bloubAvatarSvg from '../assets/bloub-nuage-surpris-encre-anime.svg'
 
 const NAV_LINKS = [
-  { name: 'Home', path: '/', icon: FiHome },
+  { name: 'Overview', path: '/', icon: FiHome },
   { name: 'Interviews', path: '/interview', icon: FiMessageSquare },
   { name: 'Roadmap', path: '/roadmap', icon: FiCompass },
   { name: 'Resume', path: '/resume', icon: FiFileText },
-  { name: 'Profile', path: '/profile', icon: FiUser },
+  { name: 'Analytics', path: '/profile', icon: FiBarChart2 },
+  { name: 'AI Agents', path: '/profile', icon: FiCpu },
 ]
 
 const Navbar = () => {
-  const { user, initials, isAuthenticated, logout } = useAuth()
+  const { user, isAuthenticated, logout } = useAuth()
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
@@ -34,12 +37,12 @@ const Navbar = () => {
     navigate('/login')
   }, [logout, navigate])
 
-  const closeMobileMenu = useCallback(() => {
-    setMobileOpen(false)
+  const toggleMobileMenu = useCallback(() => {
+    setMobileOpen((prev) => !prev)
   }, [])
 
-  const openMobileMenu = useCallback(() => {
-    setMobileOpen(true)
+  const closeMobileMenu = useCallback(() => {
+    setMobileOpen(false)
   }, [])
 
   const displayName = useMemo(
@@ -48,171 +51,170 @@ const Navbar = () => {
   )
 
   return (
-    <>
-      {/* Mobile Menu Trigger Button (Top Left on Mobile, shown only when menu is closed) */}
-      {!mobileOpen && (
-        <div className="md:hidden fixed top-4 left-4 z-50">
-          <button
-            type="button"
-            onClick={openMobileMenu}
-            className="p-3 bg-[#111110] text-[#F8F6F1] border border-[#111110] rounded-xl shadow-lg cursor-pointer flex items-center justify-center transition-all hover:bg-[#2b2b27]"
-            aria-label="Open navigation drawer"
-          >
-            <FiMenu size={20} />
-          </button>
-        </div>
-      )}
-
-      {/* Mobile Backdrop */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 md:hidden transition-opacity duration-300"
+    <header className="sticky top-0 z-50 w-full h-[76px] bg-[#F8F6F1]/95 backdrop-blur-md border-b border-[#e2e0d6] transition-all select-none">
+      <div className="max-w-[1440px] h-full mx-auto px-6 sm:px-10 lg:px-12 flex items-center justify-between gap-6">
+        
+        {/* Brand Header / Logo strictly matching image: // CAREER */}
+        <Link
+          to="/"
           onClick={closeMobileMenu}
-        />
-      )}
+          className="flex items-center gap-1.5 font-sans font-black tracking-tight text-[#111110] text-xl sm:text-2xl no-underline group shrink-0"
+        >
+          <span className="text-[#111110] font-mono font-black text-xl sm:text-2xl">//</span>
+          <span className="tracking-tight uppercase font-extrabold">CAREER</span>
+        </Link>
 
-      {/* Left Side Vertical Navigation Sidebar */}
-      <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-60 bg-[#F8F6F1] border-r border-[#e2e0d6] flex flex-col shrink-0 transition-transform duration-300 ease-out select-none shadow-2xl md:shadow-none ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
-      >
-        {/* Brand Header */}
-        <div className="h-[72px] px-6 flex items-center justify-between border-b border-[#e2e0d6] shrink-0">
-          <Link
-            to="/"
-            onClick={closeMobileMenu}
-            className="flex items-center gap-1 font-sans font-black tracking-tight text-[#111110] text-xl no-underline group"
-          >
-            <span className="text-[#88857d] font-mono font-normal group-hover:text-[#111110] transition-colors">//</span>
-            <span>CAREER Ai</span>
-          </Link>
-
-          {/* Close button on mobile left drawer */}
-          <button
-            type="button"
-            onClick={closeMobileMenu}
-            className="md:hidden p-2 text-[#66645e] hover:text-[#111110] hover:bg-[#ebe8df] rounded-lg transition-colors cursor-pointer border border-[#e2e0d6]"
-            aria-label="Close menu"
-          >
-            <FiX size={18} />
-          </button>
-        </div>
-
-        {/* Vertical Navigation Links with spacious margins, padding, and staggered entrance animation */}
-        <nav className="flex-1 px-4 py-6 space-y-3 overflow-y-auto no-scrollbar">
-          <div className="px-2 pb-3 font-mono text-[10px] font-semibold text-[#88857d] uppercase tracking-widest">
-            // NAVIGATION
-          </div>
-
-          {NAV_LINKS.map((item, index) => {
-            const Icon = item.icon
+        {/* Central Navigation Links */}
+        <nav className="hidden lg:flex items-center gap-2 lg:gap-5 h-full">
+          {NAV_LINKS.map((item) => {
             return (
-              <div
-                key={item.path}
-                className="mb-1"
-                style={{
-                  animation: mobileOpen ? `slideInLeft 0.35s ease-out ${index * 0.05}s both` : 'none'
-                }}
+              <NavLink
+                key={item.name + item.path}
+                to={item.path}
+                end={item.path === '/'}
+                className={({ isActive }) =>
+                  `px-3 py-1.5 rounded-lg font-sans text-xs font-semibold tracking-wide transition-all duration-200 no-underline ${
+                    isActive
+                      ? 'text-[#111110] font-bold border-b-2 border-[#111110] rounded-none'
+                      : 'text-[#66645e] hover:text-[#111110]'
+                  }`
+                }
               >
-                <NavLink
-                  to={item.path}
-                  end={item.path === '/'}
-                  onClick={closeMobileMenu}
-                  className={({ isActive }) =>
-                    `flex items-center gap-4 px-4 py-3.5 rounded-xl font-sans text-[14.5px] font-medium transition-all duration-200 no-underline group ${
-                      isActive
-                        ? 'bg-[#111110] text-[#F8F6F1] font-semibold shadow-md translate-x-0.5'
-                        : 'text-[#55534e] hover:bg-[#eae7dc] hover:text-[#111110]'
-                    }`
-                  }
-                >
-                  {({ isActive }) => (
-                    <>
-                      <div
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                          isActive
-                            ? 'bg-[#262522] text-[#F8F6F1]'
-                            : 'bg-transparent text-[#66645e] group-hover:text-[#111110] group-hover:bg-[#dfdcd0]'
-                        }`}
-                      >
-                        <Icon size={19} />
-                      </div>
-                      <span className="tracking-wide">{item.name}</span>
-                    </>
-                  )}
-                </NavLink>
-              </div>
+                <span>{item.name}</span>
+              </NavLink>
             )
           })}
         </nav>
 
-        {/* Bottom Section: LOGIN Card with Animated SVG Avatar OR Logged In User Profile Card */}
-        <div className="p-4 border-t border-[#e2e0d6] shrink-0 bg-[#F8F6F1]">
+        {/* Right Section: Login Link + Try Now Black Button */}
+        <div className="flex items-center gap-4 sm:gap-6 shrink-0">
           {isAuthenticated ? (
-            /* Logged in User Card with Animated SVG Avatar */
-            <Link
-              to="/profile"
-              onClick={closeMobileMenu}
-              className="no-underline flex items-center justify-between gap-3 p-3 bg-[#efece4] rounded-xl border border-[#e2e0d6] hover:border-[#111110] transition-colors group"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                {/* Animated SVG Avatar replacing static PD initials */}
-                <div className="w-10 h-10 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+            <div className="flex items-center gap-3">
+              <Link
+                to="/profile"
+                onClick={closeMobileMenu}
+                className="no-underline flex items-center gap-2.5 p-1.5 pl-3 bg-[#efece4] rounded-full border border-[#e2e0d6] hover:border-[#111110] transition-all group"
+              >
+                <div className="w-7 h-7 flex items-center justify-center shrink-0">
                   <img
                     src={bloubAvatarSvg}
-                    alt="User Animated Avatar"
-                    className="w-full h-full object-contain pointer-events-none select-none drop-shadow-xs"
+                    alt="User Avatar"
+                    className="w-full h-full object-contain pointer-events-none select-none"
                   />
                 </div>
-                <div className="min-w-0">
+                <div className="hidden sm:block min-w-0 pr-2">
                   <div className="font-mono font-bold text-xs text-[#111110] uppercase truncate">
                     {displayName}
                   </div>
-                  <div className="font-mono text-[10px] text-[#66645e] truncate">
-                    {user?.email}
-                  </div>
                 </div>
-              </div>
+              </Link>
+
               <button
                 type="button"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  handleLogout()
-                }}
-                className="p-1.5 text-[#66645e] hover:text-[#ef4444] transition-colors cursor-pointer bg-transparent border-0 shrink-0"
+                onClick={handleLogout}
+                className="p-2 text-[#66645e] hover:text-[#ef4444] rounded-full transition-colors cursor-pointer bg-transparent"
                 title="Logout"
               >
                 <FiLogOut size={18} />
               </button>
-            </Link>
+            </div>
           ) : (
-            /* Animated SVG Avatar Box with OVERLAID / INTEGRATED LOGIN Button */
-            <div className="relative flex flex-col items-center bg-[#efece4] p-3.5 rounded-xl border border-[#e2e0d6] text-center">
-              {/* Animated SVG Avatar (No Black Background) */}
-              <div className="relative w-16 h-16 flex items-center justify-center mb-2">
-                <img
-                  src={bloubAvatarSvg}
-                  alt="Animated Avatar Login"
-                  className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
-                />
-              </div>
-
-              {/* Overlaid Login Button */}
+            <div className="flex items-center gap-4">
               <Link
                 to="/login"
                 onClick={closeMobileMenu}
-                className="w-full h-10 btn-primary-dark font-mono font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 no-underline rounded-lg shadow-md hover:scale-[1.02] transition-transform"
+                className="font-sans text-xs font-bold text-[#111110] hover:text-black no-underline"
               >
-                <span>LOGIN</span>
-                <FiArrowRight size={15} />
+                Login
+              </Link>
+              <Link
+                to="/register"
+                onClick={closeMobileMenu}
+                className="no-underline px-5 py-2.5 bg-[#111110] text-[#F8F6F1] font-sans font-bold text-xs rounded-full hover:bg-[#262522] shadow-sm transition-all"
+              >
+                Try Now
+              </Link>
+            </div>
+          )}
+
+          {/* Mobile Hamburger Trigger Button */}
+          <button
+            type="button"
+            onClick={toggleMobileMenu}
+            className="lg:hidden p-2 text-[#111110] bg-[#efece4] border border-[#e2e0d6] rounded-xl cursor-pointer flex items-center justify-center hover:bg-[#e4e1d7] transition-colors"
+            aria-label="Toggle navigation menu"
+          >
+            {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown Panel */}
+      {mobileOpen && (
+        <div className="lg:hidden bg-[#F8F6F1] border-b border-[#e2e0d6] px-6 py-6 shadow-2xl animate-in slide-in-from-top duration-200">
+          <nav className="flex flex-col gap-3 py-2">
+            {NAV_LINKS.map((item) => {
+              return (
+                <NavLink
+                  key={item.name + item.path}
+                  to={item.path}
+                  end={item.path === '/'}
+                  onClick={closeMobileMenu}
+                  className={({ isActive }) =>
+                    `px-4 py-2.5 rounded-xl font-sans text-sm font-semibold tracking-wide transition-all duration-200 no-underline ${
+                      isActive
+                        ? 'bg-[#111110] text-[#F8F6F1] font-bold'
+                        : 'text-[#55534e] hover:bg-[#eae7dc] hover:text-[#111110]'
+                    }`
+                  }
+                >
+                  <span>{item.name}</span>
+                </NavLink>
+              )
+            })}
+          </nav>
+
+          {isAuthenticated ? (
+            <div className="pt-4 border-t border-[#e2e0d6] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 flex items-center justify-center">
+                  <img src={bloubAvatarSvg} alt="Avatar" className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <div className="font-mono font-bold text-xs text-[#111110] uppercase">{displayName}</div>
+                  <div className="font-mono text-[10px] text-[#66645e]">{user?.email}</div>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="px-3.5 py-2 bg-[#efece4] text-[#ef4444] font-mono text-xs font-bold rounded-xl border border-[#e2e0d6] flex items-center gap-1.5 cursor-pointer"
+              >
+                <FiLogOut size={14} />
+                <span>LOGOUT</span>
+              </button>
+            </div>
+          ) : (
+            <div className="pt-4 border-t border-[#e2e0d6] flex flex-col gap-2">
+              <Link
+                to="/login"
+                onClick={closeMobileMenu}
+                className="w-full py-3 bg-[#efece4] text-[#111110] font-sans font-bold text-xs text-center rounded-xl no-underline"
+              >
+                LOGIN
+              </Link>
+              <Link
+                to="/register"
+                onClick={closeMobileMenu}
+                className="w-full py-3 bg-[#111110] text-[#F8F6F1] font-sans font-bold text-xs text-center rounded-xl no-underline"
+              >
+                TRY NOW
               </Link>
             </div>
           )}
         </div>
-      </aside>
-    </>
+      )}
+    </header>
   )
 }
 
