@@ -14,7 +14,7 @@ const LoginPage = () => {
 
     useEffect(() => {
         if (user) {
-            navigate('/overview', { replace: true })
+            navigate('/', { replace: true })
         }
     }, [user, navigate])
 
@@ -23,7 +23,7 @@ const LoginPage = () => {
         setFormError('')
         const res = await login(email, password)
         if (res.success) {
-            navigate('/overview')
+            navigate('/')
         } else {
             setFormError(res.message || 'Failed to sign in. Please check your credentials.')
         }

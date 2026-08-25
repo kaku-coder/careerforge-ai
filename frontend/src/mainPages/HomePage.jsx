@@ -121,6 +121,7 @@ const ScrollSection = ({
   isVideoPhase = true,
   videoSrc,
   reverse = false,
+  stageCtaLink = '/register',
   videoTag = '// AI POWERED',
   videoTitle = <>Your Career,<br />Our Intelligence.</>,
   videoSubtitle = 'AI-powered system to analyze, prepare and accelerate your career every step of the way.',
@@ -138,9 +139,9 @@ const ScrollSection = ({
   )
   const activeStageIndex = foundIndex === -1 ? (progress < stages[0].range[0] ? 0 : stages.length - 1) : foundIndex
 
-  const splitT = Math.max(0, Math.min(1, (progress - 0.02) / 0.08))
+  const splitT = Math.max(0, Math.min(1, (progress - 0.03) / 0.1))
   const showVideo = isVideoPhase && progress >= 0.82
-  const ease = 'cubic-bezier(0.16, 1, 0.3, 1)'
+  const ease = 'cubic-bezier(0.22, 1, 0.36, 1)'
 
   if (isMobile) {
     return (
@@ -148,28 +149,28 @@ const ScrollSection = ({
         <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#F8F6F1]">
 
           {showVideo && (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-6 px-6">
+            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 px-6">
               <video
                 src={videoSrc}
                 autoPlay loop muted playsInline
-                className="w-full max-w-sm rounded-2xl shadow-xl object-cover"
+                className="w-full max-w-sm rounded-xl shadow-xl object-cover"
                 style={{ aspectRatio: '16/10' }}
               />
-              <div className="space-y-3 text-center">
+              <div className="space-y-2.5 text-center">
                 <div className="font-mono text-[10px] font-bold text-[#88857d] uppercase tracking-[0.2em]">
                   {videoTag}
                 </div>
-                <h2 className="font-sans font-black text-2xl text-[#111110] tracking-tight leading-[1.1]">
+                <h2 className="font-sans font-black text-xl text-[#111110] tracking-tight leading-[1.1]">
                   {videoTitle}
                 </h2>
-                <p className="font-sans text-xs text-[#66645e] max-w-xs mx-auto leading-relaxed">
+                <p className="font-sans text-[11px] text-[#66645e] max-w-xs mx-auto leading-relaxed">
                   {videoSubtitle}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3 pt-2">
-                  <a href={videoCta1Link} className="no-underline inline-flex items-center gap-2 px-5 py-2.5 bg-[#111110] text-[#F8F6F1] font-mono text-[10px] font-bold uppercase tracking-wider rounded-lg">
-                    <span>{videoCta1Text}</span><FiArrowRight size={12} />
+                  <a href={videoCta1Link} className="no-underline inline-flex items-center gap-2 px-6 py-3 bg-[#111110] text-[#F8F6F1] font-mono text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
+                    <span>{videoCta1Text}</span><FiArrowRight size={13} />
                   </a>
-                  <a href={videoCta2Link} className="no-underline inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#e2e0d6] text-[#111110] font-mono text-[10px] font-bold uppercase tracking-wider rounded-lg">
+                  <a href={videoCta2Link} className="no-underline inline-flex items-center gap-2 px-5 py-3 bg-[#F8F6F1] border border-[#d6d3c7] text-[#111110] font-mono text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-2xs hover:bg-[#efece4] transition-all">
                     <span>{videoCta2Text}</span>
                   </a>
                 </div>
@@ -210,8 +211,8 @@ const ScrollSection = ({
                       <p className="font-sans text-[11px] text-[#66645e] leading-relaxed mb-4">
                         {stage.subtitle}
                       </p>
-                      <a href="/register" className="no-underline inline-flex items-center gap-2 px-5 py-2.5 bg-[#111110] text-[#F8F6F1] font-mono text-[10px] font-bold uppercase tracking-wider rounded-lg">
-                        <span>Get Started</span><FiArrowRight size={12} />
+                      <a href={stageCtaLink} className="no-underline inline-flex items-center gap-2.5 px-6 py-3 bg-[#111110] text-[#F8F6F1] font-mono text-[11px] font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
+                        <span>Get Started</span><FiArrowRight size={13} />
                       </a>
                     </div>
                   )
@@ -221,13 +222,14 @@ const ScrollSection = ({
 
             {/* Mobile: Image sequence on bottom */}
             <div className="flex-[0.55] flex items-start justify-center px-5 pt-1">
-              <div
-                className="relative w-full h-full max-h-[50vh] rounded-xl overflow-hidden shadow-lg"
-                style={{
-                  opacity: splitT,
-                  transform: `translateY(${(1 - splitT) * 20}%)`,
-                  transition: `opacity 0.8s ${ease}, transform 0.8s ${ease}`,
-                }}
+            <div
+              className="relative w-full h-full max-h-[50vh] rounded-xl overflow-hidden shadow-lg"
+              style={{
+                opacity: splitT,
+                transform: `translateY(${(1 - splitT) * 15}%)`,
+                transition: `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
+                willChange: 'opacity, transform',
+              }}
               >
                 {frames.map((src, index) => (
                   <img
@@ -261,16 +263,16 @@ const ScrollSection = ({
       <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#F8F6F1]">
 
         {showVideo && (
-          <div className="absolute inset-0 z-30 flex items-center gap-12 lg:gap-16 px-10 sm:px-16 lg:px-24">
-            <div className="flex-1 flex justify-center">
+          <div className="absolute inset-0 z-30 flex items-center justify-center gap-12 lg:gap-20 px-8 sm:px-14 lg:px-20">
+            <div className="flex-1 flex justify-end">
               <video
                 src={videoSrc}
                 autoPlay loop muted playsInline
-                className="w-full max-w-lg rounded-2xl shadow-xl object-cover"
+                className="w-full max-w-lg rounded-xl shadow-xl object-cover"
                 style={{ aspectRatio: '16/10' }}
               />
             </div>
-            <div className="flex-1 space-y-5">
+            <div className="flex-1 space-y-4">
               <div className="font-mono text-[10px] sm:text-xs font-bold text-[#88857d] uppercase tracking-[0.2em]">
                 {videoTag}
               </div>
@@ -281,10 +283,17 @@ const ScrollSection = ({
                 {videoSubtitle}
               </p>
               <div className="flex flex-wrap gap-4 pt-2">
-                <a href={videoCta1Link} className="no-underline inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
-                  <span>{videoCta1Text}</span><FiArrowRight size={14} />
+                <a
+                  href={videoCta1Link}
+                  className="no-underline inline-flex items-center gap-3 px-8 py-4 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-[#262522] hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all group cursor-pointer border border-[#111110]"
+                >
+                  <span>{videoCta1Text}</span>
+                  <FiArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
                 </a>
-                <a href={videoCta2Link} className="no-underline inline-flex items-center gap-2.5 px-6 py-3.5 bg-white border border-[#e2e0d6] text-[#111110] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-xs hover:bg-[#efece4] transition-all">
+                <a
+                  href={videoCta2Link}
+                  className="no-underline inline-flex items-center gap-3 px-7 py-4 bg-[#F8F6F1] border border-[#d6d3c7] text-[#111110] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-2xs hover:bg-[#efece4] hover:border-[#111110] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer"
+                >
                   <span>{videoCta2Text}</span>
                 </a>
               </div>
@@ -300,52 +309,63 @@ const ScrollSection = ({
             pointerEvents: showVideo ? 'none' : 'auto',
           }}
         >
-          {/* Text column */}
+          {/* Text column — centered on page load, splits to side on scroll */}
           <div
             className="absolute top-0 h-full flex items-center overflow-hidden"
             style={{
-              left: reverse ? 'auto' : 0,
-              right: reverse ? 0 : 'auto',
-              width: '42%',
-              paddingLeft: reverse ? 'auto' : '6%',
-              paddingRight: reverse ? '6%' : 'auto',
-              justifyContent: reverse ? 'flex-end' : 'flex-start',
-              transition: `padding 0.8s ${ease}`,
+              left: splitT < 1 ? 0 : (reverse ? 'auto' : 0),
+              right: splitT < 1 ? 0 : (reverse ? 0 : 'auto'),
+              width: splitT < 1 ? '100%' : '42%',
+              paddingLeft: splitT < 1 ? '2rem' : (reverse ? 'auto' : '6%'),
+              paddingRight: splitT < 1 ? '2rem' : (reverse ? '6%' : 'auto'),
+              justifyContent: splitT < 1 ? 'center' : (reverse ? 'flex-end' : 'flex-start'),
+              transition: `width 0.8s ${ease}, padding 0.8s ${ease}, left 0.8s ${ease}, right 0.8s ${ease}`,
             }}
           >
             <div
-              className="w-full"
+              className="w-full relative h-full flex items-center justify-center"
               style={{
-                maxWidth: '440px',
-                transform: `translateX(${splitT < 1 ? (1 - splitT) * (reverse ? -10 : 10) : 0}%)`,
-                transition: `transform 0.8s ${ease}`,
+                maxWidth: splitT < 1 ? '720px' : '440px',
+                transition: `max-width 0.8s ${ease}`,
               }}
             >
               {stages.map((stage, i) => {
                 const isVisible = activeStageIndex === i
+                const isCentered = splitT < 1
                 return (
                   <div
                     key={i}
-                    className="absolute"
-                    style={{
-                      opacity: isVisible ? 1 : 0,
-                      transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-                      transition: `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
-                      pointerEvents: isVisible ? 'auto' : 'none',
-                    }}
+                    className={`absolute w-full px-4 flex flex-col ${
+                      isCentered ? 'items-center text-center' : 'items-start text-left'
+                    }`}
+                      style={{
+                        opacity: isVisible ? 1 : 0,
+                        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                        transition: `opacity 0.6s ${ease}, transform 0.6s ${ease}`,
+                        pointerEvents: isVisible ? 'auto' : 'none',
+                        willChange: 'opacity, transform',
+                      }}
                   >
-                    <div className="font-mono text-[10px] sm:text-xs font-bold text-[#88857d] uppercase tracking-[0.2em] mb-5">
+                    <div className="font-mono text-[10px] sm:text-xs font-bold text-[#88857d] uppercase tracking-[0.2em] mb-4">
                       {stage.tag}
                     </div>
-                    <h2 className="font-sans font-black text-3xl sm:text-4xl lg:text-5xl text-[#111110] tracking-tight leading-[1.08] mb-5">
+                    <h2 className={`font-sans font-black text-3xl sm:text-4xl lg:text-5xl text-[#111110] tracking-tight leading-[1.08] mb-4 ${
+                      isCentered ? 'text-center max-w-xl' : 'text-left max-w-lg'
+                    }`}>
                       {stage.title}
                     </h2>
-                    <p className="font-sans text-sm sm:text-base text-[#66645e] max-w-md leading-relaxed mb-8">
+                    <p className={`font-sans text-sm sm:text-base text-[#66645e] max-w-md leading-relaxed mb-8 ${
+                      isCentered ? 'text-center mx-auto' : 'text-left'
+                    }`}>
                       {stage.subtitle}
                     </p>
-                    <div>
-                      <a href="/register" className="no-underline inline-flex items-center gap-2.5 px-7 py-3.5 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#262522] transition-all">
-                        <span>Get Started</span><FiArrowRight size={14} />
+                    <div className={`w-full flex ${isCentered ? 'justify-center' : 'justify-start'}`}>
+                      <a
+                        href={stageCtaLink}
+                        className="no-underline inline-flex items-center gap-3 px-8 py-4 bg-[#111110] text-[#F8F6F1] font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg hover:bg-[#262522] hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 transition-all group cursor-pointer border border-[#111110]"
+                      >
+                        <span>Get Started</span>
+                        <FiArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-200" />
                       </a>
                     </div>
                   </div>
@@ -367,11 +387,12 @@ const ScrollSection = ({
             }}
           >
             <div
-              className="relative w-full h-[85vh] rounded-2xl overflow-hidden shadow-lg"
+              className="relative w-full h-[85vh] rounded-xl overflow-hidden shadow-lg"
               style={{
                 opacity: splitT,
-                transform: `translateX(${(1 - splitT) * (reverse ? -40 : 40)}%)`,
-                transition: `opacity 0.8s ${ease}, transform 0.8s ${ease}`,
+                transform: `translateX(${(1 - splitT) * (reverse ? -35 : 35)}%)`,
+                transition: `opacity 0.7s ${ease}, transform 0.7s ${ease}`,
+                willChange: 'opacity, transform',
               }}
             >
               {frames.map((src, index) => (
@@ -414,11 +435,12 @@ const HomePage = () => {
         stages={INTERVIEW_STAGES}
         isVideoPhase={true}
         videoSrc={interviewVideo}
+        stageCtaLink="/interview"
         videoTag="// AI INTERVIEW"
         videoTitle={<>Your Career,<br />Our Intelligence.</>}
         videoSubtitle="AI-powered system to analyze, prepare and accelerate your career every step of the way."
         videoCta1Text="Get Started"
-        videoCta1Link="/register"
+        videoCta1Link="/interview"
         videoCta2Text="Try Interview"
         videoCta2Link="/interview"
       />
@@ -430,6 +452,7 @@ const HomePage = () => {
         isVideoPhase={true}
         videoSrc={resumeVideo}
         reverse={true}
+        stageCtaLink="/resume"
         videoTag="// ATS RESUME ENGINE"
         videoTitle={<>Craft a Resume<br />That Gets Interviews.</>}
         videoSubtitle="AI-powered system to analyze, format and optimize your resume for maximum ATS pass rates."

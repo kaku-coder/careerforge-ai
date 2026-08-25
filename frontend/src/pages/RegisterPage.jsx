@@ -15,7 +15,7 @@ const RegisterPage = () => {
 
     useEffect(() => {
         if (user) {
-            navigate('/overview', { replace: true })
+            navigate('/', { replace: true })
         }
     }, [user, navigate])
 
@@ -24,7 +24,7 @@ const RegisterPage = () => {
         setFormError('')
         const res = await register(name, email, password)
         if (res.success) {
-            navigate('/overview')
+            navigate('/')
         } else {
             setFormError(res.message || 'Failed to create account. Please try again.')
         }
