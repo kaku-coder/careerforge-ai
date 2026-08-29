@@ -77,11 +77,7 @@ export const router = createBrowserRouter([
       },
       {
         path: 'resume',
-        element: (
-          <ProtectedRoute>
-            <ResumePage />
-          </ProtectedRoute>
-        ),
+        element: <ResumePage />,
       },
       {
         path: 'scorer',

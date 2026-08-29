@@ -148,7 +148,7 @@ const ScrollSection = ({
   if (isMobile) {
     return (
       <div ref={containerRef} className="relative" style={{ height: '600vh' }}>
-        <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#F8F6F1]">
+        <div className="sticky top-[76px] w-full h-[calc(100vh-76px)] overflow-hidden bg-[#F8F6F1]">
 
           {showVideo && (
             <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-5 px-6">
@@ -169,10 +169,10 @@ const ScrollSection = ({
                   {videoSubtitle}
                 </p>
                 <div className="flex flex-wrap justify-center gap-3 pt-2">
-                  <Link to={videoCta1Link} className="btn-tactile-dark-3d text-[11px] px-5 py-2.5 rounded-xl">
+                  <Link to={videoCta1Link} className="btn-tactile-dark-3d">
                     <span>{videoCta1Text}</span><FiArrowRight size={13} />
                   </Link>
-                  <Link to={videoCta2Link} className="btn-tactile-3d text-[11px] px-5 py-2.5 rounded-xl">
+                  <Link to={videoCta2Link} className="btn-tactile-3d">
                     <span>{videoCta2Text}</span>
                   </Link>
                 </div>
@@ -213,7 +213,7 @@ const ScrollSection = ({
                       <p className="font-sans text-[11px] text-[#66645e] leading-relaxed mb-3.5 max-w-xs">
                         {stage.subtitle}
                       </p>
-                      <Link to={stageCtaLink} className="btn-tactile-dark-3d text-[11px] px-5 py-2.5 rounded-xl">
+                      <Link to={stageCtaLink} className="btn-tactile-dark-3d">
                         <span>Get Started</span><FiArrowRight size={13} />
                       </Link>
                     </div>
@@ -262,7 +262,7 @@ const ScrollSection = ({
   // Desktop layout — image takes 58%, text takes 42%
   return (
     <div ref={containerRef} className="relative" style={{ height: '600vh' }}>
-      <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#F8F6F1]">
+      <div className="sticky top-[76px] w-full h-[calc(100vh-76px)] overflow-hidden bg-[#F8F6F1]">
 
         {showVideo && (
           <div className="absolute inset-0 z-30 flex items-center justify-center gap-12 lg:gap-20 px-8 sm:px-14 lg:px-20">

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiArrowRight } from 'react-icons/fi'
+import { useAuth } from '../context/AuthContext'
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
 const range01 = (p, s, e) => clamp((p - s) / (e - s), 0, 1)
@@ -78,13 +79,13 @@ const Connector = ({ lit }) => (
   </div>
 )
 
-const ResumeDoc = ({ className = 'w-[300px]', faded = false }) => (
+const ResumeDoc = ({ className = 'w-[300px]', faded = false, name = 'CAREER USER' }) => (
   <div
     className={`${className} bg-[#FCFBF7] border border-[#111110]/25 px-6 py-5 font-sans shadow-[0_18px_60px_-16px_rgba(17,17,16,0.30)] select-none ${
       faded ? 'opacity-35' : ''
     }`}
   >
-    <div className="font-black text-lg leading-none tracking-tight text-[#111110]">PRAKASH</div>
+    <div className="font-black text-lg leading-none tracking-tight text-[#111110]">{name}</div>
     <div className="text-[9px] uppercase tracking-[0.25em] text-[#66645e] mt-1">
       Full Stack Developer
     </div>
@@ -104,6 +105,9 @@ const ResumeDoc = ({ className = 'w-[300px]', faded = false }) => (
 const ResumeIntelligenceSection = () => {
   const ref = useRef(null)
   const progress = useScrollProgress(ref)
+  const { user } = useAuth()
+
+  const userName = (user?.username || user?.name || user?.email?.split('@')[0] || 'CAREER USER').toUpperCase()
 
   const stages = [
     {
@@ -166,7 +170,7 @@ const ResumeIntelligenceSection = () => {
             <Tag>// SCAN · AI INGEST</Tag>
             <div className="relative">
               <div className="relative overflow-hidden">
-                <ResumeDoc className="w-[290px] sm:w-[330px]" />
+                <ResumeDoc className="w-[290px] sm:w-[330px]" name={userName} />
                 <div
                   className="absolute left-0 right-0 h-[2px] bg-emerald-500 pointer-events-none"
                   style={{ top: `${scanY}%`, boxShadow: '0 0 14px 3px rgba(16,185,129,0.5)' }}
@@ -248,7 +252,7 @@ const ResumeIntelligenceSection = () => {
                 transform: `translateX(-${t * 70}px) scale(${1 - t * 0.08})`,
               }}
             >
-              <ResumeDoc className="w-[320px]" faded />
+              <ResumeDoc className="w-[320px]" faded name={userName} />
             </div>
           </div>
 
@@ -528,7 +532,7 @@ const ResumeIntelligenceSection = () => {
               transform: `translate(-50%, -50%) scale(${1 - t * 0.45}) translateY(${t * 28}px)`,
             }}
           >
-            <ResumeDoc className="w-[260px]" />
+            <ResumeDoc className="w-[260px]" name={userName} />
           </div>
 
           <div

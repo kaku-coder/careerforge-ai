@@ -1,19 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  FiArrowRight,
-  FiUploadCloud,
-  FiCheck,
-  FiAlertTriangle,
-  FiX,
-  FiCpu,
-  FiLock,
-  FiChevronRight,
-  FiCompass,
-  FiMessageSquare,
-  FiBarChart2
-} from 'react-icons/fi'
-import { HiSparkles } from 'react-icons/hi'
+import { FiArrowRight, FiUploadCloud, FiCpu } from 'react-icons/fi'
 
 function useScrollProgress(ref) {
   const [progress, setProgress] = useState(0)

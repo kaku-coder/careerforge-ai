@@ -1,10 +1,8 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import {
-  FiUploadCloud,
-  FiUpload,
   FiCheck,
-  FiX,
   FiAlertCircle,
   FiArrowRight,
   FiFileText,
@@ -15,15 +13,13 @@ import {
   FiBarChart2,
   FiChevronDown,
   FiCpu,
-  FiArrowLeft,
-  FiShield,
-  FiTrash2
+  FiArrowLeft
 } from 'react-icons/fi'
 import { HiSparkles } from 'react-icons/hi'
 
 const API_BASE_URL = 'http://localhost:5000/api/resume'
 
-// Semi-circle Arc Gauge Component for ATS Score (Used only on report page)
+// High-Tech Semi-circle Arc Gauge Component for ATS Score
 const AtsGauge = ({ score = 84 }) => {
   const radius = 70
   const strokeWidth = 14
@@ -31,33 +27,33 @@ const AtsGauge = ({ score = 84 }) => {
   const strokeDashoffset = circumference - (score / 100) * circumference
 
   return (
-    <div className="relative flex flex-col items-center justify-center">
-      <svg width="180" height="110" viewBox="0 0 180 110" className="overflow-visible">
+    <div className="relative flex flex-col items-center justify-center py-2">
+      <svg width="190" height="115" viewBox="0 0 190 115" className="overflow-visible">
         <path
-          d="M 20 95 A 70 70 0 0 1 160 95"
+          d="M 20 100 A 75 75 0 0 1 170 100"
           fill="none"
           stroke="#e2e0d6"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
         />
         <path
-          d="M 20 95 A 70 70 0 0 1 160 95"
+          d="M 20 100 A 75 75 0 0 1 170 100"
           fill="none"
           stroke="#059669"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
-          className="transition-all duration-1000 ease-out"
+          className="transition-all duration-1000 ease-out drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]"
         />
       </svg>
-      <div className="absolute bottom-1 flex flex-col items-center justify-center text-center">
-        <div className="flex items-baseline font-mono font-black text-4xl text-[#111110]">
+      <div className="absolute bottom-2 flex flex-col items-center justify-center text-center">
+        <div className="flex items-baseline font-mono font-black text-4xl sm:text-5xl text-[#111110] tracking-tight">
           {score}
           <span className="text-sm font-semibold text-[#88857d] ml-1">/100</span>
         </div>
-        <div className="font-mono text-xs font-bold text-emerald-600 tracking-wide mt-0.5">
-          {score >= 80 ? 'Good Score' : score >= 60 ? 'Moderate Score' : 'Needs Work'}
+        <div className="font-mono text-[11px] font-extrabold text-emerald-700 tracking-wider uppercase mt-0.5">
+          {score >= 80 ? '● Excellent Score' : score >= 60 ? '● Moderate Score' : '● Needs Work'}
         </div>
       </div>
     </div>
@@ -65,12 +61,8 @@ const AtsGauge = ({ score = 84 }) => {
 }
 
 const ResumePage = () => {
-  // Navigation & Upload Workflow States:
-  // 'idle' -> Initial Upload Box with SELECT RESUME button
-  // 'parsing' -> Parsing Progress Bar & Technical Steps
-  // 'success' -> RESUME READY + ANALYZE RESUME button
-  // 'dashboard' -> Full ATS Score & Resume Intelligence Analysis Page
-  const [uploadState, setUploadState] = useState('idle')
+  // View States: 'upload' -> 'parsing' -> 'success' -> 'dashboard'
+  const [viewState, setViewState] = useState('upload')
 
   const [resumes, setResumes] = useState([])
   const [selectedId, setSelectedId] = useState('')
@@ -96,7 +88,7 @@ const ResumePage = () => {
     skillsScore: 81,
     experienceScore: 76,
     roleMatchScore: 81,
-    summary: 'Your resume is well-structured and contains relevant skills. Improve technical depth and add more impact-driven points.',
+    summary: 'Your resume is exceptionally well-structured with high technical keyword density. Enhancing quantifiable metrics in experience bullets will push your score above 90%.',
     candidate: {
       name: 'PRAKASH DAS',
       title: 'FULL STACK DEVELOPER',
@@ -130,16 +122,16 @@ const ResumePage = () => {
       { name: 'Kubernetes', status: 'fail' }
     ],
     strengths: [
-      { title: 'Strong use of technical keywords', subtitle: 'Well optimized for ATS.' },
-      { title: 'Good skills relevance', subtitle: 'Your skills match the target role.' },
-      { title: 'Clear experience section', subtitle: 'Easy to read and well-structured.' },
-      { title: 'Proper formatting', subtitle: 'Clean layout with proper sections.' }
+      { title: 'Strong technical keyword density', subtitle: 'Optimized for modern ATS algorithms.' },
+      { title: 'High skills relevance match', subtitle: 'Skills directly match Full Stack roles.' },
+      { title: 'Clean structural hierarchy', subtitle: 'Easy to scan by both human & AI recruiters.' },
+      { title: 'Proper section formatting', subtitle: 'Standard bullet points and chronological order.' }
     ],
     gaps: [
-      { title: 'Lack of metrics', subtitle: 'Add quantifiable impact in experience.' },
-      { title: 'System Design exposure', subtitle: 'Add more system design related projects.' },
-      { title: 'Cloud experience', subtitle: 'Include AWS/GCP related experience.' },
-      { title: 'Advanced Technical Skills', subtitle: 'Consider adding Redis, Kafka, etc.' }
+      { title: 'Lack of quantifiable impact metrics', subtitle: 'Add numbers like % latency reduction or revenue impact.' },
+      { title: 'Limited System Design bullets', subtitle: 'Highlight distributed system architectures.' },
+      { title: 'Cloud Infrastructure details', subtitle: 'Mention specific AWS services used (S3, EC2, CloudFront).' },
+      { title: 'Advanced Caching & Queues', subtitle: 'Add Redis, Kafka, or RabbitMQ experience.' }
     ],
     keywords: [
       { name: 'JavaScript', found: true },
@@ -172,7 +164,7 @@ const ResumePage = () => {
         setSelectedId(data.data[0]._id)
       }
     } catch {
-      // Keep silent fallback
+      // Silent fallback
     }
   }, [])
 
@@ -184,29 +176,28 @@ const ResumePage = () => {
   const processUploadFlow = async (file) => {
     const fileName = file ? file.name.toUpperCase().replace(/\s+/g, '_') : 'PRAKASH_DAS_RESUME.PDF'
     setUploadedFileName(fileName)
-    setUploadState('parsing')
-    setParseProgress(10)
+    setViewState('parsing')
+    setParseProgress(12)
     setParsingStep(1)
     setUploadStatus(null)
 
-    // Simulate technical parsing steps
-    let currentP = 10
+    let currentP = 12
     const interval = setInterval(() => {
-      currentP += 18
+      currentP += 22
       if (currentP >= 100) {
         clearInterval(interval)
         setParseProgress(100)
         setParsingStep(5)
         setTimeout(() => {
-          setUploadState('success')
-        }, 500)
+          setViewState('success')
+        }, 450)
       } else {
         setParseProgress(currentP)
         if (currentP >= 75) setParsingStep(4)
         else if (currentP >= 50) setParsingStep(3)
         else if (currentP >= 25) setParsingStep(2)
       }
-    }, 350)
+    }, 320)
 
     if (file) {
       const formData = new FormData()
@@ -222,7 +213,7 @@ const ResumePage = () => {
           fetchResumes()
         }
       } catch {
-        // Fallback progress state handles presentation
+        // Fallback presentation
       }
     }
   }
@@ -283,65 +274,87 @@ const ResumePage = () => {
         }))
       }
     } catch {
-      // Keep report payload
+      // Keep payload
     } finally {
       setAnalyzing(false)
     }
   }
 
   return (
-    <div className="w-full min-h-screen bg-[#F8F6F1] text-[#111110] p-4 sm:p-8 lg:p-12 font-sans select-none relative">
+    <div className="w-full min-h-screen bg-[#F8F6F1] text-[#111110] py-8 sm:py-12 px-6 sm:px-12 lg:px-20 font-sans select-none relative overflow-x-hidden">
       
-      {/* Subtle Engineering Grid Background */}
-      <div className="absolute inset-0 bg-grid-lines pointer-events-none opacity-40" />
+      {/* Background Engineering Grid */}
+      <div className="absolute inset-0 bg-grid-lines pointer-events-none opacity-30" />
 
-      <div className="max-w-[1360px] mx-auto space-y-12 relative z-10">
+      <div className="max-w-[1240px] mx-auto space-y-12 relative z-10">
 
-        {/* ════════ INITIAL UPLOAD WORKFLOW (idle | parsing | success) ════════ */}
-        {uploadState !== 'dashboard' && (
-          <div className="space-y-12 py-6 sm:py-10">
+        {/* ════════ INITIAL UPLOAD WORKFLOW (upload | parsing | success) ════════ */}
+        {viewState !== 'dashboard' && (
+          <div className="space-y-12 py-4 sm:py-6">
             
-            {/* Top Grid: Headline Left | Technical Upload Box Right */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            {/* Main 2-Column Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
               
-              {/* Left Column - Page Header */}
-              <div className="lg:col-span-6 space-y-6 text-left">
-                <div className="font-mono text-xs font-bold text-[#88857d] uppercase tracking-[0.2em]">
-                  // SYSTEM 02 / RESUME INTELLIGENCE
+              {/* Left Column - Perfectly Aligned Text Block */}
+              <div className="lg:col-span-6 space-y-5 text-left flex flex-col justify-center">
+                <div className="inline-flex items-center gap-2 font-mono text-[11px] font-bold text-[#88857d] uppercase tracking-[0.22em] border-b border-[#d5d2c8] pb-1 w-fit">
+                  <span>// SYSTEM 02</span>
+                  <span>/</span>
+                  <span className="text-[#111110]">RESUME INTELLIGENCE</span>
                 </div>
                 
                 <h1 className="font-sans font-black text-4xl sm:text-5xl lg:text-6xl text-[#111110] tracking-tight leading-[1.04] uppercase">
-                  YOUR RESUME.<br />UNDERSTOOD BY AI.
+                  YOUR RESUME.<br />
+                  <span className="text-[#111110]">UNDERSTOOD BY AI.</span>
                 </h1>
 
-                {/* Accent Short Green Line */}
-                <div className="w-10 h-1 bg-emerald-500 rounded-full" />
+                {/* Accent Short Green Line with Glow */}
+                <div className="w-12 h-1.5 bg-emerald-500 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.4)]" />
 
                 <p className="font-sans text-sm sm:text-base text-[#55534e] max-w-md leading-relaxed">
-                  Upload your resume and let the AI understand your experience, skills and career direction.
+                  Upload your resume and get AI-powered insights to improve your score and stand out.
                 </p>
 
-                {/* Technical Status Badge */}
-                <div className="pt-2">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#efece4] border border-[#d5d2c8] rounded-lg font-mono text-xs font-bold text-[#33312c]">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>RESUME ANALYSIS ENGINE / READY</span>
-                  </div>
+                {/* Left Column Dual Action Buttons matching Reference Spec */}
+                <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="btn-tactile-dark-3d px-6 py-3 rounded-xl font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-md"
+                  >
+                    <span>UPLOAD NEW RESUME</span>
+                    <span className="text-sm">↑</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setViewState('dashboard')
+                      runAtsScan()
+                    }}
+                    className="btn-tactile-3d px-6 py-3 rounded-xl font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer shadow-sm"
+                  >
+                    <span>VIEW SAMPLE REPORT</span>
+                  </button>
+                </div>
+
+                <div className="font-mono text-[11px] text-[#88857d] uppercase tracking-wider pt-1 font-semibold">
+                  Supported: PDF, DOCX • Max 5MB
                 </div>
               </div>
 
-              {/* Right Column - Main Upload Area Frame */}
-              <div className="lg:col-span-6 flex">
-                <div className="w-full bg-[#efece4]/40 border border-[#d5d2c8] rounded-2xl p-4 sm:p-6 shadow-sm relative">
+              {/* Right Column - Technical Frame with Dual Border */}
+              <div className="lg:col-span-6 flex justify-center w-full">
+                <div className="w-full bg-[#efece4]/50 border border-[#d5d2c8] rounded-2xl p-4 sm:p-7 shadow-[0_10px_30px_rgba(17,17,16,0.04)] relative backdrop-blur-sm">
                   
-                  {/* Subtle Corner Markers */}
-                  <span className="absolute top-2 left-3 font-mono text-[10px] text-[#88857d]">+</span>
-                  <span className="absolute top-2 right-3 font-mono text-[10px] text-[#88857d]">+</span>
-                  <span className="absolute bottom-2 left-3 font-mono text-[10px] text-[#88857d]">+</span>
-                  <span className="absolute bottom-2 right-3 font-mono text-[10px] text-[#88857d]">+</span>
+                  {/* Precision Corner Crosshair Markers */}
+                  <span className="absolute top-3 left-4 font-mono text-xs text-[#88857d] font-bold select-none">+</span>
+                  <span className="absolute top-3 right-4 font-mono text-xs text-[#88857d] font-bold select-none">+</span>
+                  <span className="absolute bottom-3 left-4 font-mono text-xs text-[#88857d] font-bold select-none">+</span>
+                  <span className="absolute bottom-3 right-4 font-mono text-xs text-[#88857d] font-bold select-none">+</span>
 
                   {/* ── STATE 1: IDLE UPLOAD DROPZONE ── */}
-                  {uploadState === 'idle' && (
+                  {viewState === 'upload' && (
                     <div
                       onMouseEnter={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
@@ -350,10 +363,10 @@ const ResumePage = () => {
                       onDragOver={handleDrag}
                       onDrop={handleDrop}
                       onClick={() => fileInputRef.current?.click()}
-                      className={`w-full min-h-[340px] rounded-xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-8 text-center cursor-pointer bg-[#F8F6F1]/90 hover:bg-[#F8F6F1] space-y-4 relative overflow-hidden ${
+                      className={`w-full min-h-[340px] rounded-xl border-2 border-dashed transition-all duration-300 flex flex-col items-center justify-center p-6 sm:p-8 text-center cursor-pointer bg-[#F8F6F1] space-y-4 relative overflow-hidden ${
                         dragActive || isHovered
-                          ? 'border-emerald-600 shadow-[0_0_20px_rgba(5,150,105,0.12)] scale-[1.01]'
-                          : 'border-[#b5b2a8]'
+                          ? 'border-emerald-600 shadow-[0_0_25px_rgba(5,150,105,0.15)] scale-[1.01]'
+                          : 'border-[#b5b2a8] hover:border-[#111110]'
                       }`}
                     >
                       <input
@@ -365,116 +378,102 @@ const ResumePage = () => {
                         id="ats-file-input"
                       />
 
-                      {/* Icon with subtle hover elevation */}
-                      <div className={`w-14 h-16 rounded-xl border border-[#111110] bg-[#F8F6F1] flex flex-col items-center justify-center relative shadow-sm transition-transform duration-300 ${
-                        isHovered ? '-translate-y-1.5 border-emerald-600' : ''
+                      {/* Icon Box with Elevation */}
+                      <div className={`w-14 h-16 rounded-xl border-2 border-[#111110] bg-[#F8F6F1] flex flex-col items-center justify-center relative shadow-sm transition-all duration-300 ${
+                        isHovered ? '-translate-y-2 border-emerald-600 shadow-md' : ''
                       }`}>
                         <FiFileText size={24} className={isHovered ? 'text-emerald-700' : 'text-[#111110]'} />
-                        <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center absolute -top-1 -right-1 text-[10px] font-bold">
+                        <div className="w-4 h-4 rounded-full bg-emerald-600 text-white flex items-center justify-center absolute -top-1.5 -right-1.5 text-[10px] font-black shadow-sm">
                           ↑
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <div className="font-mono font-bold text-sm sm:text-base text-[#111110] uppercase tracking-wider">
+                      <div className="space-y-1.5">
+                        <div className="font-mono font-black text-sm sm:text-base text-[#111110] uppercase tracking-wider">
                           {isHovered ? 'READY TO ANALYZE →' : 'DROP YOUR RESUME HERE'}
                         </div>
                         
-                        <div className="w-8 h-0.5 bg-emerald-500 mx-auto my-1 rounded-full" />
+                        <div className="font-sans text-xs text-[#66645e]">
+                          or click to browse
+                        </div>
 
-                        <div className="font-mono text-xs text-[#66645e] uppercase tracking-widest pt-1">
+                        <div className="font-mono text-xs text-[#66645e] uppercase tracking-widest pt-1 font-bold">
                           PDF / DOCX
                         </div>
                       </div>
 
-                      {/* SELECT RESUME Button */}
-                      <div className="pt-2">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (resumes.length > 0) {
-                              processUploadFlow(null)
-                            } else {
-                              fileInputRef.current?.click()
-                            }
-                          }}
-                          className="btn-tactile-dark-3d px-8 py-3.5 rounded-xl font-mono font-bold text-xs uppercase tracking-wider inline-flex items-center gap-2 cursor-pointer"
-                        >
-                          <span>SELECT RESUME →</span>
-                        </button>
-                      </div>
-
-                      <div className="font-mono text-[10px] text-[#88857d] uppercase tracking-widest pt-2">
-                        MAX 5MB / SINGLE DOCUMENT
-                      </div>
-
-                      <div className="font-sans text-[11px] text-[#66645e] flex items-center gap-1.5 pt-2">
-                        <span>Your resume stays private and secure</span>
+                      <div className="font-sans text-[11px] text-[#66645e] flex items-center gap-1.5 pt-3 border-t border-[#e2e0d6] w-full justify-center">
+                        <span>Your file is secure and confidential</span>
                         <FiLock size={12} className="text-[#88857d]" />
                       </div>
+
+                      {uploadStatus?.type === 'error' && (
+                        <div className="font-mono text-[11px] font-bold text-red-500 uppercase tracking-widest pt-1">
+                          {uploadStatus.text}
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {/* ── STATE 2: UPLOAD & PARSING PROGRESS ── */}
-                  {uploadState === 'parsing' && (
-                    <div className="w-full min-h-[340px] rounded-xl border border-[#111110] bg-[#F8F6F1] p-8 flex flex-col justify-between text-left space-y-6">
+                  {viewState === 'parsing' && (
+                    <div className="w-full min-h-[340px] rounded-xl border-2 border-[#111110] bg-[#F8F6F1] p-8 flex flex-col justify-between text-left space-y-6 shadow-md">
                       <div className="space-y-2">
                         <div className="font-mono text-[10px] font-bold text-emerald-700 uppercase tracking-widest flex items-center gap-2">
-                          <FiCpu size={14} className="animate-spin text-emerald-600" />
+                          <FiCpu size={15} className="animate-spin text-emerald-600" />
                           <span>RESUME UPLOADED</span>
                         </div>
-                        <div className="font-mono font-black text-lg text-[#111110] uppercase truncate">
+                        <div className="font-mono font-black text-xl text-[#111110] uppercase truncate tracking-tight">
                           {uploadedFileName}
                         </div>
                       </div>
 
-                      {/* Progress Meter */}
+                      {/* Progress Meter Bar */}
                       <div className="space-y-2 font-mono text-xs">
                         <div className="flex justify-between text-[#111110] font-bold">
                           <span>PARSING RESUME</span>
                           <span>{parseProgress}%</span>
                         </div>
-                        <div className="h-2 bg-[#efece4] border border-[#d5d2c8] rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-600 transition-all duration-300 rounded-full" style={{ width: `${parseProgress}%` }} />
+                        <div className="h-2.5 bg-[#efece4] border border-[#d5d2c8] rounded-full overflow-hidden p-0.5">
+                          <div className="h-full bg-emerald-600 transition-all duration-300 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.5)]" style={{ width: `${parseProgress}%` }} />
                         </div>
                       </div>
 
                       {/* Technical Steps Checklist */}
                       <div className="space-y-2 font-mono text-xs border-t border-[#e2e0d6] pt-4">
-                        <div className={`flex items-center gap-2 ${parsingStep >= 1 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
-                          <span>✓</span> FILE RECEIVED
+                        <div className={`flex items-center gap-2.5 ${parsingStep >= 1 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
+                          <span className="w-4 text-center">✓</span> FILE RECEIVED
                         </div>
-                        <div className={`flex items-center gap-2 ${parsingStep >= 2 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
-                          <span>{parsingStep >= 2 ? '✓' : '○'}</span> DOCUMENT VALIDATED
+                        <div className={`flex items-center gap-2.5 ${parsingStep >= 2 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
+                          <span className="w-4 text-center">{parsingStep >= 2 ? '✓' : '○'}</span> DOCUMENT VALIDATED
                         </div>
-                        <div className={`flex items-center gap-2 ${parsingStep >= 3 ? 'text-emerald-700 font-bold' : parsingStep === 2 ? 'text-[#111110] font-bold' : 'text-[#88857d]'}`}>
-                          <span>{parsingStep >= 3 ? '✓' : '→'}</span> EXTRACTING CONTENT
+                        <div className={`flex items-center gap-2.5 ${parsingStep >= 3 ? 'text-emerald-700 font-bold' : parsingStep === 2 ? 'text-[#111110] font-bold' : 'text-[#88857d]'}`}>
+                          <span className="w-4 text-center">{parsingStep >= 3 ? '✓' : '→'}</span> EXTRACTING CONTENT
                         </div>
-                        <div className={`flex items-center gap-2 ${parsingStep >= 4 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
-                          <span>{parsingStep >= 4 ? '✓' : '○'}</span> ANALYZING EXPERIENCE
+                        <div className={`flex items-center gap-2.5 ${parsingStep >= 4 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
+                          <span className="w-4 text-center">{parsingStep >= 4 ? '✓' : '○'}</span> ANALYZING EXPERIENCE
                         </div>
-                        <div className={`flex items-center gap-2 ${parsingStep >= 5 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
-                          <span>{parsingStep >= 5 ? '✓' : '○'}</span> BUILDING PROFILE
+                        <div className={`flex items-center gap-2.5 ${parsingStep >= 5 ? 'text-emerald-700 font-bold' : 'text-[#88857d]'}`}>
+                          <span className="w-4 text-center">{parsingStep >= 5 ? '✓' : '○'}</span> BUILDING PROFILE
                         </div>
                       </div>
                     </div>
                   )}
 
                   {/* ── STATE 3: SUCCESS STATE (RESUME READY) ── */}
-                  {uploadState === 'success' && (
-                    <div className="w-full min-h-[340px] rounded-xl border border-emerald-300 bg-[#F8F6F1] p-8 flex flex-col justify-between text-left space-y-6 shadow-sm">
+                  {viewState === 'success' && (
+                    <div className="w-full min-h-[340px] rounded-xl border-2 border-emerald-500 bg-[#F8F6F1] p-8 flex flex-col justify-between text-left space-y-6 shadow-lg">
                       <div className="space-y-3">
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full font-mono text-xs font-bold text-emerald-800">
-                          <FiCheckCircle size={14} />
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 border border-emerald-300 rounded-full font-mono text-xs font-extrabold text-emerald-800">
+                          <FiCheckCircle size={15} />
                           <span>RESUME READY</span>
                         </div>
 
                         <div className="font-mono font-black text-xl text-[#111110] uppercase tracking-tight">
                           {uploadedFileName}
                         </div>
-                        <p className="font-sans text-xs text-[#66645e]">
-                          File successfully uploaded and indexed into AI intelligence system.
+                        <p className="font-sans text-xs text-[#66645e] leading-relaxed">
+                          File successfully uploaded and parsed. Ready to perform ATS Compatibility & Keyword Analysis.
                         </p>
                       </div>
 
@@ -486,12 +485,12 @@ const ResumePage = () => {
                             setViewState('dashboard')
                             runAtsScan()
                           }}
-                          className="btn-tactile-dark-3d w-full py-4 rounded-xl font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+                          className="btn-tactile-dark-3d w-full justify-center uppercase tracking-wider shadow-md py-4 rounded-xl font-mono font-bold text-xs flex items-center gap-2 cursor-pointer"
                         >
                           <span>ANALYZE RESUME →</span>
                         </button>
 
-                        <div className="font-mono text-[11px] text-[#88857d] text-center">
+                        <div className="font-mono text-[11px] text-[#88857d] text-center font-semibold">
                           You can review your resume before analysis.
                         </div>
                       </div>
@@ -503,43 +502,10 @@ const ResumePage = () => {
 
             </div>
 
-            {/* Bottom 3 Trust Badges */}
-            <div className="border-t border-[#e2e0d6] pt-8 grid grid-cols-1 md:grid-cols-3 gap-6 font-sans text-xs text-[#55534e]">
-              <div className="flex items-center gap-3 justify-center md:justify-start">
-                <div className="w-9 h-9 rounded-lg bg-[#efece4] border border-[#d5d2c8] flex items-center justify-center text-[#111110] shrink-0">
-                  <FiShield size={18} />
-                </div>
-                <div className="text-left space-y-0.5">
-                  <div className="font-mono font-bold text-xs text-[#111110]">Your data is secure</div>
-                  <div className="text-[11px] text-[#88857d]">256-bit encrypted</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 justify-center md:justify-start border-t md:border-t-0 md:border-l border-[#e2e0d6] pt-4 md:pt-0 md:pl-6">
-                <div className="w-9 h-9 rounded-lg bg-[#efece4] border border-[#d5d2c8] flex items-center justify-center text-[#111110] shrink-0">
-                  <FiFileText size={18} />
-                </div>
-                <div className="text-left space-y-0.5">
-                  <div className="font-mono font-bold text-xs text-[#111110]">Supported formats</div>
-                  <div className="text-[11px] text-[#88857d]">PDF, DOCX</div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 justify-center md:justify-start border-t md:border-t-0 md:border-l border-[#e2e0d6] pt-4 md:pt-0 md:pl-6">
-                <div className="w-9 h-9 rounded-lg bg-[#efece4] border border-[#d5d2c8] flex items-center justify-center text-[#111110] shrink-0">
-                  <FiTrash2 size={18} />
-                </div>
-                <div className="text-left space-y-0.5">
-                  <div className="font-mono font-bold text-xs text-[#111110]">Files are private</div>
-                  <div className="text-[11px] text-[#88857d]">We never share your data</div>
-                </div>
-              </div>
-            </div>
-
           </div>
         )}
 
-        {/* ════════ FULL ATS SCORE REPORT DASHBOARD (LOADS AFTER USER CLICKS ANALYZE RESUME) ════════ */}
+        {/* ════════ FULL ATS SCORE REPORT DASHBOARD ════════ */}
         {viewState === 'dashboard' && (
           <div className="space-y-8 animate-fadeIn">
             
@@ -557,10 +523,7 @@ const ResumePage = () => {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => {
-                    setViewState('upload')
-                    setUploadState('idle')
-                  }}
+                  onClick={() => setViewState('upload')}
                   className="btn-tactile-3d text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 font-mono font-bold cursor-pointer"
                 >
                   <FiArrowLeft size={14} />
@@ -584,7 +547,7 @@ const ResumePage = () => {
               
               {/* RESUME PREVIEW */}
               <div className="lg:col-span-5 bg-[#efece4] border border-[#e2e0d6] rounded-2xl p-6 space-y-4 shadow-sm relative text-left">
-                <div className="font-mono text-xs font-bold text-[#66645e] uppercase tracking-wider">
+                <div className="font-mono text-xs font-bold text-[#66645e] uppercase tracking-wider border-b border-[#e2e0d6] pb-2">
                   RESUME PREVIEW
                 </div>
 
@@ -684,7 +647,7 @@ const ResumePage = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
                     <div className="sm:col-span-5 flex flex-col items-center justify-center space-y-2">
                       <AtsGauge score={report.overallScore} />
-                      <span className="px-3 py-1 bg-[#F8F6F1] border border-[#d5d2c8] rounded-full font-mono text-[10px] font-bold text-emerald-700">
+                      <span className="px-3 py-1 bg-[#F8F6F1] border border-[#d5d2c8] rounded-full font-mono text-[10px] font-bold text-emerald-700 shadow-sm">
                         +12% from last analysis ↑
                       </span>
                     </div>
@@ -732,11 +695,11 @@ const ResumePage = () => {
                     </div>
                   </div>
 
-                  <div className="bg-[#F8F6F1] border border-[#e2e0d6] rounded-xl p-4 flex items-start gap-3">
+                  <div className="bg-[#F8F6F1] border border-[#e2e0d6] rounded-xl p-4 flex items-start gap-3 shadow-sm">
                     <HiSparkles size={18} className="text-[#111110] shrink-0 mt-0.5" />
                     <div className="space-y-1">
                       <div className="font-mono text-xs font-bold text-[#111110] uppercase tracking-wider">
-                        AI Summary
+                        AI Verdict
                       </div>
                       <p className="font-sans text-xs text-[#55534e] leading-relaxed">
                         "{report.summary}"
@@ -755,7 +718,7 @@ const ResumePage = () => {
                       <select
                         value={targetRole}
                         onChange={(e) => setTargetRole(e.target.value)}
-                        className="appearance-none bg-[#F8F6F1] border border-[#d5d2c8] rounded-xl px-4 py-1.5 pr-8 font-mono text-xs font-bold text-[#111110] focus:outline-none cursor-pointer"
+                        className="appearance-none bg-[#F8F6F1] border border-[#d5d2c8] rounded-xl px-4 py-1.5 pr-8 font-mono text-xs font-bold text-[#111110] focus:outline-none cursor-pointer shadow-sm"
                       >
                         <option value="Full Stack Developer">Full Stack Developer</option>
                         <option value="Frontend Developer">Frontend Developer</option>
