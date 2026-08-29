@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import {
   FiCheck,
@@ -67,7 +67,7 @@ const ResumeSection = () => {
   // 'dashboard' -> Full ATS Score & Resume Intelligence Report
   const [viewState, setViewState] = useState('upload')
 
-  const [uploadedFileName, setUploadedFileName] = useState('PRAKASH_DAS_RESUME.PDF')
+  const [uploadedFileName, setUploadedFileName] = useState('CAREER_USER_RESUME.PDF')
   const [parseProgress, setParseProgress] = useState(0)
   const [parsingStep, setParsingStep] = useState(1)
 
@@ -79,7 +79,7 @@ const ResumeSection = () => {
   const fileInputRef = useRef(null)
 
   const processUploadFlow = async (file) => {
-    const fileName = file ? file.name.toUpperCase().replace(/\s+/g, '_') : 'PRAKASH_DAS_RESUME.PDF'
+    const fileName = file ? file.name.toUpperCase().replace(/\s+/g, '_') : 'CAREER_USER_RESUME.PDF'
     setUploadedFileName(fileName)
     setViewState('parsing')
     setParseProgress(12)
@@ -390,13 +390,13 @@ const ResumeSection = () => {
                 <div className="bg-[#F8F6F1] border border-[#e2e0d6] rounded-xl p-6 sm:p-7 space-y-4 font-sans text-xs text-[#33312c]">
                   <div className="space-y-1 border-b border-[#e2e0d6] pb-3">
                     <h3 className="font-mono font-black text-xl text-[#111110] tracking-tight">
-                      PRAKASH DAS
+                      CAREER USER
                     </h3>
                     <div className="font-mono text-[11px] font-bold text-emerald-700 tracking-wider uppercase">
                       FULL STACK DEVELOPER
                     </div>
                     <div className="font-sans text-[11px] text-[#66645e] flex flex-wrap gap-2 pt-0.5">
-                      <span>✉ prakashdas@email.com</span>
+                      <span>✉ career.user@email.com</span>
                       <span>• 📞 +91 98765 43210</span>
                       <span>• 📍 Bangalore, India</span>
                     </div>
@@ -454,7 +454,7 @@ const ResumeSection = () => {
                 <div className="flex items-center justify-between font-mono text-[11px] text-[#66645e] pt-1 px-1">
                   <div className="flex items-center gap-1.5 uppercase font-semibold text-[#111110]">
                     <FiFileText size={14} />
-                    <span>PRAKASH_DAS_RESUME.PDF</span>
+                    <span>CAREER_USER_RESUME.PDF</span>
                   </div>
                   <div className="flex items-center gap-1 text-emerald-600 font-bold">
                     <FiCheckCircle size={13} />

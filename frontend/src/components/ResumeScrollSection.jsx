@@ -144,7 +144,7 @@ const ResumeScrollSection = ({ containerRef: externalRef }) => {
 
               {/* Candidate Info Header */}
               <div className="space-y-1 border-b border-[#e2e0d6] pb-3 text-left">
-                <div className="font-mono font-black text-2xl text-[#111110]">PRAKASH</div>
+                <div className="font-mono font-black text-2xl text-[#111110]">CAREER USER</div>
                 <div className="font-mono text-xs font-bold text-emerald-700 tracking-wider">FULL STACK DEVELOPER</div>
                 <div className="font-mono text-[10px] text-[#66645e]">React · Node.js · MongoDB · AWS</div>
               </div>
@@ -164,7 +164,7 @@ const ResumeScrollSection = ({ containerRef: externalRef }) => {
               </div>
 
               <div className="font-mono text-[10px] text-emerald-700 font-bold flex items-center justify-between border-t border-[#e2e0d6] pt-2">
-                <span>PRAKASH_RESUME.PDF</span>
+                <span>CAREER_USER_RESUME.PDF</span>
                 <span className="flex items-center gap-1"><FiCpu size={12} className="animate-spin" /> SCANNING...</span>
               </div>
             </div>

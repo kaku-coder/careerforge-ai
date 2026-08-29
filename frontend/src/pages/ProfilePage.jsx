@@ -14,8 +14,8 @@ const ProfilePage = () => {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
-  const displayName = user?.username || user?.name || user?.email?.split('@')[0] || 'PRAKASH DAS'
-  const email = user?.email || 'prakash.das@example.com'
+  const displayName = user?.username || user?.name || user?.email?.split('@')[0] || 'CAREER USER'
+  const email = user?.email || 'career.user@career.net'
 
   const handleLogout = async () => {
     await logout()
@@ -55,7 +55,7 @@ const ProfilePage = () => {
             <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
               <img
                 src={bloubAvatarSvg}
-                alt="Prakash Das Animated Avatar"
+                alt="Career Profile Animated Avatar"
                 className="w-full h-full object-contain pointer-events-none select-none drop-shadow-xl"
               />
             </div>
