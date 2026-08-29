@@ -4,9 +4,10 @@ import {
     embedTextsWithMistral,
     askResumeWithMistral,
     askResumeWithAnthropic,
-    compareMistralAndAnthropic
-} from "../services/resumeAi.js";
-import ResumeModel from "../schema/resume.schema.model.js";
+    compareMistralAndAnthropic,
+    analyzeResumeForAts
+} from "../../services/resume_services/resumeAi.js";
+import ResumeModel from "../../schema/resume_schema/resume.schema.model.js";
 
 /**
  * Controller to upload, parse PDF resume, split text into chunks, generate Mistral embeddings, and save in MongoDB
@@ -206,5 +207,35 @@ export const getUserResumes = async (req, res) => {
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: "Failed to fetch resumes", error: error.message });
+    }
+};
+
+/**
+ * Controller to run an AI-powered ATS compatibility analysis on a resume
+ */
+export const atsAnalyzeController = async (req, res) => {
+    try {
+        const { resumeId, targetRole = "", jobDescription = "", provider = "mistral" } = req.body;
+
+        const contextText = await getResumeContext(req);
+        if (!contextText) {
+            return res.status(404).json({ success: false, message: "No resume found. Please upload a resume first." });
+        }
+
+        const analysis = await analyzeResumeForAts(contextText, {
+            targetRole,
+            jobDescription,
+            provider
+        });
+
+        return res.status(200).json({
+            success: true,
+            provider: provider === "both" || provider === "compare" ? "comparison" : provider,
+            resumeId: resumeId || null,
+            analysis
+        });
+    } catch (error) {
+        console.error("ATS Analysis Controller Error:", error);
+        return res.status(500).json({ success: false, message: "ATS analysis failed", error: error.message });
     }
 };

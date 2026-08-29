@@ -196,6 +196,116 @@ export const compareMistralAndAnthropic = async (question, resumeContext) => {
     return results;
 };
 
+/**
+ * Extract strict JSON from an AI response (handles markdown code fences)
+ */
+const parseAtsJson = (content) => {
+    const text = typeof content === "string" ? content : String(content ?? "");
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (start === -1 || end === -1 || end <= start) {
+        throw new Error("AI did not return a valid JSON report.");
+    }
+    const parsed = JSON.parse(text.slice(start, end + 1));
+
+    // Normalize breakdown (accepts array OR object keyed by category)
+    let breakdown = [];
+    if (Array.isArray(parsed.breakdown)) {
+        breakdown = parsed.breakdown.map(item => ({
+            category: item.category || item.name || "Category",
+            score: Math.max(0, Math.min(100, Number(item.score) || 0)),
+            feedback: item.feedback || ""
+        }));
+    } else if (parsed.breakdown && typeof parsed.breakdown === "object") {
+        breakdown = Object.entries(parsed.breakdown).map(([category, value]) => {
+            const item = typeof value === "object" ? value : { score: value };
+            return {
+                category,
+                score: Math.max(0, Math.min(100, Number(item.score) || 0)),
+                feedback: item.feedback || ""
+            };
+        });
+    }
+
+    return {
+        score: Math.max(0, Math.min(100, Math.round(Number(parsed.score) || 0))),
+        verdict: parsed.verdict || "",
+        estimatedRole: parsed.estimatedRole || parsed.role || "Not detected",
+        breakdown,
+        strengths: Array.isArray(parsed.strengths) ? parsed.strengths.map(String) : [],
+        weaknesses: Array.isArray(parsed.weaknesses) ? parsed.weaknesses.map(String) : [],
+        matchedKeywords: Array.isArray(parsed.matchedKeywords) ? parsed.matchedKeywords.map(String) : [],
+        missingKeywords: Array.isArray(parsed.missingKeywords) ? parsed.missingKeywords.map(String) : [],
+        suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions.map(String) : []
+    };
+};
+
+/**
+ * Analyze a resume for Applicant Tracking System (ATS) compatibility and return a scored report
+ */
+export const analyzeResumeForAts = async (resumeContext, options = {}) => {
+    try {
+        const provider = (options.provider || "mistral").toLowerCase();
+        const isClaude = provider.includes("anthropic") || provider.includes("claude");
+        const chatModel = isClaude ? getAnthropicChatModel() : getMistralChatModel();
+
+        const targetRole = (options.targetRole || "").trim() || "Not specified (auto-detect from resume)";
+        const jobDescription = (options.jobDescription || "").trim() || "Not provided (judge against general ATS best practices)";
+
+        const truncatedContext = resumeContext.length > 12000
+            ? resumeContext.slice(0, 12000) + "\n...[truncated]"
+            : resumeContext;
+
+        const systemPrompt = `You are a senior ATS (Applicant Tracking System) expert and resume coach for CareerForge AI.
+Analyze the given resume for ATS compatibility and return ONLY a valid JSON object. Do not include prose, explanations, or markdown code fences — output raw JSON only.
+
+Use exactly this JSON shape:
+{
+  "score": <integer 0-100>,
+  "verdict": "one short line overall judgement",
+  "estimatedRole": "the role this resume best targets",
+  "breakdown": [
+    { "category": "Contact Info", "score": <0-100>, "feedback": "one short line" },
+    { "category": "Clear Structure & Parsing", "score": <0-100>, "feedback": "one short line" },
+    { "category": "Keywords & Skills Match", "score": <0-100>, "feedback": "one short line" },
+    { "category": "Experience & Achievements", "score": <0-100>, "feedback": "one short line" },
+    { "category": "Action Verbs & Quantification", "score": <0-100>, "feedback": "one short line" },
+    { "category": "Education & Certifications", "score": <0-100>, "feedback": "one short line" },
+    { "category": "Formatting & Length", "score": <0-100>, "feedback": "one short line" }
+  ],
+  "strengths": ["short strength", "short strength"],
+  "weaknesses": ["short weakness", "short weakness"],
+  "matchedKeywords": ["keyword", "keyword"],
+  "missingKeywords": ["keyword", "keyword"],
+  "suggestions": ["actionable fix", "actionable fix"]
+}
+
+Rules:
+- If a job description is provided, matchedKeywords must be the relevant keywords actually present in the resume, and missingKeywords must be important keywords from the job description that are absent.
+- If no job description, matchedKeywords = skills clearly present in the resume relevant to the estimated role; missingKeywords = important missing skills/attributes a good applicant for that role would have.
+- Be strict and honest. Score harshly for unclear formatting, missing contact info, no quantified achievements, spelling issues, or content unrelated to the target role.`;
+        
+        const userPrompt = `--- RESUME CONTENT ---
+${truncatedContext}
+-------------------------
+
+TARGET ROLE: ${targetRole}
+
+JOB DESCRIPTION:
+${jobDescription}`;
+
+        const response = await chatModel.invoke([
+            ["system", systemPrompt],
+            ["user", userPrompt]
+        ]);
+
+        return parseAtsJson(response.content);
+    } catch (error) {
+        console.error("Error analyzing resume for ATS:", error);
+        throw error;
+    }
+};
+
 export default {
     parseResumePdf,
     splitResumeText,
@@ -203,5 +313,6 @@ export default {
     embedQueryWithMistral,
     askResumeWithMistral,
     askResumeWithAnthropic,
-    compareMistralAndAnthropic
+    compareMistralAndAnthropic,
+    analyzeResumeForAts
 };

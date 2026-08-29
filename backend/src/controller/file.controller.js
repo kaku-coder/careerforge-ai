@@ -1,5 +1,5 @@
 import { uploadToImageKit } from "../config/imagekit.js";
-import FileModel from "../schema/file.schema.model.js";
+import FileModel from "../schema/resume_schema/file.schema.model.js";
 
 /**
  * Controller to upload a file to ImageKit and save its details in MongoDB

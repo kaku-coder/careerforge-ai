@@ -5,14 +5,18 @@ import {
     askMistralController,
     askAnthropicController,
     compareModelsController,
-    getUserResumes
-} from "../controller/resume.controller.js";
+    getUserResumes,
+    atsAnalyzeController
+} from "../controller/resume_controller/resume.controller.js";
 import upload from "../middleware/multer.middleware.js";
 
 const router = Router();
 
 // POST /api/resume/parse - Upload, parse PDF resume & save to MongoDB
 router.post("/parse", upload.single("file"), processResumePdf);
+
+// POST /api/resume/ats - AI-powered ATS compatibility analysis
+router.post("/ats", atsAnalyzeController);
 
 // Dedicated AI Model Testing Endpoints:
 // 1. Mistral AI URL:
