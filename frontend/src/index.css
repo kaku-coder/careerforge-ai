@@ -125,35 +125,7 @@
   transform: scaleX(1);
 }
 
-/* 3D Tactile Bevel Button Effects */
-.btn-tactile-3d {
-  font: inherit;
-  background-color: #f0f0f0;
-  border: 0;
-  color: #242424;
-  border-radius: 0.6em;
-  font-size: 0.95rem;
-  padding: 0.65em 1.5em;
-  font-weight: 600;
-  text-shadow: 0 0.0625em 0 #fff;
-  box-shadow: inset 0 0.0625em 0 0 #f4f4f4, 0 0.0625em 0 0 #efefef,
-    0 0.125em 0 0 #ececec, 0 0.25em 0 0 #e0e0e0, 0 0.3125em 0 0 #dedede,
-    0 0.375em 0 0 #dcdcdc, 0 0.425em 0 0 #cacaca, 0 0.425em 0.5em 0 #cecece;
-  transition: 0.15s ease;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6em;
-  text-decoration: none;
-}
-
-.btn-tactile-3d:active {
-  transform: translateY(0.225em);
-  box-shadow: inset 0 0.03em 0 0 #f4f4f4, 0 0.03em 0 0 #efefef,
-    0 0.0625em 0 0 #ececec, 0 0.125em 0 0 #e0e0e0, 0 0.125em 0 0 #dedede,
-    0 0.2em 0 0 #dcdcdc, 0 0.225em 0 0 #cacaca, 0 0.225em 0.375em 0 #cecece;
-}
-
+/* 3D Tactile Bevel Button Primary (Dark Fill) */
 .btn-tactile-dark-3d {
   font: inherit;
   background-color: #111110;
@@ -179,6 +151,41 @@
   box-shadow: inset 0 0.03em 0 0 #33322e, 0 0.03em 0 0 #282724,
     0 0.0625em 0 0 #22211e, 0 0.125em 0 0 #1b1a18, 0 0.125em 0 0 #141413,
     0 0.2em 0 0 #0d0d0c, 0 0.225em 0 0 #080807, 0 0.225em 0.375em 0 rgba(0,0,0,0.4);
+}
+
+/* 3D Tactile Bevel Button Secondary (Outline) — matches primary geometry */
+.btn-tactile-3d {
+  font: inherit;
+  background-color: #F8F6F1;
+  border: 0;
+  color: #111110;
+  border-radius: 0.75em;
+  font-size: 0.9rem;
+  padding: 0.75em 1.6em;
+  font-weight: 700;
+  box-shadow: inset 0 0 0 1.5px #111110, inset 0 0.0625em 0 0 rgba(17, 17, 16, 0.06),
+    0 0.0625em 0 0 rgba(17, 17, 16, 0.22), 0 0.125em 0 0 rgba(17, 17, 16, 0.2),
+    0 0.25em 0 0 rgba(17, 17, 16, 0.18), 0 0.3125em 0 0 rgba(17, 17, 16, 0.16),
+    0 0.375em 0 0 rgba(17, 17, 16, 0.14), 0 0.425em 0.5em 0 rgba(0, 0, 0, 0.16);
+  transition: 0.15s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65em;
+  text-decoration: none;
+}
+
+.btn-tactile-3d:hover {
+  background-color: #111110;
+  color: #F8F6F1;
+}
+
+.btn-tactile-3d:active {
+  transform: translateY(0.225em);
+  box-shadow: inset 0 0 0 1.5px #111110, inset 0 0.03em 0 0 rgba(17, 17, 16, 0.06),
+    0 0.03em 0 0 rgba(17, 17, 16, 0.22), 0 0.0625em 0 0 rgba(17, 17, 16, 0.2),
+    0 0.125em 0 0 rgba(17, 17, 16, 0.18), 0 0.125em 0 0 rgba(17, 17, 16, 0.16),
+    0 0.2em 0 0 rgba(17, 17, 16, 0.14), 0 0.225em 0.375em 0 rgba(0, 0, 0, 0.16);
 }
 
 /* Entrance Animations */
@@ -262,6 +269,9 @@ body,
   font-family: var(--font-sans);
   color: #111110;
   background-color: #F8F6F1;
+  background-image: radial-gradient(rgba(17, 17, 16, 0.12) 1.2px, transparent 1.2px);
+  background-size: 16px 16px;
+  background-position: 0 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -294,35 +304,4 @@ body,
 
 .animate-float {
   animation: subtleFloat 2s ease-in-out infinite;
-}
-
-/* Custom Scrollbar Hide Utility */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  min-height: 100vh;
-  width: 100%;
-  font-family: var(--font-sans);
-  color: #111110;
-  background-color: #F8F6F1;
-  background-image: radial-gradient(rgba(17, 17, 16, 0.12) 1.2px, transparent 1.2px);
-  background-size: 16px 16px;
-  background-position: 0 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }

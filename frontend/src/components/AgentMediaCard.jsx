@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { FiArrowRight, FiPlay, FiTv } from 'react-icons/fi'
 
@@ -14,8 +14,7 @@ const AgentMediaCard = ({
   imageSrc,
   videoSrc,
   badgeText = 'AI AGENT',
-  ctaText = 'EXPLORE AGENT',
-  accentColor = 'emerald'
+  ctaText = 'EXPLORE AGENT'
 }) => {
   const videoRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -38,14 +37,6 @@ const AgentMediaCard = ({
     if (videoRef.current) {
       videoRef.current.pause()
       videoRef.current.currentTime = 0
-    }
-  }
-
-  const togglePlay = () => {
-    if (isPlaying) {
-      handleMouseLeave()
-    } else {
-      handleMouseEnter()
     }
   }
 

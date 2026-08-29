@@ -1,5 +1,3 @@
-import React from 'react'
-
 const StatCard = ({ title, value, unit, badgeText, subtitleText }) => {
   return (
     <div className="w-full h-full min-h-[145px] sm:min-h-[160px] bg-[#1c1b18] text-[#F8F6F1] p-5 rounded-2xl border border-[#2b2925] flex flex-col items-center justify-between text-center space-y-3 shadow-lg min-w-0 transition-all duration-300 hover:border-[#423f3a]">
