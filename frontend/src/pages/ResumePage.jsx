@@ -1,3 +1,10 @@
+/**
+ * ResumePage Component
+ * 
+ * Provides resume upload, ATS scoring analysis, AI feedback dashboard,
+ * and resume version management for CareerForge AI.
+ */
+
 import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '../context/AuthContext'
 import {
