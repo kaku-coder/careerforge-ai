@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import ChatMessage from './ChatMessage'
 import TypingIndicator from './TypingIndicator'
 import { FiSend } from 'react-icons/fi'
@@ -15,9 +15,10 @@ const ChatPanel = ({ chat, started, isThinking, onSend, displayName }) => {
   const scrollRef = useRef(null)
   const textareaRef = useRef(null)
 
-  const messages = started && chat?.conversation?.length
-    ? chat.conversation
-    : [GREETING]
+  const messages = useMemo(
+    () => (started && chat?.conversation?.length ? chat.conversation : [GREETING]),
+    [started, chat]
+  )
 
   useEffect(() => {
     const el = scrollRef.current

@@ -76,10 +76,14 @@ const ResumePage = () => {
   const displayName = (user?.username || user?.name || user?.email?.split('@')[0] || 'CAREER USER').toUpperCase()
 
   // View States: 'upload' (upload view with internal dropzone states: idle, parsing, success) -> 'dashboard'
-  const [viewState, setViewState] = useState('upload')
+  const [viewState, setViewState] = useState(() => {
+    return localStorage.getItem('ats_view_state') || 'upload'
+  })
   const [dropState, setDropState] = useState('idle') // 'idle' | 'parsing' | 'success'
 
-  const [selectedId, setSelectedId] = useState('')
+  const [selectedId, setSelectedId] = useState(() => {
+    return localStorage.getItem('ats_selected_resume_id') || ''
+  })
   const [resumes, setResumes] = useState([])
   const [uploadedFileName, setUploadedFileName] = useState(`${displayName.replace(/\s+/g, '_')}_RESUME.PDF`)
   const [parseProgress, setParseProgress] = useState(0)
@@ -92,6 +96,30 @@ const ResumePage = () => {
   const [isHovered, setIsHovered] = useState(false)
 
   const fileInputRef = useRef(null)
+
+  const changeViewState = (state) => {
+    setViewState(state)
+    localStorage.setItem('ats_view_state', state)
+  }
+
+  const getCachedReport = (resumeId) => {
+    if (!resumeId) return null
+    try {
+      const raw = localStorage.getItem(`ats_report_cache_${resumeId}`)
+      return raw ? JSON.parse(raw) : null
+    } catch {
+      return null
+    }
+  }
+
+  const saveReportCache = (resumeId, reportData, role) => {
+    if (!resumeId) return
+    try {
+      localStorage.setItem(`ats_report_cache_${resumeId}`, JSON.stringify({ report: reportData, targetRole: role }))
+    } catch {
+      // Silent
+    }
+  }
 
   // Report state dynamically populated from real AI scan
   const [report, setReport] = useState({
@@ -145,7 +173,10 @@ const ResumePage = () => {
         const data = await res.json()
         if (!cancelled && res.ok && data.success && data.data?.length > 0) {
           setResumes(data.data)
-          setSelectedId(data.data[0]._id)
+          const savedId = localStorage.getItem('ats_selected_resume_id')
+          const activeId = (savedId && data.data.some(r => r._id === savedId)) ? savedId : data.data[0]._id
+          setSelectedId(activeId)
+          localStorage.setItem('ats_selected_resume_id', activeId)
         }
       } catch {
         // Silent fallback
@@ -163,7 +194,11 @@ const ResumePage = () => {
       const data = await res.json()
       if (res.ok && data.success && data.data?.length > 0) {
         setResumes(data.data)
-        setSelectedId(data.data[0]._id)
+        const newestId = data.data[0]._id
+        setSelectedId(newestId)
+        localStorage.setItem('ats_selected_resume_id', newestId)
+        changeViewState('dashboard')
+        runAtsScan(newestId, true)
       }
     } catch {
       // Silent fallback
@@ -235,7 +270,20 @@ const ResumePage = () => {
     if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFileUpload(e.dataTransfer.files[0])
   }
 
-  const runAtsScan = async (resumeId = selectedId) => {
+  const runAtsScan = async (resumeId = selectedId, forceRescan = false) => {
+    if (!resumeId) return
+
+    // If not forced and we have a cached report for this resume, load it instantly!
+    if (!forceRescan) {
+      const cached = getCachedReport(resumeId)
+      if (cached?.report) {
+        setReport(cached.report)
+        if (cached.targetRole) setTargetRole(cached.targetRole)
+        setAnalyzing(false)
+        return
+      }
+    }
+
     setAnalyzing(true)
     try {
       const res = await fetch(`${API_BASE_URL}/ats`, {
@@ -255,27 +303,29 @@ const ResumePage = () => {
         const missing = (ai.missingKeywords || []).map((k) => ({ name: k, found: false }))
         const allKeywords = [...matched, ...missing].slice(0, 12)
 
-        setReport((prev) => ({
-          ...prev,
-          overallScore: ai.score ?? prev.overallScore,
-          roleMatchScore: ai.score ?? prev.roleMatchScore,
-          summary: ai.verdict ?? prev.summary,
-          keywordMatch: getScore('keyword') ?? prev.keywordMatch,
-          formattingScore: getScore('format') ?? prev.formattingScore,
-          skillsScore: getScore('skills') ?? prev.skillsScore,
-          experienceScore: getScore('experience') ?? prev.experienceScore,
+        const newReport = {
+          overallScore: ai.score ?? 78,
+          roleMatchScore: ai.score ?? 78,
+          summary: ai.verdict ?? 'Good resume with strong engineering foundations.',
+          keywordMatch: getScore('keyword') ?? 90,
+          formattingScore: getScore('format') ?? 70,
+          skillsScore: getScore('skills') ?? 90,
+          experienceScore: getScore('experience') ?? 60,
+          skillChecklist: report.skillChecklist,
           strengths: ai.strengths?.length
             ? ai.strengths.map((s) => ({ title: s, subtitle: 'Identified by AI analysis' }))
-            : prev.strengths,
+            : report.strengths,
           gaps: ai.weaknesses?.length
             ? ai.weaknesses.map((w) => ({ title: w, subtitle: 'Recommended enhancement' }))
-            : prev.gaps,
-          keywords: allKeywords.length ? allKeywords : prev.keywords
-        }))
-
-        if (ai.estimatedRole && ai.estimatedRole !== 'Not detected') {
-          setTargetRole(ai.estimatedRole)
+            : report.gaps,
+          keywords: allKeywords.length ? allKeywords : report.keywords
         }
+
+        const newRole = (ai.estimatedRole && ai.estimatedRole !== 'Not detected') ? ai.estimatedRole : targetRole
+
+        setReport(newReport)
+        if (newRole) setTargetRole(newRole)
+        saveReportCache(resumeId, newReport, newRole)
       }
     } catch {
       // Fallback
@@ -286,8 +336,9 @@ const ResumePage = () => {
 
   const handleResumeSelect = (resumeId) => {
     setSelectedId(resumeId)
-    setViewState('dashboard')
-    runAtsScan(resumeId)
+    localStorage.setItem('ats_selected_resume_id', resumeId)
+    changeViewState('dashboard')
+    runAtsScan(resumeId, false)
   }
 
   const getProgressColor = (score) => {
@@ -327,7 +378,7 @@ const ResumePage = () => {
                   Upload your resume and get AI-powered insights to optimize your ATS score, discover missing keywords, and match top engineering roles.
                 </p>
 
-                <div className="pt-2">
+                <div className="pt-2 flex flex-wrap items-center gap-3.5">
                   <button
                     type="button"
                     onClick={() => {
@@ -339,6 +390,20 @@ const ResumePage = () => {
                     <span>Upload New Resume</span>
                     <span className="text-base font-bold transition-transform duration-200 group-hover:-translate-y-0.5">↑</span>
                   </button>
+
+                  {resumes.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        changeViewState('dashboard')
+                        runAtsScan(selectedId || resumes[0]._id, false)
+                      }}
+                      className="btn-tactile-3d text-sm inline-flex items-center gap-2"
+                    >
+                      <span>View Saved Report ({resumes.length})</span>
+                      <span>→</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -465,7 +530,7 @@ const ResumePage = () => {
                         <button
                           type="button"
                           onClick={() => {
-                            setViewState('dashboard')
+                            changeViewState('dashboard')
                             runAtsScan()
                           }}
                           className="btn-tactile-dark-3d w-full justify-center text-sm group"
@@ -567,7 +632,7 @@ const ResumePage = () => {
                   type="button"
                   onClick={() => {
                     setDropState('idle')
-                    setViewState('upload')
+                    changeViewState('upload')
                   }}
                   className="btn-tactile-3d text-xs sm:text-sm h-[44px] px-4.5 shrink-0 inline-flex items-center justify-center gap-2"
                 >
@@ -577,7 +642,7 @@ const ResumePage = () => {
 
                 <button
                   type="button"
-                  onClick={() => runAtsScan()}
+                  onClick={() => runAtsScan(selectedId, true)}
                   disabled={analyzing}
                   className="btn-tactile-dark-3d text-xs sm:text-sm h-[44px] px-5 shrink-0 inline-flex items-center justify-center gap-2"
                 >

@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { FiTrendingUp, FiChevronDown, FiChevronUp, FiTarget, FiCheck } from 'react-icons/fi'
+import { FiTrendingUp, FiChevronDown, FiChevronUp } from 'react-icons/fi'
 import CareerProfile from './CareerProfile'
 import RoadmapNode from './RoadmapNode'
 import EmptyRoadmap from './EmptyRoadmap'

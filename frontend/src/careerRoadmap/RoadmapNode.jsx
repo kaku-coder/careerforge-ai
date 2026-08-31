@@ -50,7 +50,6 @@ const priorityColor = {
 
 const RoadmapNode = ({
   item,
-  idx,
   isCurrent,
   expanded,
   onToggle,
