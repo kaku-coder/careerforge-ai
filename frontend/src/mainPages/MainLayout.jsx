@@ -24,7 +24,7 @@ const MainLayout = () => {
       <Navbar />
 
       {/* Main Page Content View */}
-      <main className="flex-1 min-w-0 bg-grid-lines">
+      <main className="flex-1 min-w-0 bg-grid-lines flex flex-col">
         <Outlet />
       </main>
     </div>

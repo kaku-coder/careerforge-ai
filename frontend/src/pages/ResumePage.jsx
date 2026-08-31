@@ -300,13 +300,13 @@ const ResumePage = () => {
   const totalKeywordsCount = report.keywords.length
 
   return (
-    <div className="w-full min-h-screen text-[#18181B] py-8 sm:py-12 font-sans select-none flex flex-col items-center justify-start">
-      <div className="w-full max-w-[1380px] mx-auto px-6 sm:px-8 lg:px-12 space-y-8">
+    <div className="w-full flex-1 text-[#18181B] py-10 sm:py-14 font-sans select-none flex flex-col items-center justify-center">
+      <div className="w-full max-w-[1380px] mx-auto px-6 sm:px-8 lg:px-12 flex flex-col items-center justify-center flex-1 my-auto">
 
         {/* ════════ UPLOAD WORKFLOW (ALL IN ONE SCREEN) ════════ */}
         {viewState === 'upload' && (
-          <div className="flex flex-col justify-between min-h-[calc(100vh-180px)] py-4 w-full items-center">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center justify-center w-full max-w-5xl mx-auto my-auto">
+          <div className="flex flex-col justify-center gap-10 sm:gap-14 w-full items-center my-auto py-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center justify-center w-full max-w-5xl mx-auto">
 
               {/* Left Hero */}
               <div className="lg:col-span-6 space-y-6 text-left flex flex-col justify-center">
@@ -493,7 +493,7 @@ const ResumePage = () => {
             </div>
 
             {/* Stepper Footer Centered at Bottom */}
-            <div className="border-t border-[#E4E1D7] mt-auto pt-8 pb-4 space-y-6 text-center w-full max-w-3xl mx-auto">
+            <div className="border-t border-[#E4E1D7] mt-6 sm:mt-10 pt-8 pb-4 space-y-6 text-center w-full max-w-3xl mx-auto">
               <div className="flex items-center justify-center gap-4 w-full max-w-md mx-auto">
                 <div className="h-[1px] bg-[#DCD8CD] flex-1" />
                 <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#18181B]">
@@ -530,10 +530,10 @@ const ResumePage = () => {
 
         {/* ════════ ATS DASHBOARD (CENTERED & PROPORTIONATE) ════════ */}
         {viewState === 'dashboard' && (
-          <div className="space-y-14 lg:space-y-20 w-full text-left">
+          <div className="space-y-14 lg:space-y-20 w-full text-left flex flex-col items-center">
 
             {/* Header Toolbar */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-[#E4E1D7] pb-7 gap-5">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-[#E4E1D7] pb-7 gap-5 w-full max-w-[1200px]">
               <div className="space-y-1.5">
                 <div className="font-mono text-xs font-bold text-[#88857D] uppercase tracking-[0.22em]">
                   // SYSTEM 02 / ATS REPORT
@@ -588,7 +588,7 @@ const ResumePage = () => {
             </div>
 
             {/* ── TOP SECTION: ATS SCORE HERO + TARGET ROLE MATCH ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full max-w-[1200px]">
 
               {/* CARD 1: ATS SCORE (Visual Hero) */}
               <div className="lg:col-span-12 xl:col-span-7 bg-[#F4F1EA]/80 border border-[#E4E1D7] rounded-3xl p-8 sm:p-10 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
@@ -734,7 +734,7 @@ const ResumePage = () => {
             </div>
 
             {/* ── SECOND SECTION: 3 BALANCED CARDS (STRENGTHS | GAPS | KEYWORDS) ── */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 items-stretch w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 items-stretch w-full max-w-[1200px]">
 
               {/* CARD 1: STRENGTHS */}
               <div className="bg-[#F4F1EA]/80 border border-[#E4E1D7] rounded-3xl p-8 sm:p-10 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
