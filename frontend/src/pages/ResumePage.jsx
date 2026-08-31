@@ -361,8 +361,8 @@ const ResumePage = () => {
                       onDrop={handleDrop}
                       onClick={() => fileInputRef.current?.click()}
                       className={`w-full min-h-[340px] rounded-2xl border border-dashed transition-all duration-200 flex flex-col items-center justify-center p-8 text-center cursor-pointer bg-[#FAF8F3] space-y-5 relative overflow-hidden ${dragActive || isHovered
-                          ? 'border-emerald-600 shadow-[0_0_25px_rgba(5,150,105,0.15)] scale-[1.005]'
-                          : 'border-[#CCC8BD] hover:border-[#18181B]'
+                        ? 'border-emerald-600 shadow-[0_0_25px_rgba(5,150,105,0.15)] scale-[1.005]'
+                        : 'border-[#CCC8BD] hover:border-[#18181B]'
                         }`}
                     >
                       <input
@@ -493,7 +493,7 @@ const ResumePage = () => {
             </div>
 
             {/* Stepper Footer Centered at Bottom */}
-            <div className="border-t border-[#E4E1D7] mt-6 sm:mt-10 pt-8 pb-4 space-y-6 text-center w-full max-w-3xl mx-auto">
+            <div className="border-t border-[#E4E1D7] mt-auto pt-8 pb-4 space-y-6 text-center w-full max-w-3xl mx-auto">
               <div className="flex items-center justify-center gap-4 w-full max-w-md mx-auto">
                 <div className="h-[1px] bg-[#DCD8CD] flex-1" />
                 <span className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#18181B]">
@@ -528,12 +528,12 @@ const ResumePage = () => {
           </div>
         )}
 
-        {/* ════════ ATS DASHBOARD (CENTERED & PROPORTIONATE) ════════ */}
+        {/* ════════ ATS DASHBOARD ════════ */}
         {viewState === 'dashboard' && (
-          <div className="space-y-14 lg:space-y-20 w-full text-left flex flex-col items-center">
+          <div className="space-y-14 sm:space-y-16 lg:space-y-20 w-full text-left flex flex-col items-center py-6">
 
             {/* Header Toolbar */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-[#E4E1D7] pb-7 gap-5 w-full max-w-[1200px]">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-[#E4E1D7] pb-8 gap-6 w-full max-w-[1280px]">
               <div className="space-y-1.5">
                 <div className="font-mono text-xs font-bold text-[#88857D] uppercase tracking-[0.22em]">
                   // SYSTEM 02 / ATS REPORT
@@ -543,14 +543,14 @@ const ResumePage = () => {
                 </h1>
               </div>
 
-              <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
                 {resumes.length > 0 && (
-                  <div className="relative inline-flex items-center">
-                    <FiFileText size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none" />
+                  <div className="relative inline-flex items-center shrink-0">
+                    <FiFileText size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none z-10" />
                     <select
                       value={selectedId}
                       onChange={(e) => handleResumeSelect(e.target.value)}
-                      className="appearance-none bg-white hover:bg-[#FAF8F3] text-[#18181B] border border-[#DCD8CD] hover:border-[#18181B] rounded-xl pl-9 pr-10 py-2.5 font-mono text-xs sm:text-sm font-semibold focus:outline-none transition-all cursor-pointer shadow-xs min-w-[260px] max-w-[340px] truncate"
+                      className="appearance-none bg-white hover:bg-[#FAF8F3] text-[#18181B] border border-[#DCD8CD] hover:border-[#18181B] rounded-xl pl-9 pr-9 h-[44px] font-mono text-xs sm:text-sm font-semibold focus:outline-none transition-all cursor-pointer shadow-xs min-w-[200px] sm:min-w-[240px] max-w-[320px] truncate"
                     >
                       <option value="">— Select Resume —</option>
                       {resumes.map((r) => (
@@ -559,7 +559,7 @@ const ResumePage = () => {
                         </option>
                       ))}
                     </select>
-                    <FiChevronDown size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none" />
+                    <FiChevronDown size={15} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#71717A] pointer-events-none z-10" />
                   </div>
                 )}
 
@@ -569,26 +569,26 @@ const ResumePage = () => {
                     setDropState('idle')
                     setViewState('upload')
                   }}
-                  className="btn-tactile-3d text-xs sm:text-sm py-2.5 px-4.5"
+                  className="btn-tactile-3d text-xs sm:text-sm h-[44px] px-4.5 shrink-0 inline-flex items-center justify-center gap-2"
                 >
                   <FiArrowLeft size={15} />
-                  <span>Upload Different Resume</span>
+                  <span>Upload Different</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => runAtsScan()}
                   disabled={analyzing}
-                  className="btn-tactile-dark-3d text-xs sm:text-sm py-2.5 px-5"
+                  className="btn-tactile-dark-3d text-xs sm:text-sm h-[44px] px-5 shrink-0 inline-flex items-center justify-center gap-2"
                 >
                   <FiCpu size={15} className={analyzing ? 'animate-spin text-emerald-400' : ''} />
-                  <span>{analyzing ? 'Re-scanning...' : 'Re-run ATS Check'}</span>
+                  <span>{analyzing ? 'Re-scanning...' : 'Re-run Scan'}</span>
                 </button>
               </div>
             </div>
 
             {/* ── TOP SECTION: ATS SCORE HERO + TARGET ROLE MATCH ── */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch w-full max-w-[1200px]">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch w-full max-w-[1280px] mt-6 sm:mt-8">
 
               {/* CARD 1: ATS SCORE (Visual Hero) */}
               <div className="lg:col-span-12 xl:col-span-7 bg-[#F4F1EA]/80 border border-[#E4E1D7] rounded-3xl p-8 sm:p-10 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
@@ -734,26 +734,26 @@ const ResumePage = () => {
             </div>
 
             {/* ── SECOND SECTION: 3 BALANCED CARDS (STRENGTHS | GAPS | KEYWORDS) ── */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 items-stretch w-full max-w-[1200px]">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 lg:gap-14 items-stretch w-full max-w-[1280px] mt-12 sm:mt-16 lg:mt-20">
 
               {/* CARD 1: STRENGTHS */}
               <div className="bg-[#F4F1EA]/80 border border-[#E4E1D7] rounded-3xl p-8 sm:p-10 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
                 <div className="flex-1">
-                  <div className="flex items-center justify-between border-b border-[#E4E1D7] pb-4 mb-6">
+                  <div className="flex items-center justify-between border-b border-[#E4E1D7] pb-5 mb-7">
                     <div className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-[#18181B] flex items-center gap-2">
                       <span>STRENGTHS</span>
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                     </div>
-                    <span className="font-mono text-xs text-emerald-800 font-bold">
+                    <span className="font-mono text-xs text-emerald-800 font-bold bg-emerald-100/60 px-3 py-1 rounded-full border border-emerald-300">
                       {report.strengths.length} Passed
                     </span>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-6 sm:space-y-7">
                     {report.strengths.map((item, i) => (
-                      <div key={i} className="flex items-start gap-3.5">
-                        <div className="w-5 h-5 rounded-full bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
-                          <FiCheck size={12} />
+                      <div key={i} className="flex items-start gap-4">
+                        <div className="w-5.5 h-5.5 rounded-full bg-emerald-500/15 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                          <FiCheck size={13} />
                         </div>
                         <div className="space-y-1">
                           <div className="font-sans text-xs sm:text-sm font-bold text-[#18181B] leading-snug">{item.title}</div>
@@ -764,7 +764,7 @@ const ResumePage = () => {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-[#E4E1D7] font-mono text-xs text-[#71717A]">
+                <div className="mt-10 pt-5 border-t border-[#E4E1D7] font-mono text-xs text-[#71717A]">
                   Validated by ATS rules engine
                 </div>
               </div>
@@ -772,21 +772,21 @@ const ResumePage = () => {
               {/* CARD 2: GAPS TO IMPROVE */}
               <div className="bg-[#F4F1EA]/80 border border-[#E4E1D7] rounded-3xl p-8 sm:p-10 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
                 <div className="flex-1">
-                  <div className="flex items-center justify-between border-b border-[#E4E1D7] pb-4 mb-6">
+                  <div className="flex items-center justify-between border-b border-[#E4E1D7] pb-5 mb-7">
                     <div className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-[#18181B] flex items-center gap-2">
                       <span>GAPS TO IMPROVE</span>
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                     </div>
-                    <span className="font-mono text-xs text-amber-800 font-bold">
+                    <span className="font-mono text-xs text-amber-800 font-bold bg-amber-100/60 px-3 py-1 rounded-full border border-amber-300">
                       {report.gaps.length} Actionable
                     </span>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-6 sm:space-y-7">
                     {report.gaps.map((item, i) => (
-                      <div key={i} className="flex items-start gap-3.5">
-                        <div className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
-                          <FiAlertCircle size={12} />
+                      <div key={i} className="flex items-start gap-4">
+                        <div className="w-5.5 h-5.5 rounded-full bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold">
+                          <FiAlertCircle size={13} />
                         </div>
                         <div className="space-y-1">
                           <div className="font-sans text-xs sm:text-sm font-bold text-[#18181B] leading-snug">{item.title}</div>
@@ -797,7 +797,7 @@ const ResumePage = () => {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-[#E4E1D7] font-mono text-xs text-[#71717A]">
+                <div className="mt-10 pt-5 border-t border-[#E4E1D7] font-mono text-xs text-[#71717A]">
                   Prioritize numbers &amp; quantifiable impact
                 </div>
               </div>
@@ -805,22 +805,22 @@ const ResumePage = () => {
               {/* CARD 3: KEYWORDS FOUND */}
               <div className="bg-[#F4F1EA]/80 border border-[#E4E1D7] rounded-3xl p-8 sm:p-10 flex flex-col justify-between shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
                 <div className="flex-1">
-                  <div className="flex items-center justify-between border-b border-[#E4E1D7] pb-4 mb-6">
+                  <div className="flex items-center justify-between border-b border-[#E4E1D7] pb-5 mb-7">
                     <div className="font-mono text-xs sm:text-sm font-bold uppercase tracking-wider text-[#18181B]">
                       KEYWORDS FOUND
                     </div>
-                    <span className="font-mono text-xs font-bold text-[#18181B] bg-[#FAF8F3] px-2.5 py-0.5 rounded-full border border-[#DCD8CD]">
+                    <span className="font-mono text-xs font-bold text-[#18181B] bg-[#FAF8F3] px-3 py-1 rounded-full border border-[#DCD8CD]">
                       {matchedKeywordsCount}/{totalKeywordsCount} matched
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3.5 font-mono text-xs sm:text-sm">
+                  <div className="grid grid-cols-2 gap-4 sm:gap-4.5 font-mono text-xs sm:text-sm">
                     {report.keywords.map((kw, i) => (
                       <div
                         key={i}
                         className={`px-3.5 py-2.5 rounded-xl border flex items-center justify-between transition-colors font-medium ${kw.found
-                            ? 'bg-[#FAF8F3] border-[#DCD8CD] text-[#18181B]'
-                            : 'bg-[#EDEAE1]/60 border-[#D8D4C8] text-[#8C887E]'
+                          ? 'bg-[#FAF8F3] border-[#DCD8CD] text-[#18181B]'
+                          : 'bg-[#EDEAE1]/60 border-[#D8D4C8] text-[#8C887E]'
                           }`}
                       >
                         <span className="truncate pr-1 text-xs">{kw.name}</span>
@@ -834,7 +834,7 @@ const ResumePage = () => {
                   </div>
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-[#E4E1D7] font-mono text-xs text-[#71717A]">
+                <div className="mt-10 pt-5 border-t border-[#E4E1D7] font-mono text-xs text-[#71717A]">
                   Target density: &gt;85% match
                 </div>
               </div>

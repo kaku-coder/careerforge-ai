@@ -18,7 +18,7 @@ import bloubAvatarSvg from '../assets/bloub-nuage-surpris-encre-anime.svg'
 const NAV_LINKS = [
   { name: 'Home', path: '/', icon: FiHome },
   { name: 'Interviews', path: '/interview', icon: FiMessageSquare },
-  { name: 'Roadmap', path: '/roadmap', icon: FiCompass },
+  { name: 'Roadmap', path: '/career-roadmap', icon: FiCompass },
   { name: 'Resume', path: '/resume', icon: FiFileText },
   { name: 'Profile', path: '/profile', icon: FiUser },
 ]
