@@ -40,13 +40,24 @@ export const handleRoadmapChat = async (req, res) => {
             text: message.trim()
         });
 
-        // Call Groq AI Service with full chat history context
-        const aiReply = await generateRoadmapChatResponse(roadmapDoc.messages);
+        // Fetch user resume tool data (returns null if no resume uploaded)
+        const resumeContext = await getUserResumeContext(userId);
+        if (resumeContext) {
+            console.log(`📄 Resume Context Loaded for User (${userId}):`, resumeContext.fileName);
+        } else {
+            console.log(`ℹ️ No uploaded resume found for User (${userId}). Proceeding with standard AI roadmap.`);
+        }
 
-        // Push AI response into history
+        // Call Groq AI Service with chat history & optional resume context
+        const aiReply = await generateRoadmapChatResponse(roadmapDoc.messages, resumeContext);
+
+        const textMessage = (typeof aiReply === "object" && aiReply.message) ? aiReply.message : (typeof aiReply === "string" ? aiReply : "Roadmap response generated.");
+        const roadmapObj = (typeof aiReply === "object" && aiReply.roadmap) ? aiReply.roadmap : null;
+
+        // Push AI response message into history
         roadmapDoc.messages.push({
             sender: "ai",
-            text: aiReply
+            text: textMessage
         });
 
         // Save updated chat document in MongoDB
@@ -54,7 +65,8 @@ export const handleRoadmapChat = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            aiResponse: aiReply,
+            aiResponse: textMessage,
+            roadmap: roadmapObj,
             messages: roadmapDoc.messages
         });
     } catch (error) {

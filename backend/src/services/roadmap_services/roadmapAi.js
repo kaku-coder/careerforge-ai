@@ -8,29 +8,11 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const generateRoadmapChatResponse = async (messages = []) => {
     try {
-        // Keep last 6 messages & extract concise text to avoid Groq 413 "Request Entity Too Large" errors
-        const recentMessages = messages.slice(-6);
-        const formattedMessages = recentMessages.map((msg) => {
-            let contentText = msg.text || "";
-            try {
-                const cleanJsonStr = contentText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-                const parsed = JSON.parse(cleanJsonStr);
-                if (parsed && parsed.message) {
-                    contentText = parsed.message;
-                }
-            } catch (err) {
-                // Not JSON, keep original text
-            }
-
-            if (contentText.length > 500) {
-                contentText = contentText.substring(0, 500) + "...";
-            }
-
-            return {
-                role: msg.sender === "user" ? "user" : "assistant",
-                content: contentText
-            };
-        });
+        const recentMessages = messages.slice(-10);
+        const formattedMessages = recentMessages.map((msg) => ({
+            role: msg.sender === "user" ? "user" : "assistant",
+            content: msg.text
+        }));
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [
@@ -485,27 +467,31 @@ Use:
 when the existing roadmap has been changed.
 
 ==================================================
-RESPONSE FORMAT
+RESPONSE FORMAT & CRITICAL MANDATE
 ==================================================
 
-Always return valid JSON.
+ALWAYS return valid JSON.
 
-Do not return Markdown outside the JSON.
+CRITICAL MANDATE:
+Whenever the user asks for a roadmap, specifies a goal (e.g. DevOps, MERN, Python, Backend, Data Science), or asks to create/update a roadmap (even if no resume is uploaded):
+You MUST IMMEDIATELY generate a complete JSON object with "type": "roadmap_created" (or "roadmap_updated") and provide the complete "roadmap" object containing title, goal, summary, estimatedDuration, progress, and all steps with topics and projects!
 
-Do not wrap the JSON in \`\`\`json code fences.
+Do NOT ask the user to manually paste their resume or text. Build the roadmap immediately based on their requested role!
 
-The response must follow this structure:
+The response must strictly follow this structure:
 
 {
-                    "type": "chat | roadmap_created | roadmap_updated",
-                    "message": "Natural language response to the user.",
-                    "roadmap": null
-                }
-
-When a roadmap is created or updated, "roadmap" must contain the complete
-current roadmap.
-
-When the response is only a normal chat response, "roadmap" can be null.
+  "type": "roadmap_created | roadmap_updated | chat",
+  "message": "Natural language response to the user.",
+  "roadmap": {
+    "title": "Role Roadmap Title",
+    "goal": "Goal description",
+    "summary": "Practical summary",
+    "estimatedDuration": "6 months",
+    "progress": 0,
+    "steps": [ ... ]
+  }
+}
 
 ==================================================
 ROADMAP JSON STRUCTURE
@@ -753,15 +739,20 @@ Every recommendation should answer:
             const parsed = JSON.parse(cleanJsonStr);
             console.log("✅ Parsed Response Object:", parsed);
 
-            if (parsed && parsed.message) {
-                console.log("💬 AI Message:", parsed.message);
-                return parsed.message;
-            }
+            return {
+                message: parsed.message || rawContent,
+                roadmap: parsed.roadmap || null,
+                type: parsed.type || "chat"
+            };
         } catch (err) {
             console.log("ℹ️ Raw response is plain markdown text.");
         }
 
-        return rawContent;
+        return {
+            message: rawContent,
+            roadmap: null,
+            type: "chat"
+        };
     } catch (error) {
         console.error("Groq AI Error in generateRoadmapChatResponse:", error.message);
         throw error;
