@@ -4,7 +4,7 @@ import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import ProfilePage from '../pages/ProfilePage'
 import ResumePage from '../pages/ResumePage'
-import CareerRoadmapPage from '../careerRoadmap/CareerRoadmapPage'
+import Roadmapp from '../mainPages/Roadmapp'
 import { useAuth } from '../context/AuthContext'
 
 // Guard for routes requiring authentication
@@ -72,7 +72,7 @@ export const router = createBrowserRouter([
         path: 'career-roadmap',
         element: (
           <ProtectedRoute>
-            <CareerRoadmapPage />
+            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// ROADMAP SYSTEM</div>
           </ProtectedRoute>
         ),
       },
