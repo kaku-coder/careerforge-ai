@@ -6,6 +6,7 @@ import passport from "passport"
 import authRoutes from "./routes/auth.routes.js"
 import fileRoutes from "./routes/file.routes.js"
 import resumeRoutes from "./routes/resume.routes.js"
+import roadmapRoutes from "./routes/roadmap.routes.js"
 import helmet from "helmet"
 import configureGoogleStrategy from "./config/google.config.js"
 
@@ -29,6 +30,8 @@ app.use(passport.initialize())
 app.use("/api/auth", authRoutes)
 app.use("/api/files", fileRoutes)
 app.use("/api/resume", resumeRoutes)
+app.use("/api/roadmap", roadmapRoutes)
+app.use("/api/career-roadmap", roadmapRoutes)
 
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to CareerForge AI Backend" })

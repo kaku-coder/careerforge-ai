@@ -72,7 +72,7 @@ export const router = createBrowserRouter([
         path: 'career-roadmap',
         element: (
           <ProtectedRoute>
-            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// ROADMAP SYSTEM</div>
+            <Roadmapp />
           </ProtectedRoute>
         ),
       },
@@ -80,7 +80,7 @@ export const router = createBrowserRouter([
         path: 'roadmap',
         element: (
           <ProtectedRoute>
-            <div className="p-8 sm:p-10 font-mono text-xl font-bold">// ROADMAP SYSTEM</div>
+            <Roadmapp />
           </ProtectedRoute>
         ),
       },
