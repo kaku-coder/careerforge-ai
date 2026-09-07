@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiSend, FiTrash2, FiZap, FiUser, FiLoader, FiCheckCircle, FiFileText } from 'react-icons/fi';
+import { buildFallbackRoadmap } from '../../data/fallbackRoadmaps.js';
 
 const QUICK_PROMPTS = [
   { label: '📄 From My Resume', text: 'Analyze my uploaded resume and build a targeted roadmap for my skill gaps.' },
@@ -83,16 +84,33 @@ const RoadmapChat = ({ onRoadmapUpdate }) => {
             onRoadmapUpdate(parsed.roadmap);
           }
         } catch (e) {}
+
+        // Fallback to local template so the roadmap ALWAYS appears on request
+        const localRoadmap = buildFallbackRoadmap(messageText);
+        if (localRoadmap && onRoadmapUpdate) {
+          console.log("🗺️ Using local fallback roadmap for:", messageText);
+          onRoadmapUpdate(localRoadmap);
+          replyText = `I've received your request for a ${localRoadmap.title.replace(' Roadmap', '')} roadmap. Your roadmap is ready on the right panel!`;
+        }
       }
 
       setMessages((prev) => [...prev, { sender: 'ai', text: replyText }]);
     } catch (err) {
       console.error('Error sending message:', err);
+      const localRoadmap = buildFallbackRoadmap(messageText);
+      if (localRoadmap && onRoadmapUpdate) {
+        console.log("🗺️ Using local fallback roadmap (offline) for:", messageText);
+        onRoadmapUpdate(localRoadmap);
+      }
       setMessages((prev) => [
         ...prev,
         {
           sender: 'ai',
-          text: `I've received your request: "${messageText}". I'll start building your personalized roadmap — tell me which career/goal to target if you haven't yet!`
+          text: `I've received your request: "${messageText}". ${
+            localRoadmap
+              ? 'Your roadmap is ready on the right panel! (Server is offline, showing a sample roadmap.)'
+              : 'Tell me which career/goal to target and I will build your roadmap.'
+          }`
         }
       ]);
     } finally {
