@@ -5,14 +5,61 @@ dotenv.config();
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+/**
+ * Extract a JSON object from a raw LLM string. Handles markdown code fences,
+ * stray text before/after the JSON, and stepped/truncated output.
+ */
+const extractJsonResponse = (raw) => {
+    const text = typeof raw === "string" ? raw : String(raw ?? "");
 
-export const generateRoadmapChatResponse = async (messages = []) => {
+    // 1. Try direct parse
+    try {
+        return JSON.parse(text.trim());
+    } catch (e) {}
+
+    // 2. Try after removing code fences
+    const noFences = text.replace(/```json\n?/gi, "").replace(/```\n?/gi, "").trim();
+    try {
+        return JSON.parse(noFences);
+    } catch (e) {}
+
+    // 3. Slice from first "{" to last "}" and try again
+    const start = noFences.indexOf("{");
+    const end = noFences.lastIndexOf("}");
+    if (start !== -1 && end > start) {
+        const sliced = noFences.slice(start, end + 1);
+        try {
+            return JSON.parse(sliced);
+        } catch (e) {
+            console.warn("⚠️ Could not parse JSON from AI response snippet:", sliced.slice(0, 200));
+        }
+    }
+
+    throw new Error("No valid JSON found in AI response.");
+};
+
+
+export const generateRoadmapChatResponse = async (messages = [], resumeContext = null) => {
     try {
         const recentMessages = messages.slice(-10);
         const formattedMessages = recentMessages.map((msg) => ({
             role: msg.sender === "user" ? "user" : "assistant",
             content: msg.text
         }));
+
+        const resumeSection = resumeContext && resumeContext.extractedText
+            ? `
+==================================================
+USER RESUME CONTEXT
+==================================================
+The user has uploaded the resume "${resumeContext.fileName || "resume.pdf"}".
+Use the skills and experience below to personalize the roadmap, skip topics the user already knows, and target the requested role.
+
+--- RESUME CONTENT ---
+${resumeContext.extractedText}
+------------------------
+`
+            : "";
 
         const chatCompletion = await groq.chat.completions.create({
             messages: [
@@ -719,13 +766,28 @@ You are a learning companion, not just a roadmap generator.
 
 Every recommendation should answer:
 
-"Why is this the best next step for THIS user?"`
+"Why is this the best next step for THIS user?"
+
+==================================================
+RESPONSE TONE
+==================================================
+When the user asks for a roadmap (or changes their goal), always START your
+"message" by acknowledging exactly what you received, like:
+
+"I've received your request for a DevOps Engineer roadmap. Here is your
+personalized learning path:"
+
+Never answer with a roadmap for a different role than the user asked for.
+The roadmap you return MUST target the role/technology the user just
+requested (DevOps -> DevOps roadmap, MERN -> MERN roadmap, etc.).
+${resumeSection}`
                 },
                 ...formattedMessages
             ],
             model: "groq/compound",
             temperature: 0.7,
-            max_tokens: 2048,
+            max_tokens: 8192,
+            response_format: { type: "json_object" },
         });
 
         const rawContent = chatCompletion.choices[0]?.message?.content || "Sorry, I could not generate a response at this moment.";
@@ -736,7 +798,7 @@ Every recommendation should answer:
 
         try {
             const cleanJsonStr = rawContent.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-            const parsed = JSON.parse(cleanJsonStr);
+            const parsed = extractJsonResponse(cleanJsonStr);
             console.log("✅ Parsed Response Object:", parsed);
 
             return {

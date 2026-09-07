@@ -1,5 +1,28 @@
 import RoadmapModel from "../../schema/roadmap_data/roadmap.schema.model.js";
+import ResumeModel from "../../schema/resume_schema/resume.schema.model.js";
 import { generateRoadmapChatResponse } from "../../services/roadmap_services/roadmapAi.js";
+
+/**
+ * Load the user's latest uploaded resume (if any) to give the AI extra context.
+ * Returns { fileName, extractedText } or null, so roadmap generation stays
+ * personalized without crashing when no resume exists.
+ */
+const getUserResumeContext = async (userId) => {
+    try {
+        const resume = await ResumeModel.findOne({ user: userId }).sort({ createdAt: -1 });
+        if (!resume || !resume.extractedText) return null;
+
+        return {
+            fileName: resume.fileName,
+            extractedText: resume.extractedText.length > 9000
+                ? resume.extractedText.slice(0, 9000) + "\n...[truncated]"
+                : resume.extractedText
+        };
+    } catch (error) {
+        console.warn("⚠️ Could not load resume context:", error.message);
+        return null;
+    }
+};
 
 /**
  * POST /api/roadmap/chat

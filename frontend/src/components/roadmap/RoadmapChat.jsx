@@ -65,7 +65,7 @@ const RoadmapChat = ({ onRoadmapUpdate }) => {
       });
       const data = await res.json();
 
-      let replyText = 'I have received your request and updated your roadmap!';
+      let replyText = `I've received your request: "${messageText}". Your personalized roadmap is now active!`;
       if (data.success && data.aiResponse) {
         replyText = data.aiResponse;
       }
@@ -92,7 +92,7 @@ const RoadmapChat = ({ onRoadmapUpdate }) => {
         ...prev,
         {
           sender: 'ai',
-          text: `I've processed your prompt: "${messageText}". Your roadmap is active!`
+          text: `I've received your request: "${messageText}". I'll start building your personalized roadmap — tell me which career/goal to target if you haven't yet!`
         }
       ]);
     } finally {
