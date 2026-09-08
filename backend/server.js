@@ -1,5 +1,6 @@
 import "./src/config/env.js";
 
+// Entry point: Initialize and start HTTP server and database connection
 import app from "./src/app.js";
 import connectDatabase from "./src/config/connectDb.js";
 import "./src/config/redis.js";
